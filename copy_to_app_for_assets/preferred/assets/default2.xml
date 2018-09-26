@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiteNote>
+
+    <page>
+        <page_name>Image</page_name>
+        <note>
+            <title>[s]jpg by picture</title>
+            <body></body>
+            <picture>https://upload.wikimedia.org/wikipedia/en/e/e2/Public.jpg</picture>
+            <audio></audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]jpg by link</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://upload.wikimedia.org/wikipedia/en/e/e2/Public.jpg</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Audio</page_name>
+        <note>
+            <title>[s]mp3 by audio</title>
+            <body></body>
+            <picture></picture>
+            <audio>http://smp3dl.com/fileDownload/Songs/128/29678.mp3</audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]mp3 by link</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>http://smp3dl.com/fileDownload/Songs/0/29677.mp3</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Video</page_name>
+        <note>
+            <title>[s]mp4 by picture</title>
+            <body>cartoon</body>
+            <picture>http://clips.vorwaerts-gmbh.de/VfE_html5.mp4</picture>
+            <audio></audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]mp4 by link</title>
+            <body>cartoon</body>
+            <picture></picture>
+            <audio></audio>
+            <link>http://clips.vorwaerts-gmbh.de/VfE_html5.mp4</link>
+        </note>
+        <note>
+            <title>[s]google drive</title>
+            <body>bread</body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://drive.google.com/open?id=0B6n7c10rY_1vVXViaW5XeGhyQk0</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Link</page_name>
+        <note>
+            <title>[s]YouTube</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://www.youtube.com/watch?v=XbsI1xT3Jso</link>
+        </note>
+        <note>
+            <title>[s]Web page</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>http://www.yourpurebredpuppy.com/reviews/beagles.html</link>
+        </note>
+    </page>
+</LiteNote>

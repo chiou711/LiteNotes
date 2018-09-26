@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '28.0.2'
+
+    defaultConfig {
+        applicationId "com.cw.litenote"
+        minSdkVersion 14
+        targetSdkVersion 27
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+//            shrinkResources true
+//            signingConfig signingConfigs.release
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    sourceSets {
+        main {
+              // mark: Has original tables: 2 folders, 1 page each folder
+              // un-mark: Has preferred tables
+              // Apk file size will increase if assets directory is set at default location (src/main/assets)
+//            assets.srcDirs = ['preferred/assets/']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation files('libs/commons-io-2.4.jar')
+    implementation files('libs/universal-image-loader-1.9.5.jar')
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:support-v13:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+}

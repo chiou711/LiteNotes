@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiteNote>
+
+    <page>
+        <page_name>Image</page_name>
+        <note>
+            <title>[s]jpg by picture</title>
+            <body></body>
+            <picture>https://upload.wikimedia.org/wikipedia/en/e/e2/Public.jpg</picture>
+            <audio></audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]jpg by link</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://upload.wikimedia.org/wikipedia/en/e/e2/Public.jpg</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Audio</page_name>
+        <note>
+            <title>[s]mp3 by audio</title>
+            <body></body>
+            <picture></picture>
+            <audio>https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3</audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]mp3 by link (Google drive)</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://drive.google.com/file/d/1wrOx_p6YVNZ3L3pBRU-O2p6m3V-fw17c/view</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Video</page_name>
+        <note>
+            <title>[s]mp4 by picture</title>
+            <body>cartoon</body>
+            <picture>http://clips.vorwaerts-gmbh.de/VfE_html5.mp4</picture>
+            <audio></audio>
+            <link></link>
+        </note>
+        <note>
+            <title>[s]mp4 by link (Google Drive)</title>
+            <body>bread</body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://drive.google.com/open?id=1K2zk-hoZAQRpdHp2Ld3zALV1p-yuZWO4</link>
+        </note>
+    </page>
+
+    <page>
+        <page_name>Link</page_name>
+        <note>
+            <title>[s]YouTube link</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>https://www.youtube.com/watch?v=XbsI1xT3Jso</link>
+        </note>
+        <note>
+            <title>[s]Web link</title>
+            <body></body>
+            <picture></picture>
+            <audio></audio>
+            <link>http://www.yourpurebredpuppy.com/reviews/beagles.html</link>
+        </note>
+    </page>
+</LiteNote>
