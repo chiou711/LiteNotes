@@ -5,7 +5,7 @@ android {
     buildToolsVersion '28.0.2'
 
     defaultConfig {
-        applicationId "com.cw.litenote"
+        applicationId "com.cw.litenotes"
         minSdkVersion 14
         targetSdkVersion 27
     }
