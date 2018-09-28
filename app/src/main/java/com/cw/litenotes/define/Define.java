@@ -74,7 +74,7 @@ public class Define {
      * }
      *
      */
-    public static boolean HAS_PREFERRED_TABLES = false; //true; //false;
+    public static boolean HAS_PREFERRED_TABLES = true; //true; //false;
 
     /**
      * Has original tables

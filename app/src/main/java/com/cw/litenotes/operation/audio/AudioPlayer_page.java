@@ -594,12 +594,15 @@ public class AudioPlayer_page
         {
 			audioUrl_page = Audio_manager.getAudioStringAt(Audio_manager.mAudioPos);
 
-            startNewAudio();
+			startNewAudio();
 
-			MediaControllerCompat.getMediaController(MainAct.mAct)
-					.getTransportControls()
-					.playFromUri(Uri.parse(audioUrl_page),null);//todo Fix: You must specify a non-empty Uri for playFromUri.
-			MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
+			if(!Util.isEmptyString(audioUrl_page))
+			{
+				MediaControllerCompat.getMediaController(MainAct.mAct)
+						.getTransportControls()
+						.playFromUri(Uri.parse(audioUrl_page), null);
+				MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
+			}
 
         }
         else // try enough times: still no audio file is found

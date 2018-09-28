@@ -25,7 +25,7 @@ android {
               // mark: Has original tables: 2 folders, 1 page each folder
               // un-mark: Has preferred tables
               // Apk file size will increase if assets directory is set at default location (src/main/assets)
-//            assets.srcDirs = ['preferred/assets/']
+            assets.srcDirs = ['preferred/assets/']
         }
     }
 
