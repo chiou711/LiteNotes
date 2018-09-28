@@ -279,7 +279,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
             this.registerReceiver(bluetooth_device_receiver, filter);
         }
-        else // Build.VERSION.SDK_INT >= 21
+        else // if(Build.VERSION.SDK_INT >= 21)
         {
             // Media session: to receive media button event of bluetooth device
             // new media browser instance and create BackgroundAudioService instance: support notification

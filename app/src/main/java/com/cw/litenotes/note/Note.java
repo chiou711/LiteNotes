@@ -587,8 +587,10 @@ public class Note extends AppCompatActivity
 		}
 
         // disconnect MediaBrowserCompat
-        if(MainAct.mMediaBrowserCompat.isConnected())
-            MainAct.mMediaBrowserCompat.disconnect();
+		if(Build.VERSION.SDK_INT >= 21) {
+			if (MainAct.mMediaBrowserCompat.isConnected())
+				MainAct.mMediaBrowserCompat.disconnect();
+		}
 	}
 
 	// avoid exception: has leaked window android.widget.ZoomButtonsController

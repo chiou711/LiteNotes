@@ -286,8 +286,10 @@ public class AudioUi_note
         if(Audio_manager.getAudioPlayMode()  == Audio_manager.PAGE_PLAY_MODE)
             Audio_manager.stopAudioPlayer();
 
-        if(MainAct.mMediaBrowserCompat.isConnected())
-            MainAct.mMediaBrowserCompat.disconnect();
+        if(Build.VERSION.SDK_INT >= 21) {
+            if (MainAct.mMediaBrowserCompat.isConnected())
+                MainAct.mMediaBrowserCompat.disconnect();
+        }
 
         NotificationManagerCompat.from(MainAct.mAct).cancel(BackgroundAudioService.id);
 
