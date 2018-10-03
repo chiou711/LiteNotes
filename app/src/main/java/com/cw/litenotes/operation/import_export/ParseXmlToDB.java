@@ -129,7 +129,7 @@ class ParseXmlToDB {
                                 // insert table for new tab
                                 mDb_folder.insertPageTable(mDb_folder,DB_folder.getFocusFolder_tableId(), TabsHost.getLastPageTableId() + 1, true );
                                 // update last tab Id after Insert
-                                TabsHost.setLastPageTableId(TabsHost.getLastPageTableId() + 1);//??? logic error? should be max page Id?
+                                TabsHost.setLastPageTableId(TabsHost.getLastPageTableId() + 1);//todo ??? logic error? should be max page Id?
 
                                 // update from 0 to 1 if Import starts from Empty
                                 int pgsCnt = mDb_folder.getPagesCount(true);

@@ -88,7 +88,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -123,7 +122,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public static int mCurrentState;
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
-
+    public boolean bAlreadyAccepted;
 
 	// Main Act onCreate
     @Override
@@ -150,49 +149,70 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 		mAppTitle = getTitle();
         mMainUi = new MainUi();
 
-        // file provider implementation is needed after Android version 24
-        // if not, will encounter android.os.FileUriExposedException
-        // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
 
-        // add the following to disable this requirement
-        if(Build.VERSION.SDK_INT>=24){
-            try {
-                // method 1
-                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                m.invoke(null);
+        System.out.println("================start application ==================");
+        System.out.println("MainAct / _onCreate");
 
-                // method 2
+        EULA_dlg eulaDlg = new EULA_dlg(this);
+        bAlreadyAccepted = eulaDlg.isEulaAlreadyAccepted();
+
+        if (!bAlreadyAccepted)
+        {
+            // Show license dialog
+            eulaDlg.show();//requestPermissions inside
+        }
+        else {
+
+            // file provider implementation is needed after Android version 24
+            // if not, will encounter android.os.FileUriExposedException
+            // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
+
+            // add the following to disable this requirement
+            if (Build.VERSION.SDK_INT >= 24) {
+                try {
+                    // method 1
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+
+                    // method 2
 //                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 //                StrictMode.setVmPolicy(builder.build());
-            }catch(Exception e){
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        // Show Api version
-        if(Define.CODE_MODE == Define.DEBUG_MODE)
-		    Toast.makeText(mAct, mAppTitle + " " + "API_" + Build.VERSION.SDK_INT , Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(mAct, mAppTitle , Toast.LENGTH_SHORT).show();
+            // Show Api version
+            if (Define.CODE_MODE == Define.DEBUG_MODE)
+                Toast.makeText(mAct, mAppTitle + " " + "API_" + Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(mAct, mAppTitle, Toast.LENGTH_SHORT).show();
 
-		// Release mode: no debug message
-        if(Define.CODE_MODE == Define.RELEASE_MODE)
-        {
-        	OutputStream nullDev = new OutputStream()
-            {
-                public  void    close() {}
-                public  void    flush() {}
-                public  void    write(byte[] b) {}
-                public  void    write(byte[] b, int off, int len) {}
-                public  void    write(int b) {}
-            };
-            System.setOut( new PrintStream(nullDev));
-        }
+            // Release mode: no debug message
+            if (Define.CODE_MODE == Define.RELEASE_MODE) {
+                OutputStream nullDev = new OutputStream() {
+                    public void close() {
+                    }
 
-        //Log.d below can be disabled by applying proguard
-        //1. enable proguard-android-optimize.txt in project.properties
-        //2. be sure to use newest version to avoid build error
-        //3. add the following in proguard-project.txt
+                    public void flush() {
+                    }
+
+                    public void write(byte[] b) {
+                    }
+
+                    public void write(byte[] b, int off, int len) {
+                    }
+
+                    public void write(int b) {
+                    }
+                };
+                System.setOut(new PrintStream(nullDev));
+            }
+
+            //Log.d below can be disabled by applying proguard
+            //1. enable proguard-android-optimize.txt in project.properties
+            //2. be sure to use newest version to avoid build error
+            //3. add the following in proguard-project.txt
         /*-assumenosideeffects class android.util.Log {
         public static boolean isLoggable(java.lang.String, int);
         public static int v(...);
@@ -202,98 +222,81 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         public static int e(...);
     	}
         */
-        Log.d("test log tag","start app");
+            UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        System.out.println("================start application ==================");
-        System.out.println("MainAct / _onCreate");
-
-        UtilImage.getDefaultScaleInPercent(MainAct.this);
-
-        mFolderTitles = new ArrayList<>();
+            mFolderTitles = new ArrayList<>();
 
 //		Context context = getApplicationContext();
 
-		//Add note with the link which got from other App
-		String intentLink = mMainUi.addNote_IntentLink(getIntent(),mAct);
-        if(!Util.isEmptyString(intentLink))
-		{
-            finish(); // LiteNote not running at first, keep closing
-            return;
-		}
-		else
-		{
-			// check DB
-			final boolean ENABLE_DB_CHECK = false;//true;//false
-			if(ENABLE_DB_CHECK)
-			{
-		        // list all folder tables
-                FolderUi.listAllFolderTables(mAct);
+            //Add note with the link which got from other App
+            String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
+            if (!Util.isEmptyString(intentLink)) {
+                finish(); // LiteNote not running at first, keep closing
+                return;
+            } else {
+                // check DB
+                final boolean ENABLE_DB_CHECK = false;//true;//false
+                if (ENABLE_DB_CHECK) {
+                    // list all folder tables
+                    FolderUi.listAllFolderTables(mAct);
 
-				// recover focus
-	    		DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
-				DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
-			}//if(ENABLE_DB_CHECK)
+                    // recover focus
+                    DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
+                    DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
+                }//if(ENABLE_DB_CHECK)
 
-	        // get focus folder table Id, default folder table Id: 1
-            DB_drawer dB_drawer = new DB_drawer(this);
-            dB_drawer.open();
-	        if (savedInstanceState == null)
-	        {
-	        	for(int i = 0; i< dB_drawer.getFoldersCount(false); i++)
-	        	{
-		        	if(dB_drawer.getFolderTableId(i,false)==Pref.getPref_focusView_folder_tableId(this))
-		        	{
-                        FolderUi.setFocus_folderPos(i);
-		    			System.out.println("MainAct / _onCreate /  FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-		        	}
-	        	}
-                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-	        	UtilAudio.mIsCalledWhilePlayingAudio = false;
-	        }
-            dB_drawer.close();
+                // get focus folder table Id, default folder table Id: 1
+                DB_drawer dB_drawer = new DB_drawer(this);
+                dB_drawer.open();
+                if (savedInstanceState == null) {
+                    for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
+                        if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
+                            FolderUi.setFocus_folderPos(i);
+                            System.out.println("MainAct / _onCreate /  FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+                        }
+                    }
+                    Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
+                    UtilAudio.mIsCalledWhilePlayingAudio = false;
+                }
+                dB_drawer.close();
 
-	        // enable ActionBar app icon to behave as action to toggle nav drawer
+                // enable ActionBar app icon to behave as action to toggle nav drawer
 //	        getActionBar().setDisplayHomeAsUpEnabled(true);
 //	        getActionBar().setHomeButtonEnabled(true);
 //			getActionBar().setBackgroundDrawable(new ColorDrawable(ColorSet.getBarColor(mAct)));
 
-            // configure layout view
-            configLayoutView();
+                // configure layout view
+                configLayoutView(); //createAssetsFile inside
 
-	        mContext = getBaseContext();
+                mContext = getBaseContext();
 
-			// add on back stack changed listener
-	        mFragmentManager = getSupportFragmentManager();
-			mOnBackStackChangedListener = this;
-	        mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
-		}
+                // add on back stack changed listener
+                mFragmentManager = getSupportFragmentManager();
+                mOnBackStackChangedListener = this;
+                mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
+            }
 
-		// Show license dialog
-		new EULA_dlg(this).show();
+            isAddedOnNewIntent = false;
 
-        isAddedOnNewIntent = false;
-
-        // Register Bluetooth device receiver
-        if(Build.VERSION.SDK_INT < 21)
-        {
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-            this.registerReceiver(bluetooth_device_receiver, filter);
-        }
-        else // if(Build.VERSION.SDK_INT >= 21)
-        {
-            // Media session: to receive media button event of bluetooth device
-            // new media browser instance and create BackgroundAudioService instance: support notification
-            if(mMediaBrowserCompat == null)
+            // Register Bluetooth device receiver
+            if (Build.VERSION.SDK_INT < 21) {
+                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+                this.registerReceiver(bluetooth_device_receiver, filter);
+            } else // if(Build.VERSION.SDK_INT >= 21)
             {
-                mMediaBrowserCompat = new MediaBrowserCompat(mAct,
-                        new ComponentName(mAct, BackgroundAudioService.class),
-                        mMediaBrowserCompatConnectionCallback,
-                        mAct.getIntent().getExtras());
+                // Media session: to receive media button event of bluetooth device
+                // new media browser instance and create BackgroundAudioService instance: support notification
+                if (mMediaBrowserCompat == null) {
+                    mMediaBrowserCompat = new MediaBrowserCompat(mAct,
+                            new ComponentName(mAct, BackgroundAudioService.class),
+                            mMediaBrowserCompatConnectionCallback,
+                            mAct.getIntent().getExtras());
 
-                if (!mMediaBrowserCompat.isConnected())
-                    mMediaBrowserCompat.connect();//cf: https://stackoverflow.com/questions/43169875/mediabrowser-subscribe-doesnt-work-after-i-get-back-to-activity-1-from-activity
+                    if (!mMediaBrowserCompat.isConnected())
+                        mMediaBrowserCompat.connect();//cf: https://stackoverflow.com/questions/43169875/mediabrowser-subscribe-doesnt-work-after-i-get-back-to-activity-1-from-activity
 
-                mCurrentState = STATE_PAUSED;
+                    mCurrentState = STATE_PAUSED;
+                }
             }
         }
 
@@ -389,6 +392,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             }
             break;
         }
+        recreate();
+        //then will go to _resume
     }
 
     @Override
@@ -540,14 +545,20 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     	super.onResumeFragments();
 
 //		// fix: home button failed after power off/on in Config fragment
-		mFragmentManager.popBackStack();
+        if(bAlreadyAccepted) {
+            mFragmentManager.popBackStack();
 
-        DB_drawer dB_drawer = new DB_drawer(this);
-		if(dB_drawer.getFoldersCount(true)>0) {
-			System.out.println("MainAct / _onResumeFragments / getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-			FolderUi.selectFolder(this,FolderUi.getFocus_folderPos());
-			getSupportActionBar().setTitle(mFolderTitle);
-		}
+            DB_drawer dB_drawer = new DB_drawer(this);
+            if (dB_drawer.getFoldersCount(true) > 0) {
+                System.out.println("MainAct / _onResumeFragments / getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+
+                int focus_folderPos = FolderUi.getFocus_folderPos();
+                FolderUi.selectFolder(this, focus_folderPos);
+
+                if (getSupportActionBar() != null)
+                    getSupportActionBar().setTitle(mFolderTitle);
+            }
+        }
     }
 
     @Override
@@ -598,7 +609,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         super.onPostCreate(savedInstanceState);
 //        System.out.println("MainAct / onPostCreate");
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        drawer.drawerToggle.syncState();
+
+        if(bAlreadyAccepted)
+            drawer.drawerToggle.syncState();
     }
 
     @Override
@@ -824,7 +837,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
         System.out.println("MainAct / _onPrepareOptionsMenu");
 
-        if((drawer == null) || (drawer.drawerLayout == null))
+        if((drawer == null) || (drawer.drawerLayout == null) || (!bAlreadyAccepted))
             return false;
 
         DB_drawer db_drawer = new DB_drawer(this);
@@ -877,9 +890,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
                 // notes count
                 int notesCnt = 0;
-//                System.out.println(preStr + "DB_page.getFocusPage_tableId() = " + DB_page.getFocusPage_tableId());
-
-                DB_page dB_page = new DB_page(this,TabsHost.getCurrentPageTableId());
+                System.out.println(preStr + "Pref.getPref_focusView_page_tableId(this) = " + Pref.getPref_focusView_page_tableId(this));
+                DB_page dB_page = new DB_page(this,Pref.getPref_focusView_page_tableId(this));
                 if(dB_page != null){
                     try {
                         notesCnt = dB_page.getNotesCount(true);

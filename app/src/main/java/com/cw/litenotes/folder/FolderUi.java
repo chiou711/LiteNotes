@@ -534,25 +534,7 @@ public class FolderUi
 				// check DB: before importing
                 dB_drawer.listFolders();
 
-				// import default tables
-				Import_fileView.createDefaultTables(act,fileName);
-
-				// check DB: after importing
-				dB_drawer.listFolders();
-
-                Pref.setPref_has_preferred_tables(act,true,position);
-
-				// add default image
-				String imageFileName = "local"+ (position+1) + ".jpg";
-				Util.createAssetsFile(act,imageFileName);
-
-				// add default video
-				String videoFileName = "local"+ (position+1) + ".mp4";
-				Util.createAssetsFile(act,videoFileName);
-
-				// add default audio
-				String audioFileName = "local"+ (position+1) + ".mp3";
-				Util.createAssetsFile(act,audioFileName);
+                    createDefaultAssets(act,position,fileName,dB_drawer);
 			}
 		}
 
@@ -561,6 +543,32 @@ public class FolderUi
 		// use Runnable to make sure only one folder background is seen
         mHandler = new Handler();
         mHandler.post(mTabsHostRun);
+    }
+
+
+    private static void createDefaultAssets(AppCompatActivity act, int position, String fileName, DB_drawer dB_drawer)
+    {
+        // import default tables
+        Import_fileView.createDefaultTables(act,fileName);//create default1.xml default2.xml
+
+        // check DB: after importing
+        dB_drawer.listFolders();
+
+        Pref.setPref_has_preferred_tables(act,true,position);
+
+        // add default image
+        String imageFileName = "local"+ (position+1) + ".jpg";
+        Util.createAssetsFile(act,imageFileName);
+
+        // add default video
+        String videoFileName = "local"+ (position+1) + ".mp4";
+        Util.createAssetsFile(act,videoFileName);
+
+        // add default audio
+        String audioFileName = "local"+ (position+1) + ".mp3";
+        Util.createAssetsFile(act,audioFileName);
+
+        MainAct.mAct.recreate();//workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
     }
 
     // start tabs host runnable

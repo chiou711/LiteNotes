@@ -15,7 +15,7 @@
     <page>
         <page_name>Audio</page_name>
         <note>
-            <title>[n]test song</title>
+            <title>[n]local audio file</title>
             <body></body>
             <picture></picture>
             <audio>file:///storage/emulated/0/LiteNotes/local1.mp3</audio>
@@ -26,7 +26,7 @@
     <page>
         <page_name>Photo</page_name>
         <note>
-            <title>[n]sunshine</title>
+            <title>[n]loca image file</title>
             <body></body>
             <picture>file:///storage/emulated/0/LiteNotes/local1.jpg</picture>
             <audio></audio>
@@ -37,8 +37,8 @@
     <page>
     <page_name>Video</page_name>
         <note>
-            <title>[s]Doggy</title>
-            <body>pee</body>
+            <title>[s]local video file</title>
+            <body></body>
             <picture>file:///storage/emulated/0/LiteNotes/local1.mp4</picture>
             <audio></audio>
             <link></link>

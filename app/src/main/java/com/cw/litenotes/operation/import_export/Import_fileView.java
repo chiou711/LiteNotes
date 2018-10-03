@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 
 import com.cw.litenotes.R;
 import com.cw.litenotes.main.MainAct;
+import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.ColorSet;
 import com.cw.litenotes.util.Util;
 
@@ -175,6 +176,8 @@ public class Import_fileView extends Fragment
     public static void createDefaultTables(Activity act,String fileName)
     {
 		System.out.println("Import_fileView / _createDefaultTables / fileName = " + fileName);
+
+		TabsHost.setLastPageTableId(0);
 
         FileInputStream fileInputStream = null;
         File assetsFile = Util.createAssetsFile(act,fileName);

@@ -46,6 +46,24 @@ public class EULA_dlg {
     SharedPreferences prefs;
     String eulaKey;
 
+    public boolean isEulaAlreadyAccepted() {
+        PackageInfo versionInfo = getPackageInfo();
+        prefs= PreferenceManager.getDefaultSharedPreferences(mAct);
+        // The eulaKey changes every time you increment the version number in
+        // the AndroidManifest.xml
+        eulaKey = EULA_PREFIX + versionInfo.versionCode;
+
+        bAlreadyAccepted = prefs.getBoolean(eulaKey, false);
+        return bAlreadyAccepted;
+    }
+
+    void setEulaAlreadyAccepted(boolean bAlreadyAccepted) {
+        this.bAlreadyAccepted = bAlreadyAccepted;
+    }
+
+    static boolean bAlreadyAccepted;
+
+
     public EULA_dlg(Activity context) {
         mAct = context;
     }
@@ -63,27 +81,16 @@ public class EULA_dlg {
  
     public void show() {
         System.out.println("EULA_dlg / _show");
-        PackageInfo versionInfo = getPackageInfo();
-        prefs= PreferenceManager.getDefaultSharedPreferences(mAct);
-        // The eulaKey changes every time you increment the version number in
-        // the AndroidManifest.xml
-        eulaKey = EULA_PREFIX + versionInfo.versionCode;
 
-        boolean bAlreadyAccepted = prefs.getBoolean(eulaKey, false);
-        
-        if (bAlreadyAccepted == false) {
- 
+        if (!isEulaAlreadyAccepted()) {
+
             // EULA title
             String title = mAct.getString(R.string.app_name) +
             			   " v" + 
-            			   versionInfo.versionName;
+            			   getPackageInfo().versionName;
  
             // EULA text
             String message = mAct.getString(R.string.EULA_string);
- 
-            // Disable orientation changes, to prevent parent activity
-            // re-initialization
-//            act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
  
             AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
                     .setTitle(title)
@@ -100,7 +107,11 @@ public class EULA_dlg {
                                     if(Build.VERSION.SDK_INT >= M)//API23
                                     {
                                         int permissionCamera = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.CAMERA);
-                                        if(permissionCamera != PackageManager.PERMISSION_GRANTED)
+                                        int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                        int permissionPhone = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.READ_PHONE_STATE);
+                                        if( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
+                                            (permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED) &&
+                                            (permissionPhone != PackageManager.PERMISSION_GRANTED)                 )
                                         {
                                             ActivityCompat.requestPermissions(mAct,
                                                                 new String[]{Manifest.permission.CAMERA,
@@ -110,14 +121,21 @@ public class EULA_dlg {
                                                                                               },
                                                                 Util.PERMISSIONS_REQUEST_ALL);
                                         }
+                                        else if ( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
+                                                  (permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED) &&
+                                                  (permissionPhone != PackageManager.PERMISSION_GRANTED)      )
+                                        {
+                                            ActivityCompat.requestPermissions(mAct,
+                                                                new String[]{Manifest.permission.CAMERA,
+                                                                        Manifest.permission.READ_PHONE_STATE
+                                                                },
+                                                                Util.PERMISSIONS_REQUEST_CAMERA_AND_PHONE);
+                                        }
+
                                     }
 
                                     // Close dialog
                                     dialogInterface.dismiss();
-
-                                    // Enable orientation changes based on
-                                    // device's sensor
-//                                    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                                 }
                             })
                     .setNegativeButton(android.R.string.cancel,
@@ -129,7 +147,6 @@ public class EULA_dlg {
                                     // Close the activity as they have declined
                                     // the EULA
                                     mAct.finish();
-//                                    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                                 }
  
                             });
@@ -137,11 +154,12 @@ public class EULA_dlg {
         }
     }
 
-    void applyPreference()
+    private void applyPreference()
     {
         // Mark this version as read.
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(eulaKey, true);
         editor.apply();
+        setEulaAlreadyAccepted(true);
     }
 }
