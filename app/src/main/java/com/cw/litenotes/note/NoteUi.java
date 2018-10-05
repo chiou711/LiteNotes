@@ -236,7 +236,7 @@ public class NoteUi
                     System.out.println("NoteUi / setPictureView_listeners / mVideoPlayButton / getVideoState() = " + UtilVideo.getVideoState());
 
                     if( (BackgroundAudioService.mMediaPlayer != null) &&
-                         BackgroundAudioService.mMediaPlayer.isPlaying() &&
+                        (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
 						(UtilVideo.getVideoState() != UtilVideo.VIDEO_AT_PLAY) )
                     {
                         // Dialog: confirm to disable audio or not

@@ -1397,7 +1397,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // initial
         BackgroundAudioService.mMediaPlayer = null;//for first
-        BackgroundAudioService.mIsPrepared = false;
 
         Page_recycler page = TabsHost.getCurrentPage();
         TabsHost.audioUi_page = new AudioUi_page(this,page.recyclerView);

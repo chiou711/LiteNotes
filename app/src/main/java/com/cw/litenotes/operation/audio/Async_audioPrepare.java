@@ -68,7 +68,9 @@ public class Async_audioPrepare extends AsyncTask<String,Integer,String>
 		 int progress = 0;
 		 int count = 0;
 
-		 while( (!BackgroundAudioService.mIsPrepared) && (!isTimeOut) )
+		 while(	(!isTimeOut) &&
+				( (BackgroundAudioService.mMediaPlayer != null) &&
+				  (!BackgroundAudioService.mMediaPlayer.isPlaying()) ) )
 		 {
 			 System.out.println("Async_audioPrepare / doInBackground / count = " + count);
 			 count++;
