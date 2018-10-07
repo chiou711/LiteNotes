@@ -84,7 +84,7 @@ public class Define {
      */
     public static boolean HAS_ORIGINAL_TABLES = !HAS_PREFERRED_TABLES;
 
-    public static boolean ENABLE_ADMOB = false;
+    public static boolean ENABLE_ADMOB = true;
 
 
     // Apply system default for picture path
