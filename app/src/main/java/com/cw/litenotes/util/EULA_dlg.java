@@ -24,6 +24,7 @@ package com.cw.litenotes.util;
  */
  
 import com.cw.litenotes.R;
+import com.cw.litenotes.main.MainAct;
 
 import android.Manifest;
 import android.app.Activity;
@@ -133,6 +134,8 @@ public class EULA_dlg {
                                         }
 
                                     }
+                                    else
+                                        MainAct.mAct.recreate();
 
                                     // Close dialog
                                     dialogInterface.dismiss();

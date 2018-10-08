@@ -55,7 +55,7 @@ public class AudioPlayer_page
     private Async_audioUrlVerify mAudioUrlVerifyTask;
 	private AudioUi_page audioUi_page;
     public static Handler mAudioHandler;
-    int notesCount;
+    private int notesCount;
 
 	public AudioPlayer_page(AppCompatActivity act, AudioUi_page audioUi_page){
 		this.act = act;
@@ -124,7 +124,6 @@ public class AudioPlayer_page
                     else {
                         BackgroundAudioService.mMediaPlayer = new MediaPlayer();
                         BackgroundAudioService.mMediaPlayer.reset();
-                        setMediaPlayerListeners();
                         try
                         {
                             BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
@@ -261,28 +260,64 @@ public class AudioPlayer_page
                 }
                 else
                 {
-                    // set listeners
-                    if(BackgroundAudioService.mMediaPlayer != null)
-                        setMediaPlayerListeners();
+                    if (BackgroundAudioService.mIsPrepared)
+                    {
+                        // media file length
+                        media_file_length = BackgroundAudioService.mMediaPlayer.getDuration(); // gets the song length in milliseconds from URL
+                        System.out.println("AudioPlayer_page / _setAudioPlayerListeners / media_file_length = " + media_file_length);
 
-                    AudioUi_page.mProgress = 0;
+                        // set footer message: media name
+                        if (!Util.isEmptyString(audioUrl_page)) {
 
-                    // for network stream buffer change
-                    if(BackgroundAudioService.mMediaPlayer != null) {
-                        BackgroundAudioService.mMediaPlayer.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
-                            @Override
-                            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                                if (TabsHost.getCurrentPage().seekBarProgress != null)
-                                    TabsHost.getCurrentPage().seekBarProgress.setSecondaryProgress(percent);
+                            // set seek bar progress
+                            TextView audioPanel_file_length = (TextView) act.findViewById(R.id.audioPanel_file_length);
+                            // show audio file length of playing
+                            int fileHour = Math.round((float) (media_file_length / 1000 / 60 / 60));
+                            int fileMin = Math.round((float) ((media_file_length - fileHour * 60 * 60 * 1000) / 1000 / 60));
+                            int fileSec = Math.round((float) ((media_file_length - fileHour * 60 * 60 * 1000 - fileMin * 1000 * 60) / 1000));
+                            if (audioPanel_file_length != null) {
+                                audioPanel_file_length.setText(String.format(Locale.US, "%2d", fileHour) + ":" +
+                                        String.format(Locale.US, "%02d", fileMin) + ":" +
+                                        String.format(Locale.US, "%02d", fileSec));
                             }
-                        });
+
+                            if(TabsHost.getCurrentPage().recyclerView != null) {
+                                scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
+                                TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
+                            }
+                        }
+
+                        // add for calling runnable
+                        if (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
+                            mAudioHandler.postDelayed(page_runnable, Util.oneSecond / 4);
+
+                        BackgroundAudioService.mIsPrepared = false;
                     }
 
-                    showAudioPanel(act,true);
+
+                    if(BackgroundAudioService.mIsCompleted)
+                    {
+                        mPlaybackTime = 0;
+
+                        // get next index
+                        if(Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
+                        {
+                            nextAudio_player();
+
+                            if(TabsHost.getCurrentPage().recyclerView != null) {
+                                TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
+                                TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
+                            }
+                        }
+
+                        BackgroundAudioService.mIsCompleted = false;
+                    }
 	   			}
 
                 if(mAudio_tryTimes < Audio_manager.getAudioFilesCount())
                 {
+                    showAudioPanel(act, true);
+
                     // update page audio seek bar
                     if(audioUi_page != null)
                         update_audioPanel_progress(audioUi_page);
@@ -340,104 +375,6 @@ public class AudioPlayer_page
 
 
     public static int media_file_length;
-    /**
-     * Set audio player listeners
-     */
-	private void setMediaPlayerListeners()
-	{
-		System.out.println("AudioPlayer_page / _setAudioPlayerListeners");
-
-			// On Completion listener
-			BackgroundAudioService.mMediaPlayer.setOnCompletionListener(new OnCompletionListener()
-			{	@Override
-				public void onCompletion(MediaPlayer mp) 
-				{
-					System.out.println("AudioPlayer_page / _setAudioPlayerListeners / _onCompletion");
-					
-					if(BackgroundAudioService.mMediaPlayer != null)
-						BackgroundAudioService.mMediaPlayer.release();
-	
-					BackgroundAudioService.mMediaPlayer = null;
-					mPlaybackTime = 0;
-
-					// get next index
-					if(Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
-					{
-                        nextAudio_player();
-						TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
-						TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
-					}
-				}
-			});
-			
-			// - on prepared listener
-			BackgroundAudioService.mMediaPlayer.setOnPreparedListener(new OnPreparedListener()
-			{	@Override
-				public void onPrepared(MediaPlayer mp)
-				{
-					System.out.println("AudioPlayer_page / _setAudioPlayerListeners / _onPrepared");
-
-					if (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
-					{
-                        showAudioPanel(act,true);
-
-
-                        if(Build.VERSION.SDK_INT < 21) {
-                            if (BackgroundAudioService.mMediaPlayer != null) {
-                                if (!BackgroundAudioService.mMediaPlayer.isPlaying()) {
-                                    BackgroundAudioService.mMediaPlayer.start();
-                                }
-                                BackgroundAudioService.mMediaPlayer.setVolume(1.0f, 1.0f);
-                            }
-                        }
-
-						// media file length
-						media_file_length = BackgroundAudioService.mMediaPlayer.getDuration(); // gets the song length in milliseconds from URL
-                        System.out.println("AudioPlayer_page / _setAudioPlayerListeners / media_file_length = " + media_file_length);
-
-						// set footer message: media name
-						if (!Util.isEmptyString(audioUrl_page))
-						{
-                            // set seek bar progress
-                            if(audioUi_page != null)
-                                update_audioPanel_progress(audioUi_page);
-
-							TextView audioPanel_file_length = (TextView) act.findViewById(R.id.audioPanel_file_length);
-							// show audio file length of playing
-							int fileHour = Math.round((float)(media_file_length / 1000 / 60 / 60));
-							int fileMin = Math.round((float)((media_file_length - fileHour * 60 * 60 * 1000) / 1000 / 60));
-							int fileSec = Math.round((float)((media_file_length - fileHour * 60 * 60 * 1000 - fileMin * 1000 * 60 )/ 1000));
-                            if(audioPanel_file_length != null) {
-                                audioPanel_file_length.setText(String.format(Locale.US, "%2d", fileHour) + ":" +
-                                        String.format(Locale.US, "%02d", fileMin) + ":" +
-                                        String.format(Locale.US, "%02d", fileSec));
-                            }
-
-                            scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
-							TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
-                        }
-
-
-						BackgroundAudioService.mMediaPlayer.seekTo(mPlaybackTime);
-
-						// add for calling runnable
-						if (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
-							mAudioHandler.postDelayed(page_runnable, Util.oneSecond / 4);
-					}
-				}
-			});
-			
-			// - on error listener
-			BackgroundAudioService.mMediaPlayer.setOnErrorListener(new OnErrorListener()
-			{	@Override
-				public boolean onError(MediaPlayer mp,int what,int extra) 
-				{
-					// more than one error when playing an index 
-					System.out.println("AudioPlayer_page / _setAudioPlayerListeners / _onError / what = " + what + " , extra = " + extra);
-					return false;
-				}
-			});
-	}
 
     private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 	/**
@@ -590,7 +527,7 @@ public class AudioPlayer_page
             {
                 // launch handler
                 if( (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-                        (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)   )
+                    (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)   )
                 {
                     mAudioHandler.postDelayed(page_runnable, Util.oneSecond / 4);
                 }
@@ -643,7 +580,6 @@ public class AudioPlayer_page
             else {
                 BackgroundAudioService.mMediaPlayer = new MediaPlayer();
                 BackgroundAudioService.mMediaPlayer.reset();
-                setMediaPlayerListeners();
                 try
                 {
                     BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
@@ -696,6 +632,8 @@ public class AudioPlayer_page
 
         // set current progress
         AudioUi_page.mProgress = (int)(((float)currentPos/ media_file_length)*100);
-        audioUi_page.seekBarProgress.setProgress(AudioUi_page.mProgress); // This math construction give a percentage of "was playing"/"song length"
+
+        if(media_file_length > 0 )
+            audioUi_page.seekBarProgress.setProgress(AudioUi_page.mProgress); // This math construction give a percentage of "was playing"/"media length"
     }
 }

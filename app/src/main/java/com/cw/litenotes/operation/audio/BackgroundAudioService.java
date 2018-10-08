@@ -48,6 +48,7 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
     public static MediaPlayer mMediaPlayer;
     public static MediaSessionCompat mMediaSessionCompat;
     public static boolean mIsPrepared;
+    public static boolean mIsCompleted;
     final public static int id = 99;
 
     BroadcastReceiver audioNoisyReceiver = new BroadcastReceiver() {
@@ -126,7 +127,9 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
 
             initMediaSessionMetadata();
             showPlayingNotification();
-            mMediaPlayer.start();
+
+            if(mMediaPlayer != null)
+                mMediaPlayer.start();
 
             // update panel status: play
             Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
@@ -172,9 +175,73 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
 
             try {
                 mMediaPlayer.prepare();
+                mIsPrepared = false;
+                mIsCompleted = false;
+
+                setAudioPlayerListeners();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        /**
+         * Set audio player listeners
+         */
+        void setAudioPlayerListeners()
+        {
+            System.out.println("BackgroundAudioService / _setAudioPlayerListeners");
+
+            // on prepared
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    System.out.println("BackgroundAudioService / _setAudioPlayerListeners / onPrepared");
+                    if (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
+                    {
+                        mMediaPlayer.seekTo(0);
+                    }
+                    mIsPrepared = true;
+                }
+            });
+
+            // on completed
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    System.out.println("BackgroundAudioService / _setAudioPlayerListeners / onCompleted");
+
+                    if(BackgroundAudioService.mMediaPlayer != null)
+                        BackgroundAudioService.mMediaPlayer.release();
+
+                    BackgroundAudioService.mMediaPlayer = null;
+                    mIsCompleted = true;
+                }
+            });
+
+            // on error
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    // more than one error when playing an index
+                    System.out.println("BackgroundAudioService / _setAudioPlayerListeners / _onError / what = " + what + " , extra = " + extra);
+                    return false;
+                }
+            });
+
+            // on buffering update
+            if(BackgroundAudioService.mMediaPlayer != null) {
+                BackgroundAudioService.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                    @Override
+                    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                        System.out.println("BackgroundAudioService / _setAudioPlayerListeners / _onBufferingUpdate");
+                        if (TabsHost.getCurrentPage().seekBarProgress != null)
+                            TabsHost.getCurrentPage().seekBarProgress.setSecondaryProgress(percent);
+                    }
+                });
+            }
+
         }
 
         @Override

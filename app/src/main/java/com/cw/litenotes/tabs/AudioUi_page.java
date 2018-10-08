@@ -192,9 +192,6 @@ public class AudioUi_page {
             public void onClick(View v)
             {
 //                System.out.println("AudioUi_page / _initAudioBlock / audioPanel_play_button / _onClick");
-
-                initAudioBlock(MainAct.mAct);
-
                 TabsHost.audioPlayer_page.runAudioState();
 
                 // update status
@@ -204,7 +201,6 @@ public class AudioUi_page {
                     TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
 
                 TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
-
             }
         });
 
