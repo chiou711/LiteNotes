@@ -130,6 +130,7 @@ public class AudioPlayer_page
 
                             // prepare the MediaPlayer to play, this will delay system response
                             BackgroundAudioService.mMediaPlayer.prepare();
+                            setAudioListeners();
                         }
                         catch(Exception e)
                         {
@@ -180,6 +181,55 @@ public class AudioPlayer_page
 		}
 	}
 
+    /**
+     * Set audio listeners
+     */
+	private void setAudioListeners()
+    {
+        // on prepared
+        BackgroundAudioService.mMediaPlayer.setOnPreparedListener(new OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                System.out.println("AudioPlayer_page / _setAudioListeners / onPrepared");
+                BackgroundAudioService.mIsPrepared = true;
+                BackgroundAudioService.mMediaPlayer.start();
+                BackgroundAudioService.mMediaPlayer.seekTo(0);
+            }
+        });
+
+        // on completed
+        BackgroundAudioService.mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                System.out.println("AudioPlayer_page / _setAudioListeners / onCompletion");
+                if(BackgroundAudioService.mMediaPlayer != null)
+                    BackgroundAudioService.mMediaPlayer.release();
+
+                BackgroundAudioService.mMediaPlayer = null;
+                BackgroundAudioService.mIsCompleted = true;
+            }
+        });
+
+        // on error
+        BackgroundAudioService.mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                // more than one error when playing an index
+                System.out.println("AudioPlayer_page / _setAudioListeners / _onError / what = " + what + " , extra = " + extra);
+                return false;
+            }
+        });
+
+        // on buffering update
+        BackgroundAudioService.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                System.out.println("AudioPlayer_page / _setAudioListeners / _onBufferingUpdate");
+                if (TabsHost.getCurrentPage().seekBarProgress != null)
+                    TabsHost.getCurrentPage().seekBarProgress.setSecondaryProgress(percent);
+            }
+        });
+    }
 
 	// set list view footer audio control
 	private void showAudioPanel(AppCompatActivity act,boolean enable)
@@ -586,6 +636,7 @@ public class AudioPlayer_page
 
                     // prepare the MediaPlayer to play, this will delay system response
                     BackgroundAudioService.mMediaPlayer.prepare();
+                    setAudioListeners();
                 }
                 catch(Exception e)
                 {

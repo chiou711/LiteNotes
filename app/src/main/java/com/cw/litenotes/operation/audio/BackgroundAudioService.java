@@ -231,17 +231,14 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
             });
 
             // on buffering update
-            if(BackgroundAudioService.mMediaPlayer != null) {
-                BackgroundAudioService.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-                    @Override
-                    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                        System.out.println("BackgroundAudioService / _setAudioPlayerListeners / _onBufferingUpdate");
-                        if (TabsHost.getCurrentPage().seekBarProgress != null)
-                            TabsHost.getCurrentPage().seekBarProgress.setSecondaryProgress(percent);
-                    }
-                });
-            }
-
+            BackgroundAudioService.mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                @Override
+                public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                    System.out.println("BackgroundAudioService / _setAudioPlayerListeners / _onBufferingUpdate");
+                    if (TabsHost.getCurrentPage().seekBarProgress != null)
+                        TabsHost.getCurrentPage().seekBarProgress.setSecondaryProgress(percent);
+                }
+            });
         }
 
         @Override

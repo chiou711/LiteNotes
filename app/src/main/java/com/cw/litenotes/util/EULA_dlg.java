@@ -102,6 +102,7 @@ public class EULA_dlg {
  
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+
                                     applyPreference();
 
                                     // check permission first time, request all necessary permissions
@@ -132,7 +133,6 @@ public class EULA_dlg {
                                                                 },
                                                                 Util.PERMISSIONS_REQUEST_CAMERA_AND_PHONE);
                                         }
-
                                     }
                                     else
                                         MainAct.mAct.recreate();
