@@ -17,9 +17,6 @@
 package com.cw.litenotes.operation.audio;
 
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,7 +46,6 @@ public class AudioPlayer_page
 	private static final String TAG = "AUDIO_PLAYER"; // error logging tag
 	private static final int DURATION_1S = 1000; // 1 seconds per slide
     private static Audio_manager mAudioManager; // slide show being played
-	private static int mPlaybackTime; // time in miniSeconds from which media should play
 	private static int mAudio_tryTimes; // use to avoid useless looping in Continue mode
     private AppCompatActivity act;
     private Async_audioUrlVerify mAudioUrlVerifyTask;
@@ -97,7 +93,6 @@ public class AudioPlayer_page
 			}
 			else
 			{
-				mPlaybackTime = 0;
                 Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
 				mAudio_tryTimes = 0;
 
@@ -347,8 +342,6 @@ public class AudioPlayer_page
 
                     if(BackgroundAudioService.mIsCompleted)
                     {
-                        mPlaybackTime = 0;
-
                         // get next index
                         if(Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
                         {
@@ -366,8 +359,6 @@ public class AudioPlayer_page
 
                 if(mAudio_tryTimes < Audio_manager.getAudioFilesCount())
                 {
-                    showAudioPanel(act, true);
-
                     // update page audio seek bar
                     if(audioUi_page != null)
                         update_audioPanel_progress(audioUi_page);
@@ -575,6 +566,8 @@ public class AudioPlayer_page
             // prepare audio
             if(Async_audioUrlVerify.mIsOkUrl)
             {
+                showAudioPanel(act, true);
+
                 // launch handler
                 if( (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
                     (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)   )
@@ -602,7 +595,6 @@ public class AudioPlayer_page
             BackgroundAudioService.mMediaPlayer.release();
             BackgroundAudioService.mMediaPlayer = null;
         }
-        mPlaybackTime = 0;
 
         // new audio index
         Audio_manager.mAudioPos++;

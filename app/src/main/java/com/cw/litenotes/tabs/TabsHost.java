@@ -391,19 +391,19 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     }
 
     // store scroll of list view
-    public static void store_listView_vScroll(DragSortListView listView)
-    {
-        int firstVisibleIndex = listView.getFirstVisiblePosition();
-        View v = listView.getChildAt(0);
-        int firstVisibleIndexTop = (v == null) ? 0 : v.getTop();
-
-        System.out.println("TabsHost / _store_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
-                                                          " , firstVisibleIndexTop = " + firstVisibleIndexTop);
-
-        // keep index and top position
-        Pref.setPref_focusView_list_view_first_visible_index(MainAct.mAct, firstVisibleIndex);
-        Pref.setPref_focusView_list_view_first_visible_index_top(MainAct.mAct, firstVisibleIndexTop);
-    }
+//    public static void store_listView_vScroll(DragSortListView listView)
+//    {
+//        int firstVisibleIndex = listView.getFirstVisiblePosition();
+//        View v = listView.getChildAt(0);
+//        int firstVisibleIndexTop = (v == null) ? 0 : v.getTop();
+//
+//        System.out.println("TabsHost / _store_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
+//                                                          " , firstVisibleIndexTop = " + firstVisibleIndexTop);
+//
+//        // keep index and top position
+//        Pref.setPref_focusView_list_view_first_visible_index(MainAct.mAct, firstVisibleIndex);
+//        Pref.setPref_focusView_list_view_first_visible_index_top(MainAct.mAct, firstVisibleIndexTop);
+//    }
 
     // store scroll of recycler view
     public static void store_listView_vScroll(RecyclerView recyclerView)
@@ -423,18 +423,18 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     }
 
     // resume scroll of list view
-    public static void resume_listView_vScroll(DragSortListView listView)
-    {
-        // recover scroll Y
-        int firstVisibleIndex = Pref.getPref_focusView_list_view_first_visible_index(MainAct.mAct);
-        int firstVisibleIndexTop = Pref.getPref_focusView_list_view_first_visible_index_top(MainAct.mAct);
-
-        System.out.println("TabsHost / _resume_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
-                " , firstVisibleIndexTop = " + firstVisibleIndexTop);
-
-        // restore index and top position
-        listView.setSelectionFromTop(firstVisibleIndex, firstVisibleIndexTop);
-    }
+//    public static void resume_listView_vScroll(DragSortListView listView)
+//    {
+//        // recover scroll Y
+//        int firstVisibleIndex = Pref.getPref_focusView_list_view_first_visible_index(MainAct.mAct);
+//        int firstVisibleIndexTop = Pref.getPref_focusView_list_view_first_visible_index_top(MainAct.mAct);
+//
+//        System.out.println("TabsHost / _resume_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
+//                " , firstVisibleIndexTop = " + firstVisibleIndexTop);
+//
+//        // restore index and top position
+//        listView.setSelectionFromTop(firstVisibleIndex, firstVisibleIndexTop);
+//    }
 
     // resume scroll of recycler view
     public static void resume_listView_vScroll(RecyclerView recyclerView)
