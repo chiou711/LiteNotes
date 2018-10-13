@@ -455,22 +455,24 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
 
         switch( focusChange ) {
             case AudioManager.AUDIOFOCUS_LOSS: {
-                if( (mMediaPlayer != null) && mMediaPlayer.isPlaying() ) {
-                    mMediaPlayer.stop();
-                }
+                System.out.println("BackgroundAudioService / _onAudioFocusChange 1");
+                Audio_manager.stopAudioPlayer();
                 break;
             }
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT: {
+                System.out.println("BackgroundAudioService / _onAudioFocusChange 2");
                 mMediaPlayer.pause();
                 break;
             }
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK: {
+                System.out.println("BackgroundAudioService / _onAudioFocusChange 3");
                 if( mMediaPlayer != null ) {
                     mMediaPlayer.setVolume(0.3f, 0.3f);
                 }
                 break;
             }
             case AudioManager.AUDIOFOCUS_GAIN: {
+                System.out.println("BackgroundAudioService / _onAudioFocusChange 4");
                 if( mMediaPlayer != null ) {
                     if( !mMediaPlayer.isPlaying() ) {
                         mMediaPlayer.start();

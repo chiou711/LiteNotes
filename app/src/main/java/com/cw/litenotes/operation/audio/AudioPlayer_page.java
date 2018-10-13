@@ -98,7 +98,7 @@ public class AudioPlayer_page
 
 				//for 1st play
 				audioUrl_page = Audio_manager.getAudioStringAt(Audio_manager.mAudioPos);
-				while (Util.isEmptyString(audioUrl_page) || !UtilAudio.hasAudioExtension(audioUrl_page)) {
+				while (!UtilAudio.hasAudioExtension(audioUrl_page)) {
                     Audio_manager.mAudioPos++;
                     audioUrl_page = Audio_manager.getAudioStringAt(Audio_manager.mAudioPos);
 
@@ -106,33 +106,8 @@ public class AudioPlayer_page
                         break;
 				}
 
-				if(!Util.isEmptyString(audioUrl_page) && UtilAudio.hasAudioExtension(audioUrl_page) ) {
+				if(UtilAudio.hasAudioExtension(audioUrl_page) && Util.isUriExisted(audioUrl_page,MainAct.mAct)) {
                     startNewAudio();
-
-                    if(Build.VERSION.SDK_INT >= 21) {
-                        MediaControllerCompat.getMediaController(MainAct.mAct)
-                                .getTransportControls()
-                                .playFromUri(Uri.parse(audioUrl_page), null);
-
-                        MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
-                    }
-                    else {
-                        BackgroundAudioService.mMediaPlayer = new MediaPlayer();
-                        BackgroundAudioService.mMediaPlayer.reset();
-                        try
-                        {
-                            BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
-
-                            // prepare the MediaPlayer to play, this will delay system response
-                            BackgroundAudioService.mMediaPlayer.prepare();
-                            setAudioListeners();
-                        }
-                        catch(Exception e)
-                        {
-                            Toast.makeText(act,R.string.audio_message_could_not_open_file,Toast.LENGTH_SHORT).show();
-                            Audio_manager.stopAudioPlayer();
-                        }
-                    }
                 }
                 else
                 {
@@ -300,7 +275,7 @@ public class AudioPlayer_page
                 if(!Async_audioUrlVerify.mIsOkUrl)
                 {
                     mAudio_tryTimes++;
-                    nextAudio_player();
+                    play_nextAudio();
                     return;
                 }
                 else
@@ -345,7 +320,7 @@ public class AudioPlayer_page
                         // get next index
                         if(Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)
                         {
-                            nextAudio_player();
+                            play_nextAudio();
 
                             if(TabsHost.getCurrentPage().recyclerView != null) {
                                 TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
@@ -372,7 +347,7 @@ public class AudioPlayer_page
 	   		else if( (Audio_manager.getCheckedAudio(Audio_manager.mAudioPos) == 0 ) )// for non-audio item
 	   		{
 //	   			System.out.println("AudioPlayer_page / page_runnable / for non-audio item");
-				nextAudio_player();
+				play_nextAudio();
 
 				TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
 				TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
@@ -581,12 +556,36 @@ public class AudioPlayer_page
             }
         }
 
+        if(Build.VERSION.SDK_INT >= 21) {
+            MediaControllerCompat.getMediaController(MainAct.mAct)
+                    .getTransportControls()
+                    .playFromUri(Uri.parse(audioUrl_page), null);
+
+            MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
+        }
+        else {
+            BackgroundAudioService.mMediaPlayer = new MediaPlayer();
+            BackgroundAudioService.mMediaPlayer.reset();
+            try
+            {
+                BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
+
+                // prepare the MediaPlayer to play, this will delay system response
+                BackgroundAudioService.mMediaPlayer.prepare();
+                setAudioListeners();
+            }
+            catch(Exception e)
+            {
+                Toast.makeText(act,R.string.audio_message_could_not_open_file,Toast.LENGTH_SHORT).show();
+                Audio_manager.stopAudioPlayer();
+            }
+        }
     }
 
     /**
      * Play next audio at AudioPlayer_page
      */
-    private void nextAudio_player()
+    private void play_nextAudio()
     {
 //		Toast.makeText(act,"Can not open file, try next one.",Toast.LENGTH_SHORT).show();
         System.out.println("AudioPlayer_page / _playNextAudio");
@@ -608,35 +607,8 @@ public class AudioPlayer_page
         {
 			audioUrl_page = Audio_manager.getAudioStringAt(Audio_manager.mAudioPos);
 
-			startNewAudio();
-
-            if(Build.VERSION.SDK_INT >= 21) {
-                if (!Util.isEmptyString(audioUrl_page))
-                {
-                    MediaControllerCompat.getMediaController(MainAct.mAct)
-                            .getTransportControls()
-                            .playFromUri(Uri.parse(audioUrl_page), null);
-                    MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
-                }
-            }
-            else {
-                BackgroundAudioService.mMediaPlayer = new MediaPlayer();
-                BackgroundAudioService.mMediaPlayer.reset();
-                try
-                {
-                    BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
-
-                    // prepare the MediaPlayer to play, this will delay system response
-                    BackgroundAudioService.mMediaPlayer.prepare();
-                    setAudioListeners();
-                }
-                catch(Exception e)
-                {
-                    Toast.makeText(act,R.string.audio_message_could_not_open_file,Toast.LENGTH_SHORT).show();
-                    Audio_manager.stopAudioPlayer();
-                }
-            }
-
+            if(UtilAudio.hasAudioExtension(audioUrl_page) && Util.isUriExisted(audioUrl_page,MainAct.mAct))
+                startNewAudio();
         }
         else // try enough times: still no audio file is found
         {

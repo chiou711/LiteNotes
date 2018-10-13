@@ -266,7 +266,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             holder.btnDrag.setVisibility(View.GONE);
 
         // show audio button
-        if( !Util.isEmptyString(audioUri) && (marking == 1))
+        if( !Util.isEmptyString(audioUri) && (marking == 1) && Util.isUriExisted(audioUri,mAct))
             holder.btnPlayAudio.setVisibility(View.VISIBLE);
         else
             holder.btnPlayAudio.setVisibility(View.GONE);
