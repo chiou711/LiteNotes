@@ -663,7 +663,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
                         // update audio play position
                         TabsHost.audioPlayTabPos = page_pos;
-                        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
 
                         // update audio panel
                         UtilAudio.updateAudioPanel(TabsHost.audioUi_page.audioPanel_play_button,
@@ -681,6 +680,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                         // update playing folder table Id
                         DB_drawer dB_drawer = new DB_drawer(mAct);
                         MainAct.mPlaying_folderTableId = dB_drawer.getFolderTableId(MainAct.mPlaying_folderPos,true);
+
+                        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
                     }
                 }
             }

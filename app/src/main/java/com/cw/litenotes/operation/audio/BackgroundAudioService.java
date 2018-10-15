@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class BackgroundAudioService extends MediaBrowserServiceCompat implements MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener  {
+public class BackgroundAudioService extends MediaBrowserServiceCompat implements AudioManager.OnAudioFocusChangeListener  {
 
     public static final String COMMAND_EXAMPLE = "command_example";
 
@@ -212,10 +212,15 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
                 public void onCompletion(MediaPlayer mp) {
                     System.out.println("BackgroundAudioService / _setAudioPlayerListeners / onCompleted");
 
-                    if(BackgroundAudioService.mMediaPlayer != null)
-                        BackgroundAudioService.mMediaPlayer.release();
+                    if(mMediaPlayer != null) {
+                        mMediaPlayer.release();
+                        // disconnect media browser
+                        if( MediaControllerCompat.getMediaController(MainAct.mAct).getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
+                            MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().stop();// .pause();
+                        }
+                    }
 
-                    BackgroundAudioService.mMediaPlayer = null;
+                    mMediaPlayer = null;
                     mIsCompleted = true;
                 }
             });
@@ -480,20 +485,6 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
                     mMediaPlayer.setVolume(1.0f, 1.0f);
                 }
                 break;
-            }
-        }
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-
-        System.out.println("BackgroundAudioService / _onCompletion");
-        if( mMediaPlayer != null ) {
-            mMediaPlayer.release();
-
-            // disconnect media browser
-            if( MediaControllerCompat.getMediaController(MainAct.mAct).getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING ) {
-                MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().pause();
             }
         }
     }

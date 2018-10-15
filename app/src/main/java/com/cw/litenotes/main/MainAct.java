@@ -344,6 +344,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 mCurrentState = STATE_PAUSED;
             }
         }
+
+        // init audio parameters
+        MainAct.mPlaying_folderPos = -1;
+        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
+        TabsHost.audioPlayTabPos = -1;
     }
 
     Intent intentReceive;

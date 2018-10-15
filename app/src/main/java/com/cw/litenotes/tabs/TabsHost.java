@@ -330,7 +330,8 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         TabLayout.Tab tab =  mTabLayout.getTabAt(audioPlayTabPos);
         if(tab != null) {
             if( (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) &&
-                (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)   )
+                (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)  &&
+                (tab.getPosition() == audioPlayTabPos)                               )
             {
                 if(tab.getCustomView() == null)
                 {
