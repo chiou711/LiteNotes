@@ -408,6 +408,8 @@ public class AudioPlayer_page
 	public void scrollHighlightAudioItemToVisible(RecyclerView recyclerView)
 	{
 //		System.out.println("AudioPlayer_page / _scrollHighlightAudioItemToVisible");
+        if(recyclerView == null)
+            return;
 
         LinearLayoutManager layoutMgr = ((LinearLayoutManager) recyclerView.getLayoutManager());
 		// version limitation: _scrollListBy

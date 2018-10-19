@@ -171,28 +171,31 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     int permissionCamera = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.CAMERA);
                     int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     int permissionPhone = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.READ_PHONE_STATE);
+
                     if( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
-                            (permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED) &&
-                            (permissionPhone != PackageManager.PERMISSION_GRANTED)                 )
+                        (permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED) &&
+                        (permissionPhone != PackageManager.PERMISSION_GRANTED)                 )
                     {
                         ActivityCompat.requestPermissions(mAct,
                                 new String[]{Manifest.permission.CAMERA,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_PHONE_STATE
+                                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                             Manifest.permission.READ_EXTERNAL_STORAGE,
+                                             Manifest.permission.READ_PHONE_STATE
                                 },
                                 Util.PERMISSIONS_REQUEST_ALL);
                     }
                     else if ( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
-                            (permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED) &&
-                            (permissionPhone != PackageManager.PERMISSION_GRANTED)      )
+                              (permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED) &&
+                              (permissionPhone != PackageManager.PERMISSION_GRANTED)      )
                     {
                         ActivityCompat.requestPermissions(mAct,
                                 new String[]{Manifest.permission.CAMERA,
-                                        Manifest.permission.READ_PHONE_STATE
+                                             Manifest.permission.READ_PHONE_STATE
                                 },
                                 Util.PERMISSIONS_REQUEST_CAMERA_AND_PHONE);
                     }
+                    else
+                        mainAction(savedInstanceState);
                 }
                 else
                     mainAction(savedInstanceState);
@@ -709,7 +712,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
         else
         {
-            if(drawer.isDrawerOpen())
+            if((drawer != null) && drawer.isDrawerOpen())
                 drawer.closeDrawer();
             else
                 super.onBackPressed();
