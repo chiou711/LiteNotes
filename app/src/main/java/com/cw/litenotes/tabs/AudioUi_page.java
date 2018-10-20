@@ -29,7 +29,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cw.litenotes.R;
-import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.AudioPlayer_page;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
@@ -197,10 +196,11 @@ public class AudioUi_page {
                 // update status
                 UtilAudio.updateAudioPanel((ImageView)v, audio_panel_title_textView); // here v is audio play button
 
-                if(Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)
+                if(AudioPlayer_page.isOnAudioPlayingPage())
+                {
                     TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
-
-                TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
+                    TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
+                }
             }
         });
 

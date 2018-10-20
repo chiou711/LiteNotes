@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
+import com.cw.litenotes.folder.FolderUi;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.tabs.AudioUi_page;
 import com.cw.litenotes.tabs.TabsHost;
@@ -301,7 +302,8 @@ public class AudioPlayer_page
                                         String.format(Locale.US, "%02d", fileSec));
                             }
 
-                            if(TabsHost.getCurrentPage().recyclerView != null) {
+                            if(isOnAudioPlayingPage())
+                            {
                                 scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
                                 TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
                             }
@@ -322,8 +324,9 @@ public class AudioPlayer_page
                         {
                             play_nextAudio();
 
-                            if(TabsHost.getCurrentPage().recyclerView != null) {
-                                TabsHost.audioPlayer_page.scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
+                            if(isOnAudioPlayingPage())
+                            {
+                                scrollHighlightAudioItemToVisible(TabsHost.getCurrentPage().recyclerView);
                                 TabsHost.getCurrentPage().itemAdapter.notifyDataSetChanged();
                             }
                         }
@@ -389,6 +392,15 @@ public class AudioPlayer_page
 
     }
 
+
+    // check if is on audio playing page
+    public static boolean isOnAudioPlayingPage()
+    {
+        return ( (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
+                 (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) &&
+                 (TabsHost.getFocus_tabPos() == MainAct.mPlaying_pagePos)     &&
+                 (TabsHost.getCurrentPage().recyclerView != null)                     );
+    }
 
     public static int media_file_length;
 
