@@ -518,26 +518,6 @@ public class FolderUi
         DrawerLayout drawerLayout = (DrawerLayout) act.findViewById(R.id.drawer_layout);
         drawerLayout.closeDrawer(Drawer.mNavigationView);
 
-		if(Define.HAS_PREFERRED_TABLES)
-		{
-			// Create preferred tables after new installation
-			if( (position < Define.ORIGIN_FOLDERS_COUNT) &&
-				!Pref.getPref_has_preferred_tables(MainAct.mAct,position) )
-			{
-				String fileName = "default"+ (position+1) + ".xml";
-
-				// set focus folder table Id
-				int folderTableId = Pref.getPref_focusView_folder_tableId(act);
-				System.out.println("FolderUi / _selectFolder / folderTableId = " + folderTableId);
-				DB_folder.setFocusFolder_tableId(folderTableId);
-
-				// check DB: before importing
-                dB_drawer.listFolders();
-
-                    createDefaultAssets(act,position,fileName,dB_drawer);
-			}
-		}
-
         MainAct.mAct.invalidateOptionsMenu();
 
 		// use Runnable to make sure only one folder background is seen
@@ -545,31 +525,6 @@ public class FolderUi
         mHandler.post(mTabsHostRun);
     }
 
-
-    private static void createDefaultAssets(AppCompatActivity act, int position, String fileName, DB_drawer dB_drawer)
-    {
-        // import default tables
-        Import_fileView.createDefaultTables(act,fileName);//create default1.xml default2.xml
-
-        // check DB: after importing
-        dB_drawer.listFolders();
-
-        Pref.setPref_has_preferred_tables(act,true,position);
-
-        // add default image
-        String imageFileName = "local"+ (position+1) + ".jpg";
-        Util.createAssetsFile(act,imageFileName);
-
-        // add default video
-        String videoFileName = "local"+ (position+1) + ".mp4";
-        Util.createAssetsFile(act,videoFileName);
-
-        // add default audio
-        String audioFileName = "local"+ (position+1) + ".mp3";
-        Util.createAssetsFile(act,audioFileName);
-
-        MainAct.mAct.recreate();//workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
-    }
 
     // start tabs host runnable
     public static void startTabsHostRun()

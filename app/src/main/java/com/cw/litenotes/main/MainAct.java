@@ -36,6 +36,7 @@ import com.cw.litenotes.operation.audio.AudioPlayer_page;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
 import com.cw.litenotes.operation.delete.DeleteFolders;
 import com.cw.litenotes.operation.delete.DeletePages;
+import com.cw.litenotes.operation.import_export.Import_fileView;
 import com.cw.litenotes.operation.import_export.Import_webAct;
 import com.cw.litenotes.page.Checked_notes_option;
 import com.cw.litenotes.page.PageUi;
@@ -221,6 +222,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     // main action
     void mainAction(Bundle savedInstanceState)
     {
+        if(Define.HAS_PREFERRED_TABLES)
+            createPreferredTables();
+
         // file provider implementation is needed after Android version 24
         // if not, will encounter android.os.FileUriExposedException
         // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
@@ -301,7 +305,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
                     if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
                         FolderUi.setFocus_folderPos(i);
-                        System.out.println("MainAct / _onCreate /  FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+                        System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
                     }
                 }
                 Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
@@ -352,6 +356,58 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         MainAct.mPlaying_folderPos = -1;
         Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
         TabsHost.audioPlayTabPos = -1;
+    }
+
+
+    // create preferred tables
+    void createPreferredTables()
+    {
+        if(!Pref.getPref_has_preferred_tables(MainAct.mAct))
+        {
+            for (int pos = 0; pos < Define.ORIGIN_FOLDERS_COUNT; pos++)
+            {
+                String fileName = "default" + (pos + 1) + ".xml";
+
+                FolderUi.setFocus_folderPos(pos);
+                DB_drawer db_drawer = new DB_drawer(this);
+
+                int folderTableId = db_drawer.getFolderTableId(pos, true);
+                Pref.setPref_focusView_folder_tableId(this, folderTableId);
+                DB_folder.setFocusFolder_tableId(folderTableId);
+
+                Import_fileView.createDefaultTables(this, fileName);//create default1.xml default2.xml
+
+                // create asset files
+                if (pos == 0) {
+                    // add default image
+                    String imageFileName = "local" + (pos + 1) + ".jpg";
+                    Util.createAssetsFile(this, imageFileName);
+
+                    // add default video
+                    String videoFileName = "local" + (pos + 1) + ".mp4";
+                    Util.createAssetsFile(this, videoFileName);
+
+                    // add default audio
+                    String audioFileName = "local" + (pos + 1) + ".mp3";
+                    Util.createAssetsFile(this, audioFileName);
+                }
+
+                // last step
+                if (pos == (Define.ORIGIN_FOLDERS_COUNT - 1)) {
+                    //set default position to 0
+                    folderTableId = db_drawer.getFolderTableId(0, true);
+                    Pref.setPref_focusView_folder_tableId(this, folderTableId);
+                    DB_folder.setFocusFolder_tableId(folderTableId);
+
+                    // already has preferred tables
+                    Pref.setPref_has_preferred_tables(this, true);
+
+                    //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
+                    recreate();
+                    break;
+                }
+            }
+        }
     }
 
     Intent intentReceive;

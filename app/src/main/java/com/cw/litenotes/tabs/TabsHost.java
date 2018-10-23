@@ -529,8 +529,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         editText1.setTextColor(Color.BLACK);
 
         //update tab info
-//        AlertDialog.Builder builder = new AlertDialog.Builder(mTabLayout.getContext());
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainAct.mAct);
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setTitle(R.string.edit_page_tab_title)
                 .setMessage(R.string.edit_page_tab_message)
                 .setView(editText1)
@@ -547,7 +546,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                             Util util = new Util(act);
                             util.vibrate();
 
-                            AlertDialog.Builder builder1 = new AlertDialog.Builder(mTabLayout.getContext());
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(act);
                             builder1.setTitle(R.string.confirm_dialog_title)
                                     .setMessage(R.string.confirm_dialog_message_page)
                                     .setNegativeButton(R.string.confirm_dialog_button_no, new DialogInterface.OnClickListener(){
