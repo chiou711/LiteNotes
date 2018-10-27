@@ -127,7 +127,12 @@ public class Note_adapter extends FragmentStatePagerAdapter
         ViewGroup textGroup = (ViewGroup) pagerView.findViewById(R.id.textGroup);
 
         // Set tag for text web view
-    	CustomWebView textWebView = ((CustomWebView) pagerView.findViewById(R.id.textGroup).findViewById(R.id.textBody));
+    	CustomWebView textWebView = ((CustomWebView) textGroup.findViewById(R.id.textBody));
+
+    	// set accessibility
+        textGroup.setContentDescription(act.getResources().getString(R.string.note_text));
+		textWebView.getRootView().setContentDescription(act.getResources().getString(R.string.note_text));
+
         tagStr = "current"+position+"textWebView";
         textWebView.setTag(tagStr);
 

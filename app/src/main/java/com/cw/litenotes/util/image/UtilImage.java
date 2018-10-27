@@ -820,28 +820,37 @@ public class UtilImage
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int rotSetting = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-		System.out.println("UtilImage / isLandscapePicture / rotSetting = " +rotSetting);
-        boolean  isLandscape = true;
-        if ( (rotSetting == ExifInterface.ORIENTATION_ROTATE_90) ||
-             (rotSetting == ExifInterface.ORIENTATION_ROTATE_270)   )
-            isLandscape = false;
-        else if( (rotSetting == ExifInterface.ORIENTATION_ROTATE_180) ||
-                 (rotSetting == ExifInterface.ORIENTATION_NORMAL)       )
-		{
-			// some device can not use width and height to determine landscape
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
 
-			BitmapFactory.decodeFile(path.replace("file://", ""), options);
-			int width = options.outWidth;
-			System.out.println("UtilImage / isLandscapePicture / width = " + width);
-			int height = options.outHeight;
-			System.out.println("UtilImage / isLandscapePicture / height = " + height);
-			isLandscape=(width > height)?true:false;
+        exif = null;
+
+        boolean  isLandscape = true; //default setting if no exif
+
+        if(exif != null) {
+			int rotSetting = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+			System.out.println("UtilImage / isLandscapePicture / rotSetting = " +rotSetting);
+
+			if ( (rotSetting == ExifInterface.ORIENTATION_ROTATE_90) ||
+				 (rotSetting == ExifInterface.ORIENTATION_ROTATE_270)   )
+			{
+				isLandscape = false;
+			}
+			else if( (rotSetting == ExifInterface.ORIENTATION_ROTATE_180) ||
+					(rotSetting == ExifInterface.ORIENTATION_NORMAL)        )
+			{
+				// some device can not use width and height to determine landscape
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = true;
+
+				BitmapFactory.decodeFile(path.replace("file://", ""), options);
+				int width = options.outWidth;
+				System.out.println("UtilImage / isLandscapePicture / width = " + width);
+				int height = options.outHeight;
+				System.out.println("UtilImage / isLandscapePicture / height = " + height);
+
+				isLandscape=(width > height)?true:false;
+			}
 		}
 
 		return isLandscape;
-
 	}
 }

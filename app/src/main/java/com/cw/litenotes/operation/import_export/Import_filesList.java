@@ -79,30 +79,41 @@ public class Import_filesList extends ListFragment
         // do update
         renewButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // source dir
-                String srcDirName = "Download";
+                // source dir: Download
+                String srcDirName = "Download";//todo Could be empty
                 String srcDirPath = Environment.getExternalStorageDirectory().toString() +
                         "/" +
                         srcDirName;
                 System.out.println("srcDirPath = " + srcDirPath);
 
+                /**
+                 * Note about getExternalStorageDirectory:
+                 * don't be confused by the word "external" here.
+                 * This directory can better be thought as media/shared storage.
+                 * It is a filesystem that can hold a relatively large amount of data and
+                 * that is shared across all applications (does not enforce permissions).
+                 * Traditionally this is an SD card, but it may also be implemented as built-in storage in a device
+                 * that is distinct from the protected internal storage and can be mounted as a filesystem on a computer.
+                 */
                 // target dir
                 String targetDirPath = Environment.getExternalStorageDirectory().toString() +
                         "/" +
                         Util.getStorageDirName(getActivity());
 
-                // copy target files to source directory
+                // copy source files to target directory
                 File srcDir = new File(srcDirPath);
-                for(File srcFile : srcDir.listFiles() )
-                {
-                    File targetFile = new File(targetDirPath+"/"+srcFile.getName());
-                    System.out.println("targetFile.getName() = " + targetFile.getName());
-                    try {
-                        if(srcFile.getName().contains("XML") || srcFile.getName().contains("xml"))
-                            FileUtils.copyFile(srcFile,targetFile );
-                    } catch (IOException e) {
 
-                        e.printStackTrace();
+                if(srcDir.exists()) {
+                    for (File srcFile : srcDir.listFiles()) {
+                        File targetFile = new File(targetDirPath + "/" + srcFile.getName());
+                        System.out.println("targetFile.getName() = " + targetFile.getName());
+                        try {
+                            if (srcFile.getName().contains("XML") || srcFile.getName().contains("xml"))
+                                FileUtils.copyFile(srcFile, targetFile);
+                        } catch (IOException e) {
+
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -264,7 +275,7 @@ public class Import_filesList extends ListFragment
             tv.setText(fileNames.get(position));
             if(fileNames.get(position).equalsIgnoreCase("sdcard")   ||
                fileNames.get(position).equalsIgnoreCase(appName)    ||
-               fileNames.get(position).equalsIgnoreCase("LiteNote") ||
+               fileNames.get(position).equalsIgnoreCase("LiteNotes") || //todo need to change for different app name
                fileNames.get(position).equalsIgnoreCase("Download")   )
                 tv.setTypeface(null, Typeface.BOLD);
             else

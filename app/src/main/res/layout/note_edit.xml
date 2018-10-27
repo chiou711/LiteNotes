@@ -110,6 +110,7 @@
 		    android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="@android:color/white"
+			android:labelFor="@+id/edit_body"
 			android:text="@string/edit_note_dlg_body" />
 	</LinearLayout>
 
@@ -146,6 +147,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="@android:color/white"
+			android:labelFor="@+id/edit_link"
 			android:text="@string/edit_note_dlg_link" />
 	</LinearLayout>
 	<EditText

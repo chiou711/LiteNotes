@@ -546,6 +546,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         mToolbar.setNavigationIcon(R.drawable.ic_menu_back);
+        mToolbar.getChildAt(1).setContentDescription(getResources().getString(R.string.btn_back));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
