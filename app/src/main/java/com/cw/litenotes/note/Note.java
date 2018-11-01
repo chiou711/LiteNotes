@@ -127,22 +127,22 @@ public class Note extends AppCompatActivity
 
 	} //onCreate end
 
-	// callback of granted permission
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-	{
-		System.out.println("Note / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
-		switch (requestCode)
-		{
-			case Util.PERMISSIONS_REQUEST_PHONE:
-			{
-				// If request is cancelled, the result arrays are empty.
-				if ( (grantResults.length > 0) && ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) ))
-					UtilAudio.setPhoneListener(this);
-			}
-			break;
-		}
-	}
+//	// callback of granted permission
+//	@Override
+//	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+//	{
+//		System.out.println("Note / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
+//		switch (requestCode)
+//		{
+//			case Util.PERMISSIONS_REQUEST_PHONE:
+//			{
+//				// If request is cancelled, the result arrays are empty.
+//				if ( (grantResults.length > 0) && ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) ))
+//					UtilAudio.setPhoneListener(this);
+//			}
+//			break;
+//		}
+//	}
 
 	// Add to prevent resizing full screen picture,
 	// when popup menu shows up at picture mode

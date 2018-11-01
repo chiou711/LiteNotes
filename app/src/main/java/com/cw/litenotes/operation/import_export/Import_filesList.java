@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+//todo uses unchecked or unsafe operations.
 public class Import_filesList extends ListFragment
 {
     private List<String> filePathArray = null;

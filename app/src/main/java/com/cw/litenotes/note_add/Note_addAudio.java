@@ -24,8 +24,8 @@ import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.page.PageUi;
 import com.cw.litenotes.page.Page_recycler;
-import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.Util;
+import com.cw.litenotes.util.preferences.Pref;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -56,25 +56,25 @@ public class Note_addAudio extends AppCompatActivity {
         audioUriInDB = "";
         selectedAudioUri = "";
         bUseSelectedFile = false;
-			
+
         // get row Id from saved instance
         noteId = (savedInstanceState == null) ? null :
             (Long) savedInstanceState.getSerializable(DB_page.KEY_NOTE_ID);
-        
+
         // get audio Uri in DB if instance is not null
-		dB = new DB_page(this, TabsHost.getCurrentPageTableId());
+		dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
         if(savedInstanceState != null)
         {
 	        System.out.println("Note_addAudio / noteId =  " + noteId);
 	        if(noteId != null)
 	        	audioUriInDB = dB.getNoteAudioUri_byId(noteId);
         }
-        
+
         // at the first beginning
         if(savedInstanceState == null)
         	chooseAudioMedia();
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -116,6 +116,7 @@ public class Note_addAudio extends AppCompatActivity {
 		{
             setContentView(R.layout.note_add_prepare);
             progress = findViewById(R.id.add_audio_progress);//must add this, otherwise text view is not updated
+            dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
 
 			// for audio
 			if(requestCode == Util.CHOOSER_SET_AUDIO)
@@ -174,7 +175,6 @@ public class Note_addAudio extends AppCompatActivity {
 
 		        	selectedAudioUri = uriStr;
 
-//					if( (note_common.getCount() > 0) &&
 					if( (dB.getNotesCount(true) > 0) &&
 		        		option.equalsIgnoreCase("single_to_top"))
 		        	{

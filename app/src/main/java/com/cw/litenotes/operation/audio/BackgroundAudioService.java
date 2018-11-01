@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+// AudioManager.OnAudioFocusChangeListener: added in API level 8
 public class BackgroundAudioService extends MediaBrowserServiceCompat implements AudioManager.OnAudioFocusChangeListener  {
 
     public static final String COMMAND_EXAMPLE = "command_example";
@@ -460,24 +461,24 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
 
         switch( focusChange ) {
             case AudioManager.AUDIOFOCUS_LOSS: {
-                System.out.println("BackgroundAudioService / _onAudioFocusChange 1");
+                System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_LOSS");
                 Audio_manager.stopAudioPlayer();
                 break;
             }
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT: {
-                System.out.println("BackgroundAudioService / _onAudioFocusChange 2");
+                System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_LOSS_TRANSIENT");
                 mMediaPlayer.pause();
                 break;
             }
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK: {
-                System.out.println("BackgroundAudioService / _onAudioFocusChange 3");
+                System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                 if( mMediaPlayer != null ) {
                     mMediaPlayer.setVolume(0.3f, 0.3f);
                 }
                 break;
             }
             case AudioManager.AUDIOFOCUS_GAIN: {
-                System.out.println("BackgroundAudioService / _onAudioFocusChange 4");
+                System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_GAIN");
                 if( mMediaPlayer != null ) {
                     if( !mMediaPlayer.isPlaying() ) {
                         mMediaPlayer.start();

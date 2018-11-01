@@ -89,8 +89,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -169,37 +167,19 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 // check permission first time, request all necessary permissions
                 if(Build.VERSION.SDK_INT >= M)//API23
                 {
-                    int permissionCamera = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.CAMERA);
                     int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    int permissionPhone = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.READ_PHONE_STATE);
 
-                    if( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
-                        (permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED) &&
-                        (permissionPhone != PackageManager.PERMISSION_GRANTED)                 )
-                    {
+                    if(permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED ) {
                         ActivityCompat.requestPermissions(mAct,
-                                new String[]{Manifest.permission.CAMERA,
-                                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                             Manifest.permission.READ_EXTERNAL_STORAGE,
-                                             Manifest.permission.READ_PHONE_STATE
-                                },
-                                Util.PERMISSIONS_REQUEST_ALL);
-                    }
-                    else if ( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
-                              (permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED) &&
-                              (permissionPhone != PackageManager.PERMISSION_GRANTED)      )
-                    {
-                        ActivityCompat.requestPermissions(mAct,
-                                new String[]{Manifest.permission.CAMERA,
-                                             Manifest.permission.READ_PHONE_STATE
-                                },
-                                Util.PERMISSIONS_REQUEST_CAMERA_AND_PHONE);
+                                                          new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                                       Manifest.permission.READ_EXTERNAL_STORAGE },
+                                                          Util.PERMISSIONS_REQUEST_STORAGE);
                     }
                     else
-                        mainAction(savedInstanceState);
+                        doCreate(savedInstanceState);
                 }
                 else
-                    mainAction(savedInstanceState);
+                    doCreate(savedInstanceState);
 
                 // Close dialog
                 dialogInterface.dismiss();
@@ -215,15 +195,20 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             dialog_EULA.show();
         }
         else
-            mainAction(savedInstanceState);
+            doCreate(savedInstanceState);
 
     }
 
     // main action
-    void mainAction(Bundle savedInstanceState)
+    void doCreate(Bundle savedInstanceState)
     {
-        if(Define.HAS_PREFERRED_TABLES)
-            createPreferredTables();
+        if(Define.HAS_PREFERRED_TABLES) {
+            int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if(permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED )
+                createPreferredTables();
+            else if(!Pref.getPref_has_preferred_tables(this))
+                Pref.setPref_has_preferred_tables(this, true); //set for user own preferred tables
+        }
 
         // file provider implementation is needed after Android version 24
         // if not, will encounter android.os.FileUriExposedException
@@ -309,7 +294,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     }
                 }
                 Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-                UtilAudio.mIsCalledWhilePlayingAudio = false;
             }
             dB_drawer.close();
 
@@ -435,7 +419,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     // key event: 1 from bluetooth device 2 when notification bar dose not shown
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        System.out.println("MainAct / _onKeyDown / keyCode = " + keyCode);
+//        System.out.println("MainAct / _onKeyDown / keyCode = " + keyCode);
         switch (keyCode) {
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //88
                 if(TabsHost.audioUi_page != null)
@@ -484,22 +468,21 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_ALL:
+            case Util.PERMISSIONS_REQUEST_STORAGE:
             {
-               // first time request, do nothing
-                if ( (grantResults.length > 0) && ( (grantResults[3] == PackageManager.PERMISSION_GRANTED) ))
-                    UtilAudio.setPhoneListener(this);
+                System.out.println("MainAct / _onRequestPermissionsResult / requestCode = Util.PERMISSIONS_REQUEST_STORAGE" );
+                if ( (grantResults.length > 0) &&
+                     ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+                       (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
+                    System.out.println("MainAct / _onRequestPermissionsResult / grantResults[0] == PackageManager.PERMISSION_GRANTED" );
+                else
+                    System.out.println("MainAct / _onRequestPermissionsResult / grantResults[0] != PackageManager.PERMISSION_GRANTED" );
+
+                recreate();
             }
             break;
-            case Util.PERMISSIONS_REQUEST_PHONE:
-            {
-                // If request is cancelled, the result arrays are empty.
-                if ( (grantResults.length > 0) && ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) ))
-                    UtilAudio.setPhoneListener(this);
-            }
-            break;
+
         }
-        recreate();
         //then will go to _resume
     }
 
@@ -610,7 +593,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
        outState.putInt("Playing_folderPos", mPlaying_folderPos);
        outState.putInt("SeekBarProgress", AudioUi_page.mProgress);
        outState.putInt("AudioInfo_state", Audio_manager.getPlayerState());
-       outState.putBoolean("CalledWhilePlayingAudio", UtilAudio.mIsCalledWhilePlayingAudio);
        if(FolderUi.mHandler != null)
     	   FolderUi.mHandler.removeCallbacks(FolderUi.mTabsHostRun);
        FolderUi.mHandler = null;
@@ -629,7 +611,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     		mPlaying_folderPos = savedInstanceState.getInt("Playing_folderPos");
             Audio_manager.setPlayerState(savedInstanceState.getInt("AudioInfo_state"));
     		AudioUi_page.mProgress = savedInstanceState.getInt("SeekBarProgress");
-    		UtilAudio.mIsCalledWhilePlayingAudio = savedInstanceState.getBoolean("CalledWhilePlayingAudio");
     	}
     }
 
@@ -673,12 +654,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     protected void onDestroy()
     {
     	System.out.println("MainAct / onDestroy");
-
-    	//unregister TelephonyManager listener
-        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mgr != null) {
-            mgr.listen(UtilAudio.phoneStateListener, PhoneStateListener.LISTEN_NONE);
-        }
 
         if(bluetooth_device_receiver != null)
         {
@@ -1235,7 +1210,17 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return true;
 
 			case MenuId.ADD_NEW_NOTE:
-				Add_note_option.addNewNote(this);
+                if(Build.VERSION.SDK_INT >= M)//api23
+                {
+                    // check permission
+                    int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if(permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED)
+                        Add_note_option.createSelection(this,true);
+                    else
+                        Add_note_option.createSelection(this,false);
+                }
+                else
+                    Add_note_option.createSelection(this,true);
 				return true;
 
         	case MenuId.OPEN_PLAY_SUBMENU:

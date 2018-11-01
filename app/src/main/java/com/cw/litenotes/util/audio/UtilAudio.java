@@ -28,24 +28,26 @@ import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.ColorSet;
 import com.cw.litenotes.util.Util;
 
-import android.support.v7.app.AppCompatActivity;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
+//import android.support.v7.app.AppCompatActivity;
+//import android.telephony.PhoneStateListener;
+//import android.telephony.TelephonyManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static android.content.Context.TELEPHONY_SERVICE;
+//import static android.content.Context.TELEPHONY_SERVICE;
 
 public class UtilAudio {
 
-	public static void setPhoneListener(AppCompatActivity act)
-	{
-		// To Registers a listener object to receive notification when incoming call
-		TelephonyManager telMgr = (TelephonyManager) act.getSystemService(TELEPHONY_SERVICE);
-		if (telMgr != null) {
-			telMgr.listen(UtilAudio.phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-		}
-	}
+//	public static void setPhoneListener(AppCompatActivity act)
+//	{
+//		System.out.println("UtilAudio/ _setPhoneListener");
+//
+//		// To Registers a listener object to receive notification when incoming call
+//		TelephonyManager telMgr = (TelephonyManager) act.getSystemService(TELEPHONY_SERVICE);
+//		if (telMgr != null) {
+//			telMgr.listen(UtilAudio.phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+//		}
+//	}
 
     public static void stopAudioIfNeeded()
     {
@@ -121,49 +123,49 @@ public class UtilAudio {
     	return hasAudio;
     }     
     
-    public static boolean mIsCalledWhilePlayingAudio;
+//    public static boolean mIsCalledWhilePlayingAudio;
     // for Pause audio player when incoming phone call
     // http://stackoverflow.com/questions/5610464/stopping-starting-music-on-incoming-calls
-    public static PhoneStateListener phoneStateListener = new PhoneStateListener() 
-    {
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) 
-        {
-			System.out.print("UtilAudio / _onCallStateChanged");
-            if ( (state == TelephonyManager.CALL_STATE_RINGING) ||
-                 (state == TelephonyManager.CALL_STATE_OFFHOOK )   ) 
-            {
-            	System.out.println(" -> Incoming phone call:");
-
-                //from Play to Pause
-            	if(Audio_manager.getPlayerState() == Audio_manager.PLAYER_AT_PLAY)
-            	{
-                    if( (BackgroundAudioService.mMediaPlayer != null) &&
-							BackgroundAudioService.mMediaPlayer.isPlaying() ) {
-                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PAUSE);
-						BackgroundAudioService.mMediaPlayer.pause();
-                    }
-            		mIsCalledWhilePlayingAudio = true;
-            	}
-            }
-            else if(state == TelephonyManager.CALL_STATE_IDLE) 
-            {
-            	System.out.println(" -> Not in phone call:");
-                // from Pause to Play
-            	if( (Audio_manager.getPlayerState() == Audio_manager.PLAYER_AT_PAUSE) &&
-            		mIsCalledWhilePlayingAudio )	
-            	{
-                    if( (BackgroundAudioService.mMediaPlayer != null) &&
-                        !BackgroundAudioService.mMediaPlayer.isPlaying() ) {
-                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
-						BackgroundAudioService.mMediaPlayer.start();
-                    }
-                    mIsCalledWhilePlayingAudio = false;
-            	}
-            }
-            super.onCallStateChanged(state, incomingNumber);
-        }
-    };
+//    public static PhoneStateListener phoneStateListener = new PhoneStateListener()
+//    {
+//        @Override
+//        public void onCallStateChanged(int state, String incomingNumber)
+//        {
+//			System.out.print("UtilAudio / _onCallStateChanged");
+//            if ( (state == TelephonyManager.CALL_STATE_RINGING) ||
+//                 (state == TelephonyManager.CALL_STATE_OFFHOOK )   )
+//            {
+//            	System.out.println(" -> Incoming phone call:");
+//
+//                //from Play to Pause
+//            	if(Audio_manager.getPlayerState() == Audio_manager.PLAYER_AT_PLAY)
+//            	{
+//                    if( (BackgroundAudioService.mMediaPlayer != null) &&
+//							BackgroundAudioService.mMediaPlayer.isPlaying() ) {
+//                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PAUSE);
+//						BackgroundAudioService.mMediaPlayer.pause();
+//                    }
+//            		mIsCalledWhilePlayingAudio = true;
+//            	}
+//            }
+//            else if(state == TelephonyManager.CALL_STATE_IDLE)
+//            {
+//            	System.out.println(" -> Not in phone call:");
+//                // from Pause to Play
+//            	if( (Audio_manager.getPlayerState() == Audio_manager.PLAYER_AT_PAUSE) &&
+//            		mIsCalledWhilePlayingAudio )
+//            	{
+//                    if( (BackgroundAudioService.mMediaPlayer != null) &&
+//                        !BackgroundAudioService.mMediaPlayer.isPlaying() ) {
+//                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
+//						BackgroundAudioService.mMediaPlayer.start();
+//                    }
+//                    mIsCalledWhilePlayingAudio = false;
+//            	}
+//            }
+//            super.onCallStateChanged(state, incomingNumber);
+//        }
+//    };
     
     
 }

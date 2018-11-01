@@ -354,7 +354,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         {
             audioUi_page.initAudioBlock(MainAct.mAct);
 
-            audioPlayer_page.page_runnable.run();
+            audioPlayer_page.page_runnable.run();//todo Why exception when adding new text?
 
             //todo Why dose this panel disappear?
             UtilAudio.updateAudioPanel(audioUi_page.audioPanel_play_button,

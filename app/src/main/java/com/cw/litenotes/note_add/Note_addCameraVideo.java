@@ -25,6 +25,7 @@ import com.cw.litenotes.page.Page_recycler;
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.util.Util;
+import com.cw.litenotes.util.preferences.Pref;
 
 import android.Manifest;
 import android.app.Activity;
@@ -73,28 +74,11 @@ public class Note_addCameraVideo extends Activity {
 		{
 			// check permission
 			int permissionCamera = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-			int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-			if( (permissionCamera != PackageManager.PERMISSION_GRANTED) &&
-					(permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED))
+			if( permissionCamera != PackageManager.PERMISSION_GRANTED)
 			{
 				ActivityCompat.requestPermissions(this,
-						new String[]{Manifest.permission.CAMERA,
-								Manifest.permission.WRITE_EXTERNAL_STORAGE,
-								Manifest.permission.READ_EXTERNAL_STORAGE  },
-						Util.PERMISSIONS_REQUEST_CAMERA_AND_STORAGE);
-			}
-			else if(permissionCamera != PackageManager.PERMISSION_GRANTED)
-			{
-				ActivityCompat.requestPermissions(this,
-						new String[]{Manifest.permission.CAMERA},
-						Util.PERMISSIONS_REQUEST_CAMERA);
-			}
-			else if(permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED)
-			{
-				ActivityCompat.requestPermissions(this,
-						new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-								Manifest.permission.READ_EXTERNAL_STORAGE  },
-						Util.PERMISSIONS_REQUEST_STORAGE);
+													new String[]{ Manifest.permission.CAMERA },
+													Util.PERMISSIONS_REQUEST_CAMERA);
 			}
 			else
 				doCreate(savedInstanceState);
@@ -115,7 +99,7 @@ public class Note_addCameraVideo extends Activity {
 				(Long) savedInstanceState.getSerializable(DB_page.KEY_NOTE_ID);
 
 		// get picture Uri in DB if instance is not null
-		dB = Page_recycler.mDb_page;
+        dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
 		if(savedInstanceState != null)
 		{
 			System.out.println("Note_addCameraVideo / onCreate / noteId =  " + noteId);
@@ -133,45 +117,18 @@ public class Note_addCameraVideo extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
     {
-        System.out.println("Note_addCameraImage / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
+        System.out.println("Note_addCameraVideo / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_CAMERA_AND_STORAGE:
-            {
-                // If request is cancelled, the result arrays are empty.
-                if ( (grantResults.length > 0) &&
-                        ((grantResults[0] == PackageManager.PERMISSION_GRANTED)&&
-                                (grantResults[1] == PackageManager.PERMISSION_GRANTED)&&
-                                (grantResults[2] == PackageManager.PERMISSION_GRANTED)  ) )
-                    doCreate(null);
-                else
-                    finish();
-            }
-            break;
-
             case Util.PERMISSIONS_REQUEST_CAMERA:
             {
                 // If request is cancelled, the result arrays are empty.
-                if ( (grantResults.length > 0) &&
-                        (grantResults[0] == PackageManager.PERMISSION_GRANTED) )
+                if ( (grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED) )
                     doCreate(null);
                 else
                     finish();
             }
             break;
-
-            case Util.PERMISSIONS_REQUEST_STORAGE:
-            {
-                // If request is cancelled, the result arrays are empty.
-                if ( (grantResults.length > 0) &&
-                        ((grantResults[0] == PackageManager.PERMISSION_GRANTED)&&
-                                (grantResults[1] == PackageManager.PERMISSION_GRANTED)  ))
-                    doCreate(null);
-                else
-                    finish();
-            }
-            break;
-
         }//switch
     }
 

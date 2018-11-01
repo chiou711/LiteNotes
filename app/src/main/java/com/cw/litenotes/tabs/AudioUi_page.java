@@ -60,21 +60,6 @@ public class AudioUi_page {
     {
         this.mAct = act;
         listView = _listView;
-        // check permission first time, request phone permission
-        if(Build.VERSION.SDK_INT >= M)//API23
-        {
-            int permissionPhone = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.READ_PHONE_STATE);
-            if(permissionPhone != PackageManager.PERMISSION_GRANTED)
-            {
-                ActivityCompat.requestPermissions(mAct,
-                                                  new String[]{Manifest.permission.READ_PHONE_STATE},
-                                                  Util.PERMISSIONS_REQUEST_PHONE);
-            }
-            else
-                UtilAudio.setPhoneListener(mAct);
-        }
-        else
-            UtilAudio.setPhoneListener(mAct);
     }
 
 

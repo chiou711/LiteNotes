@@ -114,7 +114,7 @@ public class Note_common {
 	public Note_common(Activity act)
     {
     	this.act = act;
-    	dB = new DB_page(act, TabsHost.getCurrentPageTableId());
+		dB = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
     }
 
 	public void UI_init()

@@ -72,8 +72,10 @@ public class Add_note_option {
     private final static int ID_NEW_BACK = 9;
     private final static int ID_NEW_SETTING = 10;
 
-    public static void addNewNote(final AppCompatActivity act)
+    public static void createSelection(AppCompatActivity act,boolean permitted)
     {
+
+        System.out.println("Add_note_option / _createSelection");
         AbsListView gridView;
 
         // get layout inflater
@@ -89,37 +91,36 @@ public class Add_note_option {
                 android.R.drawable.ic_menu_edit,
                 R.string.note_text));
 
-        // audio
-        addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
-                R.drawable.ic_audio_unselected,
-                R.string.note_audio));
+        if(permitted) {
+            // audio
+            addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
+                    R.drawable.ic_audio_unselected,
+                    R.string.note_audio));
 
-        // camera image
-        if(packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
-        {
-            addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
-                    android.R.drawable.ic_menu_camera,
-                    R.string.note_camera_image));
+            // camera image
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
+                        android.R.drawable.ic_menu_camera,
+                        R.string.note_camera_image));
+            }
+
+            // ready image
+            addNoteList.add(new Add_note_option(ID_NEW_READY_IMAGE,
+                    android.R.drawable.ic_menu_gallery,
+                    R.string.note_ready_image));
+
+            // camera video
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_VIDEO,
+                        android.R.drawable.presence_video_online,
+                        R.string.note_camera_video));
+            }
+
+            // ready video
+            addNoteList.add(new Add_note_option(ID_NEW_READY_VIDEO,
+                    R.drawable.ic_ready_video,
+                    R.string.note_ready_video));
         }
-
-        // ready image
-        addNoteList.add(new Add_note_option(ID_NEW_READY_IMAGE,
-                android.R.drawable.ic_menu_gallery,
-                R.string.note_ready_image));
-
-        // camera video
-        if(packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA))
-        {
-            addNoteList.add(new Add_note_option(ID_NEW_CAMERA_VIDEO,
-                    android.R.drawable.presence_video_online,
-                    R.string.note_camera_video));
-        }
-
-        // ready video
-        addNoteList.add(new Add_note_option(ID_NEW_READY_VIDEO,
-                R.drawable.ic_ready_video,
-                R.string.note_ready_video));
-
         // YouTube link
         addNoteList.add(new Add_note_option(ID_NEW_YOUTUBE_LINK,
                 android.R.drawable.ic_menu_share,

@@ -111,7 +111,8 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        if(itemAdapter.getItemCount() ==0) {
+        if( (itemAdapter != null) &&
+            (itemAdapter.getItemCount() ==0) ){
             blankView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }

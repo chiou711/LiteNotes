@@ -140,6 +140,8 @@ public class SlideshowPlayer extends FragmentActivity
                 @Override
                 public boolean onLongClick(View v) {
                     slideHandler.removeCallbacks(runSlideshow);
+                    finish();
+
                     Intent intent;
 					viewHolder = showInfo.getShowItem(currIndex);
 					Integer position = viewHolder.position;
@@ -271,6 +273,8 @@ public class SlideshowPlayer extends FragmentActivity
 					viewHolder = showInfo.getShowItem(currIndex);
 					Integer position = viewHolder.position;
 					slideHandler.removeCallbacks(runSlideshow);
+					finish();
+
 					Intent intent;
 					intent = new Intent(SlideshowPlayer.this, Note.class);
 					intent.putExtra("POSITION", position);
