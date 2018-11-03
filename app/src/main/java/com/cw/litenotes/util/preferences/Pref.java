@@ -139,7 +139,7 @@ public class Pref
     }
 
     // set has default import
-    public static void setPref_has_preferred_tables(Activity act, boolean has)
+    public static void setPref_need_preferred_tables(Activity act, boolean has)
     {
         SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
         String keyName = "KEY_HAS_PREFERRED_TABLES";
@@ -147,7 +147,7 @@ public class Pref
     }
 
     // get has default import
-    public static boolean getPref_has_preferred_tables(Context context)
+    public static boolean getPref_need_preferred_tables(Context context)
     {
         SharedPreferences pref = context.getSharedPreferences("focus_view", 0);
         String keyName = "KEY_HAS_PREFERRED_TABLES";

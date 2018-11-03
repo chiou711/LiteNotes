@@ -145,9 +145,11 @@ public class AudioUi_note
         // get audio file length
         try
         {
-            MediaPlayer mp = MediaPlayer.create(act, Uri.parse(mAudioUriInDB));
-            mediaFileLength = mp.getDuration();
-            mp.release();
+            if(Util.isUriExisted(mAudioUriInDB, act)) {
+                MediaPlayer mp = MediaPlayer.create(act, Uri.parse(mAudioUriInDB));
+                mediaFileLength = mp.getDuration();
+                mp.release();
+            }
         }
         catch(Exception e)
         {

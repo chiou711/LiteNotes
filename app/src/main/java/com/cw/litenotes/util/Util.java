@@ -133,6 +133,7 @@ public class Util
 
 	public static final int PERMISSIONS_REQUEST_CAMERA = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE = 11;
+	public static final int PERMISSIONS_REQUEST_STORAGE_NEED_PREFERRED = 12;
 
 	public Util(){}
     
@@ -845,8 +846,55 @@ public class Util
 			// when scheme is https or http
 			try
 			{
+				// init
 				if(Patterns.WEB_URL.matcher(uriString).matches())
-					bFileExist = true;
+					bFileExist = false;
+
+				//enhance URL judgement
+				String scheme  = Util.getUriScheme(uriString);
+				if(scheme.equalsIgnoreCase("http")|| scheme.equalsIgnoreCase("https") )
+				{
+					if(Util.isNetworkConnected(activity))
+					{
+						try
+						{
+							boolean isEnd = false;
+							int i = 0;
+							while(!isEnd)
+							{
+								// check if network connection is OK
+								Util.tryUrlConnection(uriString, activity);
+								// wait for response
+								Thread.sleep(Util.oneSecond/10);
+
+								// check response
+								if(200 <= Util.mResponseCode && Util.mResponseCode <= 399) {
+									System.out.println("bFileExist 1 = " + bFileExist + " / count = " + i);
+									bFileExist = true;
+									isEnd = true;
+								}
+								else if (404 == Util.mResponseCode)
+								{
+									bFileExist = false;
+									isEnd = true;
+								}
+								else {
+									bFileExist = false;
+									System.out.println("bFileExist = 2 " + bFileExist + " / count = " + i);
+									i++;
+									if (i == 3)
+										isEnd = true; // no more try
+								}
+							}
+						}
+						catch (Exception e1)
+						{
+							e1.printStackTrace();
+						}
+					}
+					else
+						bFileExist =  false;
+				}
 			}
 			catch (Exception e)
 			{

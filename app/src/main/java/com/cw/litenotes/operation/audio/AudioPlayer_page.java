@@ -567,33 +567,35 @@ public class AudioPlayer_page
                 // during audio Preparing
                 Async_audioPrepare mAsyncTaskAudioPrepare = new Async_audioPrepare(act);
                 mAsyncTaskAudioPrepare.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Preparing to play ...");
+
+
+                if(Build.VERSION.SDK_INT >= 21) {
+                    MediaControllerCompat.getMediaController(MainAct.mAct)
+                            .getTransportControls()
+                            .playFromUri(Uri.parse(audioUrl_page), null);
+
+                    MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
+                }
+                else {
+                    BackgroundAudioService.mMediaPlayer = new MediaPlayer();
+                    BackgroundAudioService.mMediaPlayer.reset();
+                    try
+                    {
+                        BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
+
+                        // prepare the MediaPlayer to play, this will delay system response
+                        BackgroundAudioService.mMediaPlayer.prepare();
+                        setAudioListeners();
+                    }
+                    catch(Exception e)
+                    {
+                        Toast.makeText(act,R.string.audio_message_could_not_open_file,Toast.LENGTH_SHORT).show();
+                        Audio_manager.stopAudioPlayer();
+                    }
+                }
             }
         }
 
-        if(Build.VERSION.SDK_INT >= 21) {
-            MediaControllerCompat.getMediaController(MainAct.mAct)
-                    .getTransportControls()
-                    .playFromUri(Uri.parse(audioUrl_page), null);
-
-            MediaControllerCompat.getMediaController(MainAct.mAct).getTransportControls().play();
-        }
-        else {
-            BackgroundAudioService.mMediaPlayer = new MediaPlayer();
-            BackgroundAudioService.mMediaPlayer.reset();
-            try
-            {
-                BackgroundAudioService.mMediaPlayer.setDataSource(act, Uri.parse(audioUrl_page));
-
-                // prepare the MediaPlayer to play, this will delay system response
-                BackgroundAudioService.mMediaPlayer.prepare();
-                setAudioListeners();
-            }
-            catch(Exception e)
-            {
-                Toast.makeText(act,R.string.audio_message_could_not_open_file,Toast.LENGTH_SHORT).show();
-                Audio_manager.stopAudioPlayer();
-            }
-        }
     }
 
     /**

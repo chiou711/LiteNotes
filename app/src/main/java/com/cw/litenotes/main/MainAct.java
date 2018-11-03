@@ -157,38 +157,41 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
 
         // Show dialog of EULA
-        if (!bEULA_accepted){
+        if (!bEULA_accepted)
+        {
             // Ok button listener
-            dialog_EULA.clickListener_Ok = (DialogInterface dialogInterface, int i) ->
-            {
+            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
 
                 dialog_EULA.applyPreference();
 
-                // check permission first time, request all necessary permissions
-                if(Build.VERSION.SDK_INT >= M)//API23
-                {
-                    int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
+                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE_NEED_PREFERRED);
 
-                    if(permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED ) {
-                        ActivityCompat.requestPermissions(mAct,
-                                                          new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                                                       Manifest.permission.READ_EXTERNAL_STORAGE },
-                                                          Util.PERMISSIONS_REQUEST_STORAGE);
-                    }
-                    else
-                        doCreate(savedInstanceState);
-                }
-                else
-                    doCreate(savedInstanceState);
+                    // Close dialog
+                    dialog.dismiss();
+                };
 
-                // Close dialog
-                dialogInterface.dismiss();
+                DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
+                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE);
+
+                    // Close dialog
+                    dialog.dismiss();
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
+                        .setTitle("Sample notes")
+                        .setMessage("Do you want to create sample notes? If yes, you need accept external storage permission.")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", click_Yes)
+                        .setNegativeButton("No",click_No);
+                builder.create().show();
             };
 
             // No button listener
             dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
                     // Close the activity as they have declined
                     // the EULA
+                    dialog.dismiss();
                     mAct.finish();
             };
 
@@ -199,15 +202,32 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     }
 
-    // main action
+    void checkPermission(Bundle savedInstanceState,int permissions_request)
+    {
+        // check permission first time, request all necessary permissions
+        if(Build.VERSION.SDK_INT >= M)//API23
+        {
+            int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if(permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(mAct,
+                                                  new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                               Manifest.permission.READ_EXTERNAL_STORAGE },
+                                                  permissions_request);
+            }
+            else
+                doCreate(savedInstanceState);
+        }
+        else
+            doCreate(savedInstanceState);
+    }
+
+    // do create
     void doCreate(Bundle savedInstanceState)
     {
         if(Define.HAS_PREFERRED_TABLES) {
-            int permissionWriteExtStorage = ActivityCompat.checkSelfPermission(mAct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if(permissionWriteExtStorage == PackageManager.PERMISSION_GRANTED )
+            if(Pref.getPref_need_preferred_tables(MainAct.mAct))
                 createPreferredTables();
-            else if(!Pref.getPref_has_preferred_tables(this))
-                Pref.setPref_has_preferred_tables(this, true); //set for user own preferred tables
         }
 
         // file provider implementation is needed after Android version 24
@@ -346,50 +366,46 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     // create preferred tables
     void createPreferredTables()
     {
-        if(!Pref.getPref_has_preferred_tables(MainAct.mAct))
+        DB_drawer db_drawer = new DB_drawer(this);
+        for (int pos = 0; pos < Define.ORIGIN_FOLDERS_COUNT; pos++)
         {
-            for (int pos = 0; pos < Define.ORIGIN_FOLDERS_COUNT; pos++)
-            {
-                String fileName = "default" + (pos + 1) + ".xml";
+            String fileName = "default" + (pos + 1) + ".xml";
 
-                FolderUi.setFocus_folderPos(pos);
-                DB_drawer db_drawer = new DB_drawer(this);
+            FolderUi.setFocus_folderPos(pos);
 
-                int folderTableId = db_drawer.getFolderTableId(pos, true);
+            int folderTableId = db_drawer.getFolderTableId(pos, true);
+            Pref.setPref_focusView_folder_tableId(this, folderTableId);
+            DB_folder.setFocusFolder_tableId(folderTableId);
+
+            Import_fileView.createDefaultTables(this, fileName);//create default1.xml default2.xml
+
+            // create asset files
+            if (pos == 0) {
+                // add default image
+                String imageFileName = "local" + (pos + 1) + ".jpg";
+                Util.createAssetsFile(this, imageFileName);
+
+                // add default video
+                String videoFileName = "local" + (pos + 1) + ".mp4";
+                Util.createAssetsFile(this, videoFileName);
+
+                // add default audio
+                String audioFileName = "local" + (pos + 1) + ".mp3";
+                Util.createAssetsFile(this, audioFileName);
+            }
+
+            // last step
+            if (pos == (Define.ORIGIN_FOLDERS_COUNT - 1)) {
+                //set default position to 0
+                folderTableId = db_drawer.getFolderTableId(0, true);
                 Pref.setPref_focusView_folder_tableId(this, folderTableId);
                 DB_folder.setFocusFolder_tableId(folderTableId);
 
-                Import_fileView.createDefaultTables(this, fileName);//create default1.xml default2.xml
-
-                // create asset files
-                if (pos == 0) {
-                    // add default image
-                    String imageFileName = "local" + (pos + 1) + ".jpg";
-                    Util.createAssetsFile(this, imageFileName);
-
-                    // add default video
-                    String videoFileName = "local" + (pos + 1) + ".mp4";
-                    Util.createAssetsFile(this, videoFileName);
-
-                    // add default audio
-                    String audioFileName = "local" + (pos + 1) + ".mp3";
-                    Util.createAssetsFile(this, audioFileName);
-                }
-
-                // last step
-                if (pos == (Define.ORIGIN_FOLDERS_COUNT - 1)) {
-                    //set default position to 0
-                    folderTableId = db_drawer.getFolderTableId(0, true);
-                    Pref.setPref_focusView_folder_tableId(this, folderTableId);
-                    DB_folder.setFocusFolder_tableId(folderTableId);
-
-                    // already has preferred tables
-                    Pref.setPref_has_preferred_tables(this, true);
-
-                    //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
-                    recreate();
-                    break;
-                }
+                // already has preferred tables
+                Pref.setPref_need_preferred_tables(this, false);
+                //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
+                recreate();
+                break;
             }
         }
     }
@@ -468,22 +484,25 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_STORAGE:
+            case Util.PERMISSIONS_REQUEST_STORAGE_NEED_PREFERRED:
             {
-                System.out.println("MainAct / _onRequestPermissionsResult / requestCode = Util.PERMISSIONS_REQUEST_STORAGE" );
                 if ( (grantResults.length > 0) &&
                      ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
                        (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
-                    System.out.println("MainAct / _onRequestPermissionsResult / grantResults[0] == PackageManager.PERMISSION_GRANTED" );
-                else
-                    System.out.println("MainAct / _onRequestPermissionsResult / grantResults[0] != PackageManager.PERMISSION_GRANTED" );
-
-                recreate();
+                    Pref.setPref_need_preferred_tables(this, true);
             }
             break;
-
+            case Util.PERMISSIONS_REQUEST_STORAGE:
+            {
+                if ( (grantResults.length > 0) &&
+                        ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+                          (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
+                    Pref.setPref_need_preferred_tables(this, false);
+            }
+            break;
         }
-        //then will go to _resume
+        //normally, will go to _resume
+        recreate();
     }
 
     @Override
@@ -1555,7 +1574,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 System.out.println("MainAct / MediaBrowserCompat.Callback / RemoteException");
             }
         }
-
     };
 
     // callback: media controller
