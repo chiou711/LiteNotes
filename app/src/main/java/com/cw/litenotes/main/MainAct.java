@@ -165,7 +165,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 dialog_EULA.applyPreference();
 
                 DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
-                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE_NEED_PREFERRED);
+                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT);
 
                     // Close dialog
                     dialog.dismiss();
@@ -179,11 +179,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
-                        .setTitle("Sample notes")
-                        .setMessage("Do you want to create sample notes? If yes, you need accept external storage permission.")
+                        .setTitle(R.string.sample_notes_title)
+                        .setMessage(R.string.sample_notes_message)
                         .setCancelable(false)
-                        .setPositiveButton("Yes", click_Yes)
-                        .setNegativeButton("No",click_No);
+                        .setPositiveButton(R.string.confirm_dialog_button_yes, click_Yes)
+                        .setNegativeButton(R.string.confirm_dialog_button_no,click_No);
                 builder.create().show();
             };
 
@@ -225,9 +225,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     // do create
     void doCreate(Bundle savedInstanceState)
     {
-        if(Define.HAS_PREFERRED_TABLES) {
-            if(Pref.getPref_need_preferred_tables(MainAct.mAct))
-                createPreferredTables();
+        if(Define.WITH_DEFAULT_CONTENT) {
+            if(Pref.getPref_will_create_default_content(MainAct.mAct))
+                createDefaultContent();
         }
 
         // file provider implementation is needed after Android version 24
@@ -363,11 +363,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     }
 
 
-    // create preferred tables
-    void createPreferredTables()
+    // create default content
+    void createDefaultContent()
     {
         DB_drawer db_drawer = new DB_drawer(this);
-        for (int pos = 0; pos < Define.ORIGIN_FOLDERS_COUNT; pos++)
+        for (int pos = 0; pos < Define.INITIAL_FOLDERS_COUNT; pos++)
         {
             String fileName = "default" + (pos + 1) + ".xml";
 
@@ -395,14 +395,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             }
 
             // last step
-            if (pos == (Define.ORIGIN_FOLDERS_COUNT - 1)) {
+            if (pos == (Define.INITIAL_FOLDERS_COUNT - 1)) {
                 //set default position to 0
                 folderTableId = db_drawer.getFolderTableId(0, true);
                 Pref.setPref_focusView_folder_tableId(this, folderTableId);
                 DB_folder.setFocusFolder_tableId(folderTableId);
 
                 // already has preferred tables
-                Pref.setPref_need_preferred_tables(this, false);
+                Pref.setPref_will_create_default_content(this, false);
                 //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
                 recreate();
                 break;
@@ -484,12 +484,12 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_STORAGE_NEED_PREFERRED:
+            case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT:
             {
                 if ( (grantResults.length > 0) &&
                      ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
                        (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
-                    Pref.setPref_need_preferred_tables(this, true);
+                    Pref.setPref_will_create_default_content(this, true);
             }
             break;
             case Util.PERMISSIONS_REQUEST_STORAGE:
@@ -497,7 +497,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 if ( (grantResults.length > 0) &&
                         ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
                           (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
-                    Pref.setPref_need_preferred_tables(this, false);
+                    Pref.setPref_will_create_default_content(this, false);
             }
             break;
         }

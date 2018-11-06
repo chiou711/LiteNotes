@@ -51,4 +51,6 @@
     <string name="set_disable">Disable</string>
     <string name="no_page_yet">No page yet</string>
     <string name="blank_page">Blank page</string>
+    <string name="sample_notes_title">Sample of notes</string>
+    <string name="sample_notes_message">Do you want to create sample of notes? If yes, you need to allow the access of photos,media, and files on your device in next dialog.</string>
 </resources>

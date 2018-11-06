@@ -249,8 +249,8 @@ public class DeleteFolders extends Fragment{
         dbDrawer.close();
 
         // set scroll X
-        int scrollX = 0; //over the last scroll X
-        Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX );
+//        int scrollX = 0; //over the last scroll X
+//        Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX );
 
         if(BackgroundAudioService.mMediaPlayer != null)
         {

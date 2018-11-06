@@ -30,7 +30,6 @@ public class Pref
     // set folder table id of focus view
     public static void setPref_focusView_folder_tableId(Activity act, int folderTableId )
     {
-//		System.out.println("Pref / _setPref_focusView_folder_tableId / folderTableId = " + folderTableId);
         SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
         String keyName = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID";
         pref.edit().putInt(keyName, folderTableId).apply();
@@ -44,11 +43,19 @@ public class Pref
         return pref.getInt(keyName, 1); // folder table Id: default is 1
     }
 
+    // remove key of focus view for folder
+    public static void removePref_focusView_folder_tableId_key(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
+        String keyName = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID";
+        pref.edit().remove(keyName).apply();
+    }
+
     // set page table id of focus view
     public static void setPref_focusView_page_tableId(Activity act, int pageTableId )
     {
         SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-        String keyPrefix = "KEY_FOLDER_TABLE_ID_";
+        String keyPrefix = "KEY_FOCUS_VIEW_PAGE_TABLE_ID_";
         int folderTableId = getPref_focusView_folder_tableId(act);
         String keyName = keyPrefix.concat(String.valueOf(folderTableId));
         pref.edit().putInt(keyName, pageTableId).apply();
@@ -58,43 +65,43 @@ public class Pref
     public static int getPref_focusView_page_tableId(Context context)
     {
         SharedPreferences pref = context.getSharedPreferences("focus_view", 0);
-        String keyPrefix = "KEY_FOLDER_TABLE_ID_";
+        String keyPrefix = "KEY_FOCUS_VIEW_PAGE_TABLE_ID_";
         int folderTableId = getPref_focusView_folder_tableId(context);
         String keyName = keyPrefix.concat(String.valueOf(folderTableId));
         // page table Id: default is 1
         return pref.getInt(keyName, 1);
     }
 
-    // remove key of focus view
-    public static void removePref_focusView_key(Activity act, int drawerFolderTableId)
+    // remove key of focus view for page table Id
+    public static void removePref_focusView_page_tableId_key(Activity act, int folderTableId)
     {
         SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-        String keyPrefix = "KEY_FOLDER_TABLE_ID_";
-        String keyName = keyPrefix.concat(String.valueOf(drawerFolderTableId));
+        String keyPrefix = "KEY_FOCUS_VIEW_PAGE_TABLE_ID_";
+        String keyName = keyPrefix.concat(String.valueOf(folderTableId));
         pref.edit().remove(keyName).apply();
     }
 
     // set scroll X of drawer of focus view
-    public static void setPref_focusView_scrollX_byFolderTableId(Activity act, int scrollX )
-    {
-        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-        String keyPrefix = "KEY_FOLDER_TABLE_ID_";
-        int tableId = getPref_focusView_folder_tableId(act);
-        String keyName = keyPrefix.concat(String.valueOf(tableId));
-        keyName = keyName.concat("_SCROLL_X");
-        pref.edit().putInt(keyName, scrollX).apply();
-    }
+//    public static void setPref_focusView_scrollX_byFolderTableId(Activity act, int scrollX )
+//    {
+//        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
+//        String keyPrefix = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID_";
+//        int tableId = getPref_focusView_folder_tableId(act);
+//        String keyName = keyPrefix.concat(String.valueOf(tableId));
+//        keyName = keyName.concat("_SCROLL_X");
+//        pref.edit().putInt(keyName, scrollX).apply();
+//    }
 
     // get scroll X of drawer of focus view
-    public static Integer getPref_focusView_scrollX_byFolderTableId(Activity act)
-    {
-        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-        String keyPrefix = "KEY_FOLDER_TABLE_ID_";
-        int tableId = getPref_focusView_folder_tableId(act);
-        String keyName = keyPrefix.concat(String.valueOf(tableId));
-        keyName = keyName.concat("_SCROLL_X");
-        return pref.getInt(keyName, 0); // default scroll X is 0
-    }
+//    public static Integer getPref_focusView_scrollX_byFolderTableId(Activity act)
+//    {
+//        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
+//        String keyPrefix = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID_";
+//        int tableId = getPref_focusView_folder_tableId(act);
+//        String keyName = keyPrefix.concat(String.valueOf(tableId));
+//        keyName = keyName.concat("_SCROLL_X");
+//        return pref.getInt(keyName, 0); // default scroll X is 0
+//    }
 
     // Set list view first visible Index of focus view
     public static void setPref_focusView_list_view_first_visible_index(Activity act, int index )
@@ -139,7 +146,7 @@ public class Pref
     }
 
     // set has default import
-    public static void setPref_need_preferred_tables(Activity act, boolean has)
+    public static void setPref_will_create_default_content(Activity act, boolean has)
     {
         SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
         String keyName = "KEY_HAS_PREFERRED_TABLES";
@@ -147,7 +154,7 @@ public class Pref
     }
 
     // get has default import
-    public static boolean getPref_need_preferred_tables(Context context)
+    public static boolean getPref_will_create_default_content(Context context)
     {
         SharedPreferences pref = context.getSharedPreferences("focus_view", 0);
         String keyName = "KEY_HAS_PREFERRED_TABLES";

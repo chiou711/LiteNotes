@@ -525,7 +525,7 @@ public class PageUi
 				@Override
 				public void run() {
 					TabsHost.mTabLayout.scrollTo(scrollX, 0);
-					Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX);
+//					Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX);
 				}
 			});
 		}
@@ -570,7 +570,7 @@ public class PageUi
                 public void run() {
                     System.out.println("PageUi / _insertPage_leftmost / _Runnable / scrollX = " + scrollX);
                     TabsHost.mTabLayout.scrollTo(scrollX, 0);
-                    Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX);
+//                    Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX);
                 }
             });
         }

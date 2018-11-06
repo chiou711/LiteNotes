@@ -49,8 +49,8 @@ public class Define {
     /****************************************************************************
      *
      * Flags for Default tables after App installation:
-     * - HAS_PREFERRED_TABLES
-     * - HAS_ORIGINAL_TABLES
+     * - WITH_DEFAULT_CONTENT
+     * - WITH_INITIAL_PAGE_FOR_NEW_FOLDER
      * Note of flag setting: exclusive
      *
      ****************************************************************************/
@@ -74,7 +74,7 @@ public class Define {
      * }
      *
      */
-    public static boolean HAS_PREFERRED_TABLES = true; //true; //false;
+    public static boolean WITH_DEFAULT_CONTENT = true; //true; //false;
 
     /**
      * Has original tables
@@ -82,7 +82,7 @@ public class Define {
      * - page tables: 1
      *
      */
-    public static boolean HAS_ORIGINAL_TABLES = !HAS_PREFERRED_TABLES;
+    public static boolean WITH_INITIAL_PAGE_FOR_NEW_FOLDER = true;
 
     public static boolean ENABLE_ADMOB = false; //true; //false;
 
@@ -91,8 +91,8 @@ public class Define {
     public static boolean PICTURE_PATH_BY_SYSTEM_DEFAULT = true;
 
     // default table count
-    public static int ORIGIN_PAGES_COUNT = 1;//5; // Page1_1, Page1_2, Page1_3, Page1_4, Page1_5
-    public static int ORIGIN_FOLDERS_COUNT = 2;  // Folder1, Folder2, Folder3
+    public static int INITIAL_PAGES_COUNT_FOR_NEW_FOLDER = 1;//5; // Page1_1, Page1_2, Page1_3, Page1_4, Page1_5
+    public static int INITIAL_FOLDERS_COUNT = 2;  // Folder1, Folder2, Folder3
 
     // default style
     public static int STYLE_DEFAULT = 1;
@@ -101,7 +101,7 @@ public class Define {
     public static String getFolderTitle(Activity act, Integer i)
     {
         String title = null;
-        if(Define.HAS_PREFERRED_TABLES) {
+        if(Define.WITH_DEFAULT_CONTENT) {
             if (i == 0)
                 title = act.getResources().getString(R.string.prefer_folder_name_local);
             else if (i == 1)
@@ -117,7 +117,7 @@ public class Define {
     {
         String title;
 
-        if(Define.HAS_PREFERRED_TABLES) {
+        if(Define.WITH_DEFAULT_CONTENT) {
             title = context.getResources().getString(R.string.prefer_page_name).concat(String.valueOf(Id));
         }
         else {

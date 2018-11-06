@@ -57,15 +57,15 @@ class DatabaseHelper extends SQLiteOpenHelper
 				DB_drawer.KEY_FOLDER_CREATED + " INTEGER);";
 		sqlDb.execSQL(DB_CREATE);
 
-		if(Define.HAS_PREFERRED_TABLES || Define.HAS_ORIGINAL_TABLES)
+		if(Define.WITH_DEFAULT_CONTENT || Define.WITH_INITIAL_PAGE_FOR_NEW_FOLDER)
 		{
-			for(int i = 1; i<= Define.ORIGIN_FOLDERS_COUNT; i++)
+			for(int i = 1; i<= Define.INITIAL_FOLDERS_COUNT; i++)
 			{
 				/**
 				 * Create
-                 * preferred folder tables
+                 * default content tables
                  *           or
-                 * original folder tables
+                 * initial folder tables
 				 */
 				System.out.println("DatabaseHelper / _onCreate / will insert folder table " + i);
 				DB_drawer dB_drawer = new DB_drawer(MainAct.mAct);
@@ -74,12 +74,12 @@ class DatabaseHelper extends SQLiteOpenHelper
 				dB_drawer.insertFolderTable(dB_drawer, i, false);
 
                 /**
-                 *  Create original page tables
+                 *  Create initial page tables
                  */
-                if(Define.HAS_ORIGINAL_TABLES)
+                if(Define.WITH_INITIAL_PAGE_FOR_NEW_FOLDER)
                 {
                     // page tables
-                    for(int j = 1; j<= Define.ORIGIN_PAGES_COUNT; j++)
+                    for(int j = 1; j<= Define.INITIAL_PAGES_COUNT_FOR_NEW_FOLDER; j++)
                     {
                         System.out.println("DatabaseHelper / _onCreate / will insert page table " + j);
                         DB_folder db_folder = new DB_folder(MainAct.mAct,i);
@@ -94,7 +94,7 @@ class DatabaseHelper extends SQLiteOpenHelper
                                              Define.STYLE_DEFAULT);//Define.STYLE_PREFER
                         //db_folder.insertPage(sqlDb,folder_table,"N2",2,1);
                     }
-                }//if(Define.HAS_ORIGINAL_TABLES)
+                }//if(Define.WITH_INITIAL_PAGE_FOR_NEW_FOLDER)
 			}
 		}
     }

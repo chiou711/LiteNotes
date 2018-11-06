@@ -58,7 +58,7 @@ public class Folder
         if(dB_drawer.getFoldersCount(true) == 0)
         {
             // default: add 2 new folders
-//            for(int i = 0; i< Define.ORIGIN_FOLDERS_COUNT; i++)
+//            for(int i = 0; i< Define.INITIAL_FOLDERS_COUNT; i++)
 //            {
 //                // insert folder
 //                System.out.println("Folder/ _initFolder / insert folder "+ i) ;

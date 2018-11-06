@@ -51,4 +51,6 @@
     <string name="set_disable">停用</string>
     <string name="no_page_yet">還沒有頁面</string>
     <string name="blank_page">空白頁</string>
+    <string name="sample_notes_title">筆記樣本</string>
+    <string name="sample_notes_message">你想創建筆記樣本嗎？ 如果是，則需要允許在下一個對話框中訪問設備上的照片，媒體和文件。</string>
 </resources>

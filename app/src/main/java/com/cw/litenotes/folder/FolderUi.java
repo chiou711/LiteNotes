@@ -40,7 +40,6 @@ import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.drawer.Drawer;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
-import com.cw.litenotes.operation.import_export.Import_fileView;
 import com.cw.litenotes.db.DB_drawer;
 import com.cw.litenotes.db.DB_folder;
 import com.cw.litenotes.main.MainAct;
@@ -176,9 +175,9 @@ public class FolderUi
                 db_drawer.insertFolderTable(db_drawer,newTableId, true);
 
                 // insert original page table after Add new folder
-                if(Define.HAS_ORIGINAL_TABLES)
+                if(Define.WITH_INITIAL_PAGE_FOR_NEW_FOLDER)
                 {
-                    for(int i = 1; i<= Define.ORIGIN_PAGES_COUNT; i++)
+                    for(int i = 1; i<= Define.INITIAL_PAGES_COUNT_FOR_NEW_FOLDER; i++)
                     {
                         DB_folder dB_folder = new DB_folder(act,newTableId);
                         int style = Util.getNewPageStyle(act);
@@ -330,8 +329,8 @@ public class FolderUi
             }
         }
 
-        // remove focus view Key
-        Pref.removePref_focusView_key(act, folderTableId);
+        // remove focus view Key for page table Id
+        Pref.removePref_focusView_page_tableId_key(act, folderTableId);
 
         // refresh drawer list view
         folderAdapter.notifyDataSetChanged();
