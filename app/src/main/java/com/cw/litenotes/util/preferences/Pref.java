@@ -145,19 +145,35 @@ public class Pref
         return pref.getInt(keyName, 0);
     }
 
-    // set has default import
-    public static void setPref_will_create_default_content(Activity act, boolean has)
+    // set with default content
+    public static void setPref_will_create_default_content(Activity act, boolean will)
     {
-        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-        String keyName = "KEY_HAS_PREFERRED_TABLES";
-        pref.edit().putBoolean(keyName, has).apply();
+        SharedPreferences pref = act.getSharedPreferences("create_view", 0);
+        String keyName = "KEY_WITH_DEFAULT_CONTENT";
+        pref.edit().putBoolean(keyName, will).apply();
     }
 
-    // get has default import
+    // get with default content
     public static boolean getPref_will_create_default_content(Context context)
     {
-        SharedPreferences pref = context.getSharedPreferences("focus_view", 0);
-        String keyName = "KEY_HAS_PREFERRED_TABLES";
+        SharedPreferences pref = context.getSharedPreferences("create_view", 0);
+        String keyName = "KEY_WITH_DEFAULT_CONTENT";
+        return pref.getBoolean(keyName, false);
+    }
+
+    // set with initial tables
+    public static void setPref_will_create_initial_tables(Activity act, boolean will)
+    {
+        SharedPreferences pref = act.getSharedPreferences("create_view", 0);
+        String keyName = "KEY_WITH_INITIAL_TABLES";
+        pref.edit().putBoolean(keyName, will).apply();
+    }
+
+    // get with initial tables
+    public static boolean getPref_will_create_initial_tables(Context context)
+    {
+        SharedPreferences pref = context.getSharedPreferences("create_view", 0);
+        String keyName = "KEY_WITH_INITIAL_TABLES";
         return pref.getBoolean(keyName, false);
     }
 

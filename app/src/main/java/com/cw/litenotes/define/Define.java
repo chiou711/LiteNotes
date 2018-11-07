@@ -23,6 +23,7 @@ import com.cw.litenotes.R;
 
 /**
  * Created by CW on 2016/6/16.
+ * Modified by CW on 2018/11/07
  *
  * build apk file size:
  * 1) prefer w/ assets files: 15,483 KB
@@ -38,11 +39,11 @@ public class Define {
     public static boolean DEBUG_MODE = false;
     public static boolean RELEASE_MODE = !DEBUG_MODE;
 
-    /**
+    /***************************************************************************
      * Set release/debug mode
      * - RELEASE_MODE
      * - DEBUG_MODE
-     */
+     ***************************************************************************/
     public static boolean CODE_MODE = DEBUG_MODE; //DEBUG_MODE; //RELEASE_MODE;
 
 
@@ -50,49 +51,50 @@ public class Define {
      *
      * Flags for Default tables after App installation:
      * - WITH_DEFAULT_CONTENT
-     * - WITH_INITIAL_PAGE_FOR_NEW_FOLDER
+     * - WITH_INITIAL_TABLES
      * Note of flag setting: exclusive
      *
-     ****************************************************************************/
-
-    /**
-     * Has preferred tables
+     * With default content
      * - true : un-mark preferred/assets/ line in build.gradle file
      * - false:    mark preferred/assets/ line in build.gradle file
-     *
      *
      * android {
      * ...
      *    sourceSets {
      *        main {
-     *      // mark: Has original tables
-     *      // un-mark: Has preferred tables
+     *      // mark: W/O default content
+     *      // un-mark: With default content
      *      // Apk file size will increase if assets directory is set at default location (src/main/assets)
      *           assets.srcDirs = ['preferred/assets/']
      *      }
      *    }
      * }
      *
+     ************************************************************************************************************/
+    /***
+     *  With default content by XML file
      */
-    public static boolean WITH_DEFAULT_CONTENT = true; //true; //false;
+    public static boolean WITH_DEFAULT_CONTENT = false; //true; //false;
 
     /**
-     * Has original tables
-     * - folder tables: 2
-     * - page tables: 1
-     *
+     * With initial tables: table count
+     * - folder count: 2
+     * - page count: 1
      */
-    public static boolean WITH_INITIAL_PAGE_FOR_NEW_FOLDER = true;
+    // initial table count
+    public static int INITIAL_FOLDERS_COUNT = 3;  // Folder1, Folder2
+    public static int INITIAL_PAGES_COUNT = 4;// Page1_1
 
+    /***************************************************************************
+     * Enable AdMob at page bottom
+     *
+     ***************************************************************************/
     public static boolean ENABLE_ADMOB = false; //true; //false;
 
 
     // Apply system default for picture path
     public static boolean PICTURE_PATH_BY_SYSTEM_DEFAULT = true;
 
-    // default table count
-    public static int INITIAL_PAGES_COUNT_FOR_NEW_FOLDER = 1;//5; // Page1_1, Page1_2, Page1_3, Page1_4, Page1_5
-    public static int INITIAL_FOLDERS_COUNT = 2;  // Folder1, Folder2, Folder3
 
     // default style
     public static int STYLE_DEFAULT = 1;

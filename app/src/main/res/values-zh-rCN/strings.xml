@@ -51,6 +51,7 @@
     <string name="set_disable">停用</string>
     <string name="no_page_yet">还没有页面</string>
     <string name="blank_page">空白页</string>
+    <string name="blank_folder">空白文件夹</string>
     <string name="sample_notes_title">笔记样本</string>
     <string name="sample_notes_message">你想创建笔记样本吗？ 如果是，则需要允许在下一个对话框中访问设备上的照片，媒体和文件。</string>
 </resources>

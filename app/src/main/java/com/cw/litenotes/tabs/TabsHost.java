@@ -127,7 +127,17 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 //        mTabsPagerAdapter = new TabsPagerAdapter(MainAct.mAct,getChildFragmentManager());
 
         // add pages to mTabsPagerAdapter
-        addPages(mTabsPagerAdapter);
+        int pageCount = addPages(mTabsPagerAdapter);
+
+        // show blank folder if no page exists
+        if(pageCount == 0) {
+            rootView.findViewById(R.id.blankFolder).setVisibility(View.VISIBLE);
+            mViewPager.setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.blankFolder).setVisibility(View.GONE);
+            mViewPager.setVisibility(View.VISIBLE);
+        }
 
         // set mTabsPagerAdapter of view pager
         mViewPager.setAdapter(mTabsPagerAdapter);
@@ -179,7 +189,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     /**
      * Add pages
      */
-    private void addPages(TabsPagerAdapter adapter)
+    private int addPages(TabsPagerAdapter adapter)
     {
         lastPageTableId = 0;
         int pageCount = adapter.dbFolder.getPagesCount(true);
@@ -199,6 +209,8 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                 adapter.addFragment(new Page_recycler(i, pageTableId));
             }
         }
+
+        return pageCount;
     }
 
     /**

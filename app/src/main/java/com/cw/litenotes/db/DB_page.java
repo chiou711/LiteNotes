@@ -33,7 +33,7 @@ public class DB_page
 
     private Context mContext = null;
     private static DatabaseHelper mDbHelper ;
-    static SQLiteDatabase mSqlDb;
+    private SQLiteDatabase mSqlDb;
 
 	// Table name format: Page1_2
 	private static String DB_PAGE_TABLE_PREFIX = "Page";

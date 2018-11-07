@@ -164,27 +164,37 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
                 dialog_EULA.applyPreference();
 
-                DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
-                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT);
+                // dialog: with default content
+                if(Define.WITH_DEFAULT_CONTENT) {
+                    DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+
+                        // Close dialog
+                        dialog.dismiss();
+                    };
+
+                    DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
+
+                        // Close dialog
+                        dialog.dismiss();
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
+                            .setTitle(R.string.sample_notes_title)
+                            .setMessage(R.string.sample_notes_message)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.confirm_dialog_button_yes, click_Yes)
+                            .setNegativeButton(R.string.confirm_dialog_button_no, click_No);
+                    builder.create().show();
+                }
+                else if(Define.INITIAL_FOLDERS_COUNT > 0)
+                {
+                    checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES);
 
                     // Close dialog
                     dialog.dismiss();
-                };
-
-                DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
-                    checkPermission(savedInstanceState,Util.PERMISSIONS_REQUEST_STORAGE);
-
-                    // Close dialog
-                    dialog.dismiss();
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
-                        .setTitle(R.string.sample_notes_title)
-                        .setMessage(R.string.sample_notes_message)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.confirm_dialog_button_yes, click_Yes)
-                        .setNegativeButton(R.string.confirm_dialog_button_no,click_No);
-                builder.create().show();
+                }
             };
 
             // No button listener
@@ -202,6 +212,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     }
 
+    // check permission dialog
     void checkPermission(Bundle savedInstanceState,int permissions_request)
     {
         // check permission first time, request all necessary permissions
@@ -222,12 +233,17 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             doCreate(savedInstanceState);
     }
 
-    // do create
+    // Do major create operation
     void doCreate(Bundle savedInstanceState)
     {
         if(Define.WITH_DEFAULT_CONTENT) {
-            if(Pref.getPref_will_create_default_content(MainAct.mAct))
+            if(Pref.getPref_will_create_default_content(this))
                 createDefaultContent();
+        }
+
+        if(Define.INITIAL_FOLDERS_COUNT > 0) {
+            if(Pref.getPref_will_create_initial_tables(this))
+                createInitialTables();
         }
 
         // file provider implementation is needed after Android version 24
@@ -363,41 +379,52 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     }
 
 
-    // create default content
+    /**
+     *  Create default content
+     */
     void createDefaultContent()
     {
-        DB_drawer db_drawer = new DB_drawer(this);
-        for (int pos = 0; pos < Define.INITIAL_FOLDERS_COUNT; pos++)
+        DB_drawer dB_drawer = new DB_drawer(this);
+
+        // default XML files count
+        int xmlFilesCount = 2;
+        for (int pos = 0; pos < xmlFilesCount; pos++)
         {
-            String fileName = "default" + (pos + 1) + ".xml";
+            int id = pos+1;
+            // insert folder
+            String folderTitle = getResources().getString(R.string.default_folder_name).concat(String.valueOf(id));
+            dB_drawer.insertFolder(id, folderTitle, true); // Note: must set false for DB creation stage
+            dB_drawer.insertFolderTable(dB_drawer, id, true);
 
+            // set focus folder
             FolderUi.setFocus_folderPos(pos);
-
-            int folderTableId = db_drawer.getFolderTableId(pos, true);
+            int folderTableId = dB_drawer.getFolderTableId(pos, true);
             Pref.setPref_focusView_folder_tableId(this, folderTableId);
             DB_folder.setFocusFolder_tableId(folderTableId);
 
+            // create default table
+            String fileName = "default" + id + ".xml";
             Import_fileView.createDefaultTables(this, fileName);//create default1.xml default2.xml
 
             // create asset files
             if (pos == 0) {
                 // add default image
-                String imageFileName = "local" + (pos + 1) + ".jpg";
+                String imageFileName = "local" + id + ".jpg";
                 Util.createAssetsFile(this, imageFileName);
 
                 // add default video
-                String videoFileName = "local" + (pos + 1) + ".mp4";
+                String videoFileName = "local" + id + ".mp4";
                 Util.createAssetsFile(this, videoFileName);
 
                 // add default audio
-                String audioFileName = "local" + (pos + 1) + ".mp3";
+                String audioFileName = "local" + id + ".mp3";
                 Util.createAssetsFile(this, audioFileName);
             }
 
             // last step
-            if (pos == (Define.INITIAL_FOLDERS_COUNT - 1)) {
+            if (pos == (xmlFilesCount - 1)) {
                 //set default position to 0
-                folderTableId = db_drawer.getFolderTableId(0, true);
+                folderTableId = dB_drawer.getFolderTableId(0, true);
                 Pref.setPref_focusView_folder_tableId(this, folderTableId);
                 DB_folder.setFocusFolder_tableId(folderTableId);
 
@@ -408,6 +435,49 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 break;
             }
         }
+    }
+
+    /**
+     * Create initial tables
+     */
+    void createInitialTables()
+    {
+        DB_drawer dB_drawer = new DB_drawer(this);
+
+        for(int i = 1; i<= Define.INITIAL_FOLDERS_COUNT; i++)
+        {
+            // Create initial folder tables
+            System.out.println("MainAct / _createInitialTables / folder id = " + i);
+            String folderTitle = getResources().getString(R.string.default_folder_name).concat(String.valueOf(i));
+            dB_drawer.insertFolder(i, folderTitle, true); // Note: must set false for DB creation stage
+            dB_drawer.insertFolderTable(dB_drawer, i, true);
+
+            // Create initial page tables
+            if(Define.INITIAL_PAGES_COUNT > 0)
+            {
+                // page tables
+                for(int j = 1; j<= Define.INITIAL_PAGES_COUNT; j++)
+                {
+                    System.out.println("MainAct / _createInitialTables / page id = " + j);
+                    DB_folder db_folder = new DB_folder(this,i);
+                    db_folder.insertPageTable(db_folder, i, j, true);
+
+                    String DB_FOLDER_TABLE_PREFIX = "Folder";
+                    String folder_table = DB_FOLDER_TABLE_PREFIX.concat(String.valueOf(i));
+                    db_folder.open();
+                    db_folder.insertPage(db_folder.mSqlDb ,
+                            folder_table,
+                            Define.getTabTitle(this,j),
+                            1,
+                            Define.STYLE_DEFAULT);//Define.STYLE_PREFER
+                    db_folder.close();
+                    //db_folder.insertPage(sqlDb,folder_table,"N2",2,1);
+                }
+            }
+        }
+
+        recreate();
+        Pref.setPref_will_create_initial_tables(this,false);
     }
 
     Intent intentReceive;
@@ -482,24 +552,23 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
     {
         System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
-        switch (requestCode)
+
+        if ( (grantResults.length > 0) &&
+             ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+               (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
         {
-            case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT:
+            switch (requestCode)
             {
-                if ( (grantResults.length > 0) &&
-                     ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-                       (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
+                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
                     Pref.setPref_will_create_default_content(this, true);
-            }
-            break;
-            case Util.PERMISSIONS_REQUEST_STORAGE:
-            {
-                if ( (grantResults.length > 0) &&
-                        ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-                          (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
+                break;
+                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
                     Pref.setPref_will_create_default_content(this, false);
+                break;
+                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES:
+                    Pref.setPref_will_create_initial_tables(this, true);
+                break;
             }
-            break;
         }
         //normally, will go to _resume
         recreate();

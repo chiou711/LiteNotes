@@ -64,7 +64,7 @@ public class Import_webAct extends AppCompatActivity
                 ActivityCompat.requestPermissions(this,
                                                   new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                                                Manifest.permission.READ_EXTERNAL_STORAGE},
-                                                  Util.PERMISSIONS_REQUEST_STORAGE);
+                                                  Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
             }
             else
                 doCreate();
@@ -183,7 +183,7 @@ public class Import_webAct extends AppCompatActivity
         System.out.println("grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_STORAGE:
+            case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
             {
                 // If request is cancelled, the result arrays are empty.
                 if ( (grantResults.length > 0) &&

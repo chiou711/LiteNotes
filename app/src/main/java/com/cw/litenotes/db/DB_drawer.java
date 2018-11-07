@@ -37,7 +37,7 @@ public class DB_drawer
 
     private Context mContext = null;
     private static DatabaseHelper mDbHelper ;
-    static SQLiteDatabase mSqlDb;
+    private SQLiteDatabase mSqlDb;
 
     // Table name format: Drawer
     static String DB_DRAWER_TABLE_NAME = "Drawer";

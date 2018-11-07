@@ -33,7 +33,7 @@ public class DB_folder
 
     private Context mContext = null;
     private static DatabaseHelper mDbHelper ;
-    static SQLiteDatabase mSqlDb;
+    public SQLiteDatabase mSqlDb;
 
 	// Table name format: Folder1
 	private static String DB_FOLDER_TABLE_PREFIX = "Folder";
@@ -177,7 +177,7 @@ public class DB_folder
     }
 
     // insert page with SqlDb parameter
-    long insertPage(SQLiteDatabase sqlDb, String intoTable, String title, long ntId, int style)
+    public long insertPage(SQLiteDatabase sqlDb, String intoTable, String title, long ntId, int style)
     {
         Date now = new Date();
         ContentValues args = new ContentValues();
