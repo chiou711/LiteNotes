@@ -173,9 +173,9 @@ public class Import_fileView extends Fragment
         filePath = arguments.getString("KEY_FILE_PATH");
     }
 
-    public static void createDefaultTables(Activity act,String fileName)
+    public static void createDefaultContent(Activity act, String fileName)
     {
-		System.out.println("Import_fileView / _createDefaultTables / fileName = " + fileName);
+		System.out.println("Import_fileView / _createDefaultContent / fileName = " + fileName);
 
 		TabsHost.setLastPageTableId(0);
 

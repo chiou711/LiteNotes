@@ -74,7 +74,7 @@ public class Define {
     /***
      *  With default content by XML file
      */
-    public static boolean WITH_DEFAULT_CONTENT = false; //true; //false;
+    public static boolean WITH_DEFAULT_CONTENT = true; //true; //false;
 
     /**
      * With initial tables: table count
@@ -82,8 +82,8 @@ public class Define {
      * - page count: 1
      */
     // initial table count
-    public static int INITIAL_FOLDERS_COUNT = 3;  // Folder1, Folder2
-    public static int INITIAL_PAGES_COUNT = 4;// Page1_1
+    public static int INITIAL_FOLDERS_COUNT = 2;  // Folder1, Folder2
+    public static int INITIAL_PAGES_COUNT = 1;// Page1_1
 
     /***************************************************************************
      * Enable AdMob at page bottom

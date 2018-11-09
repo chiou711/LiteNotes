@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import com.cw.litenotes.db.DB_drawer;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.db.DB_folder;
 import com.cw.litenotes.db.DB_page;
@@ -45,13 +46,14 @@ class ParseXmlToDB {
     String fileBody = "";
     private String strSplitter;
     private boolean mEnableInsertDB = true;
-   
+    int folderTableId;
+
     ParseXmlToDB(FileInputStream fileInputStream, Context context)
     {
         mContext = context;
         this.fileInputStream = fileInputStream;
 
-        int folderTableId = Pref.getPref_focusView_folder_tableId(mContext);
+        folderTableId = Pref.getPref_focusView_folder_tableId(mContext);
         mDb_folder = new DB_folder(MainAct.mAct, folderTableId);
 
         mDb_page = new DB_page(MainAct.mAct,TabsHost.getCurrentPageTableId());
@@ -112,7 +114,26 @@ class ParseXmlToDB {
                     break;
 
                     case XmlPullParser.END_TAG:
-                        if(name.equals("page_name"))
+                        if(name.equals("folder_name"))
+                        {
+                            String folderName = text.trim();
+                            if(mEnableInsertDB)
+                            {
+                                // insert folder
+                                DB_drawer dB_drawer = new DB_drawer(MainAct.mAct);
+                                dB_drawer.insertFolder(folderTableId, folderName, true); // Note: must set false for DB creation stage
+                                dB_drawer.insertFolderTable(folderTableId, true);
+
+                                Pref.setPref_focusView_folder_tableId(MainAct.mAct,folderTableId);
+                                DB_folder.setFocusFolder_tableId(folderTableId);
+                                TabsHost.setLastPageTableId(0);
+
+                                mDb_folder = new DB_folder(MainAct.mAct, folderTableId);
+                                folderTableId++;
+                            }
+                            fileBody = fileBody.concat(Util.NEW_LINE + "*** " + "Folder:" + " " + folderName + " ***");
+                        }
+                        else if(name.equals("page_name"))
                         {
                             pageName = text.trim();
                             if(mEnableInsertDB)

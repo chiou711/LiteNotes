@@ -172,7 +172,7 @@ public class FolderUi
                 db_drawer.insertFolder(newTableId, folderTitle,true );
 
                 // insert folder table
-                db_drawer.insertFolderTable(db_drawer,newTableId, true);
+                db_drawer.insertFolderTable(newTableId, true);
 
                 // insert initial page table after Add new folder
                 if(Define.INITIAL_PAGES_COUNT > 0)

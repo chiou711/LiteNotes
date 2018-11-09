@@ -100,10 +100,10 @@ public class DB_drawer
 	}
 
     // insert folder table
-    public void insertFolderTable(DB_drawer dbDrawer, int id, boolean enDbOpenClose)
+    public void insertFolderTable(int id, boolean enDbOpenClose)
     {
     	if(enDbOpenClose)
-            dbDrawer.open();
+            this.open();
 
     	// table for folder
 		String tableCreated = DB_FOLDER_TABLE_PREFIX.concat(String.valueOf(id));
@@ -116,7 +116,7 @@ public class DB_drawer
         mSqlDb.execSQL(DB_CREATE);
 
 		if(enDbOpenClose)
-            dbDrawer.close();
+            this.close();
     }
 
     // delete folder table

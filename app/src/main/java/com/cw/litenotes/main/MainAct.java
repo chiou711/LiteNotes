@@ -384,57 +384,34 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      */
     void createDefaultContent()
     {
+        // create asset files
+        // default image
+        String imageFileName = "local.jpg";
+        Util.createAssetsFile(this, imageFileName);
+
+        // default video
+        String videoFileName = "local.mp4";
+        Util.createAssetsFile(this, videoFileName);
+
+        // default audio
+        String audioFileName = "local.mp3";
+        Util.createAssetsFile(this, audioFileName);
+
+        // will create database first
         DB_drawer dB_drawer = new DB_drawer(this);
 
-        // default XML files count
-        int xmlFilesCount = 2;
-        for (int pos = 0; pos < xmlFilesCount; pos++)
-        {
-            int id = pos+1;
-            // insert folder
-            String folderTitle = getResources().getString(R.string.default_folder_name).concat(String.valueOf(id));
-            dB_drawer.insertFolder(id, folderTitle, true); // Note: must set false for DB creation stage
-            dB_drawer.insertFolderTable(dB_drawer, id, true);
+        String fileName = "default.xml";
+        Import_fileView.createDefaultContent(this, fileName);//create default1.xml default2.xml
 
-            // set focus folder
-            FolderUi.setFocus_folderPos(pos);
-            int folderTableId = dB_drawer.getFolderTableId(pos, true);
-            Pref.setPref_focusView_folder_tableId(this, folderTableId);
-            DB_folder.setFocusFolder_tableId(folderTableId);
+        //set default position to 0
+        int folderTableId = dB_drawer.getFolderTableId(0, true);
+        Pref.setPref_focusView_folder_tableId(this, folderTableId);
+        DB_folder.setFocusFolder_tableId(folderTableId);
 
-            // create default table
-            String fileName = "default" + id + ".xml";
-            Import_fileView.createDefaultTables(this, fileName);//create default1.xml default2.xml
-
-            // create asset files
-            if (pos == 0) {
-                // add default image
-                String imageFileName = "local" + id + ".jpg";
-                Util.createAssetsFile(this, imageFileName);
-
-                // add default video
-                String videoFileName = "local" + id + ".mp4";
-                Util.createAssetsFile(this, videoFileName);
-
-                // add default audio
-                String audioFileName = "local" + id + ".mp3";
-                Util.createAssetsFile(this, audioFileName);
-            }
-
-            // last step
-            if (pos == (xmlFilesCount - 1)) {
-                //set default position to 0
-                folderTableId = dB_drawer.getFolderTableId(0, true);
-                Pref.setPref_focusView_folder_tableId(this, folderTableId);
-                DB_folder.setFocusFolder_tableId(folderTableId);
-
-                // already has preferred tables
-                Pref.setPref_will_create_default_content(this, false);
-                //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
-                recreate();
-                break;
-            }
-        }
+        // already has preferred tables
+        Pref.setPref_will_create_default_content(this, false);
+        //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
+        recreate();
     }
 
     /**
@@ -450,7 +427,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             System.out.println("MainAct / _createInitialTables / folder id = " + i);
             String folderTitle = getResources().getString(R.string.default_folder_name).concat(String.valueOf(i));
             dB_drawer.insertFolder(i, folderTitle, true); // Note: must set false for DB creation stage
-            dB_drawer.insertFolderTable(dB_drawer, i, true);
+            dB_drawer.insertFolderTable( i, true);
 
             // Create initial page tables
             if(Define.INITIAL_PAGES_COUNT > 0)
