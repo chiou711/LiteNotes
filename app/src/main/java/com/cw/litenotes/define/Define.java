@@ -75,6 +75,10 @@ public class Define {
      *  With default content by XML file
      */
     public static boolean WITH_DEFAULT_CONTENT = true; //true; //false;
+    // by downloaded XML file
+    public static boolean DEFAULT_CONTENT_BY_DOWNLOAD = false; //true; //false;
+    // by assets XML file
+    public static boolean DEFAULT_CONTENT_BY_ASSETS = !DEFAULT_CONTENT_BY_DOWNLOAD;
 
     /**
      * With initial tables: table count
@@ -99,21 +103,6 @@ public class Define {
     // default style
     public static int STYLE_DEFAULT = 1;
     public static int STYLE_PREFER = 2;
-
-    public static String getFolderTitle(Activity act, Integer i)
-    {
-        String title = null;
-        if(Define.WITH_DEFAULT_CONTENT) {
-            if (i == 0)
-                title = act.getResources().getString(R.string.prefer_folder_name_local);
-            else if (i == 1)
-                title = act.getResources().getString(R.string.prefer_folder_name_web);
-        }
-        else {
-            title = act.getResources().getString(R.string.default_folder_name).concat(String.valueOf(i+1));
-        }
-        return title;
-    }
 
     public static String getTabTitle(Context context, Integer Id)
     {

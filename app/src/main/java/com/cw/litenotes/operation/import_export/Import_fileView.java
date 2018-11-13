@@ -173,17 +173,18 @@ public class Import_fileView extends Fragment
         filePath = arguments.getString("KEY_FILE_PATH");
     }
 
-    public static void createDefaultContent(Activity act, String fileName)
+    // Import default content by XML file
+    public static void importDefaultContentByXml(Activity act, File xmlFile)
     {
-		System.out.println("Import_fileView / _createDefaultContent / fileName = " + fileName);
+		System.out.println("Import_fileView / _importDefaultContentByXml / xmlFileName = " + xmlFile.getName());
 
 		TabsHost.setLastPageTableId(0);
 
         FileInputStream fileInputStream = null;
-        File assetsFile = Util.createAssetsFile(act,fileName);
+
         try
         {
-            fileInputStream = new FileInputStream(assetsFile);
+            fileInputStream = new FileInputStream(xmlFile);
         }
         catch (FileNotFoundException e)
         {

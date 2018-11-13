@@ -16,6 +16,7 @@
 
 package com.cw.litenotes.main;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -63,12 +64,15 @@ import com.mobeta.android.dslv.DragSortListView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.StrictMode;
@@ -236,6 +240,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     // Do major create operation
     void doCreate(Bundle savedInstanceState)
     {
+        System.out.println("MainAct / _doCreate");
+
         if(Define.WITH_DEFAULT_CONTENT) {
             if(Pref.getPref_will_create_default_content(this))
                 createDefaultContent();
@@ -384,24 +390,44 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      */
     void createDefaultContent()
     {
-        // create asset files
-        // default image
-        String imageFileName = "local.jpg";
-        Util.createAssetsFile(this, imageFileName);
+        System.out.println("MainAct / _createDefaultContent");
 
-        // default video
-        String videoFileName = "local.mp4";
-        Util.createAssetsFile(this, videoFileName);
-
-        // default audio
-        String audioFileName = "local.mp3";
-        Util.createAssetsFile(this, audioFileName);
-
+        String fileName;
+        File xmlFile = null;
         // will create database first
         DB_drawer dB_drawer = new DB_drawer(this);
 
-        String fileName = "default.xml";
-        Import_fileView.createDefaultContent(this, fileName);//create default1.xml default2.xml
+        // create asset files
+        if(Define.DEFAULT_CONTENT_BY_ASSETS) {
+            // default image
+            String imageFileName = "local.jpg";
+            Util.createAssetsFile(this, imageFileName);
+
+            // default video
+            String videoFileName = "local.mp4";
+            Util.createAssetsFile(this, videoFileName);
+
+            // default audio
+            String audioFileName = "local.mp3";
+            Util.createAssetsFile(this, audioFileName);
+
+            fileName = "default.xml";
+
+            // By assets file
+            xmlFile = Util.createAssetsFile(this,fileName);
+
+        } else if(Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
+            fileName = "default_content.xml";
+            // By downloaded file
+            String dirString = Environment.getExternalStorageDirectory().toString() +
+                    "/" +
+                    Util.getStorageDirName(MainAct.mAct);
+            File storageRoot = new File(dirString);
+            xmlFile = new File(storageRoot, fileName);
+        }
+
+        // import content
+        Import_fileView.importDefaultContentByXml(this, xmlFile);
 
         //set default position to 0
         int folderTableId = dB_drawer.getFolderTableId(0, true);
@@ -537,11 +563,18 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             switch (requestCode)
             {
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
+                    if(Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
+                        String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1LzQ2FRCYygejiZFZe-RRYas12nn5Jefl&export=download";
+                        String targetUrl = "file://" + "/storage/emulated/0/LiteNotes" + "/default_content.xml";
+                        downloadXmlFile(srcUrl,targetUrl);
+                    }
                     Pref.setPref_will_create_default_content(this, true);
                 break;
+
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
                     Pref.setPref_will_create_default_content(this, false);
                 break;
+
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES:
                     Pref.setPref_will_create_initial_tables(this, true);
                 break;
@@ -549,6 +582,113 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
         //normally, will go to _resume
         recreate();
+    }
+
+    //  Download XML file from Google drive
+    void downloadXmlFile(String srcUrl,String targetUrl)
+    {
+        DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(srcUrl);
+
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setTitle("LiteNotes download");
+        request.setDescription("Downloading");
+//                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+//                    request.setVisibleInDownloadsUi(true);
+        request.setDestinationUri(Uri.parse(targetUrl));
+
+        downloadmanager.enqueue(request);
+
+        String dirString = Environment.getExternalStorageDirectory().toString() +
+                "/" +
+                Util.getStorageDirName(MainAct.mAct);
+        File storageRoot = new File(dirString);
+        File downloadFile = new File(storageRoot, "default_content.xml");
+
+
+        while(!downloadFile.exists())
+        {
+            System.out.println("MainAct / _onRequestPermissionsResult / downloading ! Waiting...");
+            //todo Add time out
+        }
+
+        ///
+        // download txt file from Web site
+//                    Thread thread = new Thread(new Runnable()
+//                    {
+//                        @Override
+//                        public void run()
+//                        {
+//                            try {
+//                                //cf https://www.sample-videos.com/download-sample-text-file.php
+//                                URL url = new URL("https://www.sample-videos.com/text/Sample-text-file-10kb.txt");
+//
+//                                //create https connection
+//                                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+//                                urlConnection.setRequestMethod("GET");
+//                                urlConnection.setDoOutput(true);
+//
+//                                //connect
+//                                urlConnection.connect();
+//
+//                                //output path
+//                                String dirString = Environment.getExternalStorageDirectory().toString() +
+//                                        "/" +
+//                                        Util.getStorageDirName(MainAct.mAct);
+//
+//                                File storageRoot = new File(dirString);
+//                                File file = new File(storageRoot, "default_content.xml");
+//
+//                                FileOutputStream fileOutput = null;
+//                                fileOutput = new FileOutputStream(file);
+//
+//                                // input path
+//                                InputStream inputStream = null;
+//                                inputStream = urlConnection.getInputStream();
+//
+//                                int totalSize = urlConnection.getContentLength();
+//                                int downloadedSize = 0;
+//
+//                                //create buffer
+//                                byte[] buffer = new byte[1024];
+//                                int bufferLength = 0;
+//                                bufferLength = inputStream.read(buffer);
+//
+//                                while ( bufferLength  > 0 )
+//                                {
+//                                    // write
+//                                    try {
+//                                        fileOutput.write(buffer, 0, bufferLength);
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
+//
+//                                    downloadedSize += bufferLength;
+//
+//                                    // progress
+//                                    int progress=(int)(downloadedSize*100/totalSize);
+//
+//                                    try {
+//                                        bufferLength = inputStream.read(buffer);
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                //close
+//                                fileOutput.close();
+//
+//                                while(!file.exists() || (file.length() == 0) )
+//                                {
+//                                    System.out.println("MainAct / _onRequestPermissionsResult / downloading ! Waiting...");
+//                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                    thread.start();
+        ///
     }
 
     @Override
