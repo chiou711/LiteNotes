@@ -76,7 +76,7 @@ public class Define {
      */
     public static boolean WITH_DEFAULT_CONTENT = true; //true; //false;
     // by downloaded XML file
-    public static boolean DEFAULT_CONTENT_BY_DOWNLOAD = false; //true; //false;
+    public static boolean DEFAULT_CONTENT_BY_DOWNLOAD = true; //true; //false;
     // by assets XML file
     public static boolean DEFAULT_CONTENT_BY_ASSETS = !DEFAULT_CONTENT_BY_DOWNLOAD;
 

@@ -47,6 +47,7 @@ import com.cw.litenotes.folder.FolderUi;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.note.Note;
 import com.cw.litenotes.note.Note_edit;
+import com.cw.litenotes.note.Note_editDrawing;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.AudioPlayer_page;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
@@ -69,6 +70,7 @@ import com.cw.litenotes.util.video.UtilVideo;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_AUDIO_URI;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_BODY;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_CREATED;
+import static com.cw.litenotes.db.DB_page.KEY_NOTE_DRAWING_URI;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.litenotes.db.DB_page.KEY_NOTE_PICTURE_URI;
@@ -211,19 +213,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String strBody = null;
         String pictureUri = null;
         String audioUri = null;
+        String drawingUri = null;
         Long timeCreated = null;
         linkUri = null;
         int marking = 0;
-
-        if(cursor.moveToPosition(position)) {
-            strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
-            strBody = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_BODY));
-            pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            audioUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_AUDIO_URI));
-            linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
-            marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
-            timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
-        }
 
 		SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("show_note_attribute", 0);
 
@@ -233,6 +226,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
             audioUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_AUDIO_URI));
             linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
+            drawingUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_DRAWING_URI));
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
             timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
         }
@@ -392,6 +386,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		{
 			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";
 		}
+		else if(UtilImage.hasImageExtension(drawingUri, mAct ))
+            pictureUri = drawingUri;
 
 		// case 1: show thumb nail if picture Uri exists
 		if(UtilImage.hasImageExtension(pictureUri, mAct ) ||
@@ -597,18 +593,28 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         viewHolder.btnEditNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mAct, Note_edit.class);
                 DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
                 Long rowId = db_page.getNoteId(position,true);
-                i.putExtra("list_view_position", position);
-                i.putExtra(DB_page.KEY_NOTE_ID, rowId);
-                i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
-                mAct.startActivity(i);            }
+
+                String drawingUri = db_page.getNoteDrawingUri_byId(rowId);
+                if(UtilImage.hasImageExtension(drawingUri,mAct))
+                {
+                    Intent i = new Intent(mAct, Note_editDrawing.class);
+                    mAct.startActivity(i);
+                }
+                else {
+                    Intent i = new Intent(mAct, Note_edit.class);
+                    i.putExtra("list_view_position", position);
+                    i.putExtra(DB_page.KEY_NOTE_ID, rowId);
+                    i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
+                    i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
+                    i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
+                    i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
+                    i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
+                    i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
+                    mAct.startActivity(i);
+                }
+            }
         });
 
         // on play audio

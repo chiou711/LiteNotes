@@ -46,7 +46,7 @@ public class DB_page
     public static final String KEY_NOTE_MARKING = "note_marking";
     public static final String KEY_NOTE_PICTURE_URI = "note_picture_uri";
     public static final String KEY_NOTE_AUDIO_URI = "note_audio_uri";
-    static final String KEY_NOTE_DRAWING_URI = "note_drawing_uri";
+    public static final String KEY_NOTE_DRAWING_URI = "note_drawing_uri";
     public static final String KEY_NOTE_LINK_URI = "note_link_uri";
     public static final String KEY_NOTE_CREATED = "note_created";
 
@@ -154,7 +154,7 @@ public class DB_page
           KEY_NOTE_TITLE,
           KEY_NOTE_PICTURE_URI,
           KEY_NOTE_AUDIO_URI,
-          KEY_NOTE_DRAWING_URI,
+		  KEY_NOTE_DRAWING_URI,
           KEY_NOTE_LINK_URI,
           KEY_NOTE_BODY,
           KEY_NOTE_MARKING,
@@ -241,7 +241,7 @@ public class DB_page
 				  								  KEY_NOTE_TITLE,
 				  								  KEY_NOTE_PICTURE_URI,
 				  								  KEY_NOTE_AUDIO_URI,
-				  								  KEY_NOTE_DRAWING_URI,
+												  KEY_NOTE_DRAWING_URI,
 				  								  KEY_NOTE_LINK_URI,
         										  KEY_NOTE_BODY,
         										  KEY_NOTE_MARKING,

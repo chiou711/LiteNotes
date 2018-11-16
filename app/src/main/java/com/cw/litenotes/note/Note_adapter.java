@@ -240,7 +240,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
     {
 		String linkUri = db_page.getNoteLinkUri(position,true);
 		String pictureUri = db_page.getNotePictureUri(position,true);
-    	String audioUri = db_page.getNoteAudioUri(position,true);
+		String audioUri = db_page.getNoteAudioUri(position,true);
+		String drawingUri = db_page.getNoteDrawingUri(position,true);
 
     	// Check if Uri is for YouTube
     	if(Util.isEmptyString(pictureUri) && Util.isYouTubeLink(linkUri) )
@@ -248,6 +249,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";//??? how to get this jpg for a playlist
 			System.out.println("Note_adapter / _showPictureView / YouTube pictureUri = " + pictureUri);
 		}
+		else if(UtilImage.hasImageExtension(drawingUri, act))
+			pictureUri = drawingUri;
 
         // show image view
   		if( UtilImage.hasImageExtension(pictureUri, act)||

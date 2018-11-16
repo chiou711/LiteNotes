@@ -427,12 +427,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         // import content
-        Import_fileView.importDefaultContentByXml(this, xmlFile);
+        if(xmlFile.exists()) {
+            Import_fileView.importDefaultContentByXml(this, xmlFile);
 
-        //set default position to 0
-        int folderTableId = dB_drawer.getFolderTableId(0, true);
-        Pref.setPref_focusView_folder_tableId(this, folderTableId);
-        DB_folder.setFocusFolder_tableId(folderTableId);
+            //set default position to 0
+            int folderTableId = dB_drawer.getFolderTableId(0, true);
+            Pref.setPref_focusView_folder_tableId(this, folderTableId);
+            DB_folder.setFocusFolder_tableId(folderTableId);
+        }
 
         // already has preferred tables
         Pref.setPref_will_create_default_content(this, false);
@@ -564,9 +566,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             {
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
                     if(Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
-                        String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1LzQ2FRCYygejiZFZe-RRYas12nn5Jefl&export=download";
-                        String targetUrl = "file://" + "/storage/emulated/0/LiteNotes" + "/default_content.xml";
-                        downloadXmlFile(srcUrl,targetUrl);
+                        downloadXmlFile();
                     }
                     Pref.setPref_will_create_default_content(this, true);
                 break;
@@ -585,8 +585,21 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     }
 
     //  Download XML file from Google drive
-    void downloadXmlFile(String srcUrl,String targetUrl)
+    void downloadXmlFile()
     {
+
+        // 英文耐聽.xml
+        //String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1LzQ2FRCYygejiZFZe-RRYas12nn5Jefl&export=download";
+
+        // 英文老歌.xml
+        // String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1Ax9GRgr4QeHQOUxSWsGadI9_A9fziuZ-&export=download";
+
+        // LiteNotes_defaultContent.xml
+        // https://drive.google.com/open?id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF
+        String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
+
+        String targetUrl = "file://" + "/storage/emulated/0/LiteNotes" + "/default_content.xml";
+
         DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(srcUrl);
 
@@ -605,11 +618,17 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         File storageRoot = new File(dirString);
         File downloadFile = new File(storageRoot, "default_content.xml");
 
-
-        while(!downloadFile.exists())
+        // waiting until time out
+        int timeOutCount = 10;
+        while( (!downloadFile.exists()) && (timeOutCount !=0) )
         {
             System.out.println("MainAct / _onRequestPermissionsResult / downloading ! Waiting...");
-            //todo Add time out
+            try {
+                Thread.sleep(Util.oneSecond);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeOutCount--;
         }
 
         ///
@@ -1475,12 +1494,15 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         		{
         			if(dB_page.getNoteMarking(position,false) == 1)
         			{
-						String pictureUri = dB_page.getNotePictureUri(position,false);
+                        String pictureUri = dB_page.getNotePictureUri(position,false);
+                        String drawingUri = dB_page.getNoteDrawingUri(position,false);
 						String linkUri = dB_page.getNoteLinkUri(position,false);
 
                         // replace picture path
 						if(Util.isEmptyString(pictureUri) && UtilImage.hasImageExtension(linkUri,this))
                             pictureUri = linkUri;
+						else if(UtilImage.hasImageExtension(drawingUri,this))
+						    pictureUri = drawingUri;
 
                         String title = dB_folder.getCurrentPageTitle();
                         title = title.concat(" " + "(" + (position+1) + "/" + count + ")");

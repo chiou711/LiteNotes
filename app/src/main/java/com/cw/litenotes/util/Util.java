@@ -1776,8 +1776,9 @@ public class Util
                     !Util.isEmptyString(playListIdStr) )
             {
                 System.out.println("Util / _openLink_YouTube / playlist?list= ");
-				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, playListIdStr, false/*fullscreen*/, true/*finishOnEnd*/);
-//				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
+                //todo Can not apply -With options- to play list?
+//				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, playListIdStr, false/*fullscreen*/, true/*finishOnEnd*/);
+				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
             }
 
 			act.startActivityForResult(intent,YOUTUBE_LINK_INTENT);

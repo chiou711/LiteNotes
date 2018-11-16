@@ -178,6 +178,8 @@ public class Drawer {
                                     MainAct.mToolbar.setLogo(null);
                                 }
                             }
+
+                            FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
                         }
                     }
                };

@@ -158,6 +158,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         String noteTitle1;
         String notePictureUri1;
         String noteAudioUri1;
+        String noteDrawingUri1;
         String noteLinkUri1;
         String noteBodyString1;
         int markingIndex1;
@@ -165,6 +166,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         Long noteNumber2 ;
         String notePictureUri2;
         String noteAudioUri2;
+        String noteDrawingUri2;
         String noteLinkUri2;
         String noteTitle2;
         String noteBodyString2;
@@ -175,6 +177,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         noteNumber1 = dB_page.getNoteId(startPosition,false);
         noteTitle1 = dB_page.getNoteTitle(startPosition,false);
         notePictureUri1 = dB_page.getNotePictureUri(startPosition,false);
+        noteDrawingUri1 = dB_page.getNoteDrawingUri(startPosition,false);
         noteAudioUri1 = dB_page.getNoteAudioUri(startPosition,false);
         noteLinkUri1 = dB_page.getNoteLinkUri(startPosition,false);
         noteBodyString1 = dB_page.getNoteBody(startPosition,false);
@@ -185,6 +188,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         noteTitle2 = dB_page.getNoteTitle(endPosition,false);
         notePictureUri2 = dB_page.getNotePictureUri(endPosition,false);
         noteAudioUri2 = dB_page.getNoteAudioUri(endPosition,false);
+        noteDrawingUri2 = dB_page.getNoteDrawingUri(endPosition,false);
         noteLinkUri2 = dB_page.getNoteLinkUri(endPosition,false);
         noteBodyString2 = dB_page.getNoteBody(endPosition,false);
         markingIndex2 = dB_page.getNoteMarking(endPosition,false);
@@ -194,7 +198,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
                 noteTitle1,
                 notePictureUri1,
                 noteAudioUri1,
-                "",
+                noteDrawingUri1,
                 noteLinkUri1,
                 noteBodyString1,
                 markingIndex1,
@@ -204,7 +208,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
                 noteTitle2,
                 notePictureUri2,
                 noteAudioUri2,
-                "",
+                noteDrawingUri2,
                 noteLinkUri2,
                 noteBodyString2,
                 markingIndex2,

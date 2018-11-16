@@ -69,8 +69,9 @@ public class Add_note_option {
     private final static int ID_NEW_READY_VIDEO = 6;
     private final static int ID_NEW_YOUTUBE_LINK = 7;
     private final static int ID_NEW_WEB_LINK = 8;
-    private final static int ID_NEW_BACK = 9;
-    private final static int ID_NEW_SETTING = 10;
+    private final static int ID_NEW_DRAWING = 9;
+    private final static int ID_NEW_BACK = 10;
+    private final static int ID_NEW_SETTING = 11;
 
     public static void createSelection(AppCompatActivity act,boolean permitted)
     {
@@ -132,7 +133,13 @@ public class Add_note_option {
                 android.R.drawable.ic_menu_share,
                 R.string.note_web_link));
 
-        // Back
+        if(permitted) {
+            // drawing
+            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
+                    android.R.drawable.ic_menu_edit,
+                    R.string.note_drawing));
+        }
+            // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
                 R.drawable.ic_menu_back,
                 R.string.btn_Cancel));
@@ -276,6 +283,19 @@ public class Add_note_option {
             case ID_NEW_WEB_LINK:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
+                act.startActivity(intent);
+            }
+            break;
+
+            case ID_NEW_DRAWING:
+            {
+                Intent intent = new Intent(act, Note_addDrawing.class);
+
+                if(bTop)
+                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
+                else
+                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
+
                 act.startActivity(intent);
             }
             break;
