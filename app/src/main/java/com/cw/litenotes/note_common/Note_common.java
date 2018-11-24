@@ -235,7 +235,7 @@ public class Note_common {
 						Intent i = new Intent(act, Note_editDrawing.class);
 						i.putExtra("drawing_uri", drawingUriInDB);
 						i.putExtra("drawing_id",noteId);
-						act.startActivity(i);
+						act.startActivityForResult(i,Util.EDIT_DRAWING);
 					}
 				}
                 return false;

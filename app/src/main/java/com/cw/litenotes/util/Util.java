@@ -126,7 +126,8 @@ public class Util
     
     public static int ACTIVITY_TAKE_PICTURE = 3;
     public static int CHOOSER_SET_PICTURE = 4;
-    public static int CHOOSER_SET_AUDIO = 5;
+	public static int CHOOSER_SET_AUDIO = 5;
+	public static int EDIT_DRAWING = 6;
 
 	private int defaultBgClr;
 	private int defaultTextClr;

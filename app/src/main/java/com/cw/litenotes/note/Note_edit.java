@@ -688,7 +688,13 @@ public class Note_edit extends Activity
             setResult(RESULT_CANCELED, getIntent());
             enSaveDb = true;
             return; // must add this
-		}		
+		}
+
+		// edit drawing
+		if(requestCode == Util.EDIT_DRAWING)
+		{
+			recreate();
+		}
 	}
 	
 	// show audio file name
