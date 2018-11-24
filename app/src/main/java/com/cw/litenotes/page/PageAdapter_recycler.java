@@ -764,6 +764,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         String strNote = db_page.getNoteTitle(position,false);
         String strPictureUri = db_page.getNotePictureUri(position,false);
         String strAudioUri = db_page.getNoteAudioUri(position,false);
+        String strDrawingUri = db_page.getNoteDrawingUri(position,false);
         String strLinkUri = db_page.getNoteLinkUri(position,false);
         String strNoteBody = db_page.getNoteBody(position,false);
         Long idNote =  db_page.getNoteId(position,false);
@@ -771,12 +772,12 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         // toggle the marking
         if(db_page.getNoteMarking(position,false) == 0)
         {
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, "", strLinkUri, strNoteBody, 1, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 1, 0, false);
             marking = 1;
         }
         else
         {
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, "", strLinkUri, strNoteBody, 0, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 0, 0, false);
             marking = 0;
         }
         db_page.close();

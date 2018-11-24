@@ -569,6 +569,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                                         @Override
                                         public void onClick(DialogInterface dialog1, int which1){
                                             deletePage(tabPos, act);
+                                            FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
                                         }})
                                     .show();
                         }
