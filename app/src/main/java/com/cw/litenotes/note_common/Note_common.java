@@ -22,6 +22,7 @@ import com.cw.litenotes.db.DB_folder;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
+import com.cw.litenotes.note.Note_editDrawing;
 import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.image.TouchImageView;
 import com.cw.litenotes.util.image.UtilImage_bitmapLoader;
@@ -35,6 +36,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.view.MotionEvent;
@@ -55,6 +57,7 @@ public class Note_common {
 
 	public ImageView picImageView;
 	public String pictureUriInDB;
+	public String drawingUriInDB;
 	public String audioUriInDB;
 	public String oriPictureUri;
 	public String currPictureUri;
@@ -168,17 +171,19 @@ public class Note_common {
             			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
 
                 	System.out.println("Note_common / pictureUriInDB = " + pictureUriInDB);
-                	if(!Util.isEmptyString(pictureUriInDB))
+                	if( (!Util.isEmptyString(pictureUriInDB)) ||
+						(!Util.isEmptyString(drawingUriInDB))   )
                 	{
                 		bRemovePictureUri = false;
                 		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
 
                 		// check if pictureUri has scheme
-                		if(Util.isUriExisted(pictureUriInDB, act))
+                		if(Util.isUriExisted(pictureUriInDB, act) ||
+                           Util.isUriExisted(drawingUriInDB, act)	)
                 		{
 	                		if(Uri.parse(pictureUriInDB).isAbsolute())
 	                		{
-	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
+//	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
 	                			new UtilImage_bitmapLoader(enlargedImage,
                                                            pictureUriInDB,
                                                            progressBarExpand,
@@ -189,6 +194,19 @@ public class Note_common {
                                                            act);
 	                			bShowEnlargedImage = true;
 	                		}
+                            else if(Uri.parse(drawingUriInDB).isAbsolute())
+                            {
+//	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
+                                new UtilImage_bitmapLoader(enlargedImage,
+                                        drawingUriInDB,
+                                        progressBarExpand,
+//	                					                   (style % 2 == 1 ?
+//                                                            UilCommon.optionsForRounded_light:
+//                                                            UilCommon.optionsForRounded_dark),
+                                        UilCommon.optionsForFadeIn,
+                                        act);
+                                bShowEnlargedImage = true;
+                            }
 	                		else
 	                		{
 	                			System.out.println("pictureUriInDB is not Uri format");
@@ -209,8 +227,17 @@ public class Note_common {
         {
             @Override
             public boolean onLongClick(View view) {
-            	if(bEditPicture)
-            		openSetPictureDialog();
+            	if(bEditPicture) {
+					if(!Util.isEmptyString(pictureUriInDB) )
+						openSetPictureDialog();
+					else if(!Util.isEmptyString(drawingUriInDB))
+					{
+						Intent i = new Intent(act, Note_editDrawing.class);
+						i.putExtra("drawing_uri", drawingUriInDB);
+						i.putExtra("drawing_id",noteId);
+						act.startActivity(i);
+					}
+				}
                 return false;
             }
         });
@@ -401,15 +428,23 @@ public class Note_common {
 			populateFields_text(rowId);
 
     		// for picture block
-    		pictureUriInDB = dB.getNotePictureUri_byId(rowId);
+			pictureUriInDB = dB.getNotePictureUri_byId(rowId);
+			drawingUriInDB = dB.getNoteDrawingUri_byId(rowId);
 			System.out.println("populateFields_all / mPictureFileNameInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
-			if(!Util.isEmptyString(pictureUriInDB))
+			if( (!Util.isEmptyString(pictureUriInDB)) || (!Util.isEmptyString(drawingUriInDB)) )
 			{
 				int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
+
+				String thumbUri = "";
+				if(!Util.isEmptyString(pictureUriInDB) )
+					thumbUri = pictureUriInDB;
+				else if(!Util.isEmptyString(drawingUriInDB))
+					thumbUri = drawingUriInDB;
+
 				new UtilImage_bitmapLoader(picImageView,
-                                           pictureUriInDB, progressBar,
+						                   thumbUri, progressBar,
 //    					                   (style % 2 == 1 ?
 //                                            UilCommon.optionsForRounded_light:
 //                                            UilCommon.optionsForRounded_dark),
@@ -632,7 +667,8 @@ public class Note_common {
 	        	}
 	        	else if( Util.isEmptyString(title) &&
 	        			 Util.isEmptyString(body) &&
-			        	 Util.isEmptyString(pictureUri) &&
+ 						 Util.isEmptyString(pictureUri) &&
+						 Util.isEmptyString(drawingUri) &&
 			        	 Util.isEmptyString(audioUri) &&
 			        	 Util.isEmptyString(linkUri)         )
 	        	{

@@ -20,7 +20,7 @@
     <string name="note_audio">Audio</string>
     <string name="note_youtube_link">YouTube Link</string>
     <string name="note_web_link">Web Link</string>
-    <string name="note_drawing">Drawing</string>
+    <string name="note_drawing">Doodle</string>
     <string name="note_take_picture">Take Picture</string>
     <string name="note_take_picture_OK">finished</string>
     <string name="note_cancel_add_new">Cancel</string>
@@ -38,8 +38,9 @@
     <string name="add_new_start">Start adding note</string>
     <string name="add_new_stop">Stop adding note</string>
     <string name="add_new_file_error">Adding multiple files, please confirm your selection is a local file.</string>
+    <string name="add_drawing">Add doodle</string>
+    <string name="edit_drawing">Edit doodle</string>
     <string name="button_erase">Erase</string>
-    <string name="button_cancel">Cancel</string>
     <string name="button_set_color">Set Color</string>
     <string name="button_set_line_width">Set Line Width</string>
     <string name="label_alpha">Alpha</string>
@@ -51,11 +52,14 @@
     <string name="menuitem_erase">Erase</string>
     <string name="menuitem_line_width">Line Width</string>
     <string name="menuitem_save_image">Save Image</string>
+    <string name="menuitem_update_image">Update Image</string>
     <string name="message_erase">Erase the drawing?</string>
     <string name="message_error_saving">
        There was an error saving the image</string>
     <string name="message_saved">
        Your painting has been saved to the Gallery</string>
+    <string name="message_updated">
+       Your painting has been updated to the Gallery</string>
     <string name="title_color_dialog">Choose Color</string>
     <string name="title_line_width_dialog">Choose Line Width</string>
 </resources>

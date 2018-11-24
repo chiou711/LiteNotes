@@ -596,24 +596,17 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
                 Long rowId = db_page.getNoteId(position,true);
 
-                String drawingUri = db_page.getNoteDrawingUri_byId(rowId);
-                if(UtilImage.hasImageExtension(drawingUri,mAct))
-                {
-                    Intent i = new Intent(mAct, Note_editDrawing.class);
-                    mAct.startActivity(i);
-                }
-                else {
-                    Intent i = new Intent(mAct, Note_edit.class);
-                    i.putExtra("list_view_position", position);
-                    i.putExtra(DB_page.KEY_NOTE_ID, rowId);
-                    i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
-                    i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
-                    i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
-                    i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
-                    i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
-                    i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
-                    mAct.startActivity(i);
-                }
+                Intent i = new Intent(mAct, Note_edit.class);
+                i.putExtra("list_view_position", position);
+                i.putExtra(DB_page.KEY_NOTE_ID, rowId);
+                i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_DRAWING_URI , db_page.getNoteDrawingUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
+                mAct.startActivity(i);
             }
         });
 

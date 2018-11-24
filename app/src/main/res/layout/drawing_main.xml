@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cw.litenotes.note_add.Note_drawingView
+<com.cw.litenotes.note_common.Note_drawingView
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/doodleView"
    android:layout_width="match_parent"

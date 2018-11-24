@@ -28,6 +28,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
+import com.cw.litenotes.note_common.Note_drawingView;
 import com.cw.litenotes.page.Page_recycler;
 import com.cw.litenotes.util.Util;
 import com.cw.litenotes.util.preferences.Pref;
@@ -68,9 +69,12 @@ public class Note_addDrawing extends Activity
       super.onCreate(savedInstanceState);
       setContentView(R.layout.drawing_main); // inflate the layout
 
+      // mode: add drawing
+      Note_drawingView.drawing_mode = Note_drawingView.ADD_MODE;
+
       // get reference to the DoodleView
       drawingView = findViewById(R.id.doodleView);
-      
+
       // initialize acceleration values
       acceleration = 0.00f; 
       currentAcceleration = SensorManager.GRAVITY_EARTH;    
@@ -89,12 +93,12 @@ public class Note_addDrawing extends Activity
       dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
       if(savedInstanceState != null)
       {
-         System.out.println("Note_addAudio / noteId =  " + noteId);
+         System.out.println("Note_addDrawing / noteId =  " + noteId);
          if(noteId != null)
             drawingUriInDB = dB.getNoteAudioUri_byId(noteId);
       }
 
-      getActionBar().setTitle("Drawing");
+      getActionBar().setTitle(R.string.add_drawing);
 
    } // end method onCreate
 
@@ -187,7 +191,7 @@ public class Note_addDrawing extends Activity
                   ); // end call to setPositiveButton
                
                   // add Cancel Button
-                  builder.setNegativeButton(R.string.button_cancel,
+                  builder.setNegativeButton(R.string.note_cancel_add_new,
                      new DialogInterface.OnClickListener() 
                      {
                         public void onClick(DialogInterface dialog, int id) 
@@ -263,8 +267,7 @@ public class Note_addDrawing extends Activity
             drawingView.clear(); // clear drawingView
             return true; // consume the menu event
          case SAVE_MENU_ID:
-            //todo Add storage permission
-            String uriStr = drawingView.saveImage(this); // save the current images
+            String uriStr = drawingView.saveImage(); // save the current images
 
             dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
 

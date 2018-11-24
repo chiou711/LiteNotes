@@ -1,13 +1,14 @@
 // DoodleView.java
 // Main View for the Note_editDrawing app.
-package com.cw.litenotes.note_add;
+package com.cw.litenotes.note_common;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -21,9 +22,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cw.litenotes.R;
-import com.cw.litenotes.main.MainAct;
+import com.cw.litenotes.note.Note_editDrawing;
 import com.cw.litenotes.util.Util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -41,11 +43,19 @@ public class Note_drawingView extends View
    private HashMap<Integer, Path> pathMap; // current Paths being drawn
    private HashMap<Integer, Point> previousPointMap; // current Points
 
+    String filePath;
+    Context context;
+    Bitmap jpgBitmap;
+    Bitmap overlayBitmap;
+    public static int drawing_mode;
+    public static final int ADD_MODE = 1;
+    public static final int EDIT_MODE = 2;
+
    // DoodleView constructor initializes the DoodleView
    public Note_drawingView(Context context, AttributeSet attrs)
    {
       super(context, attrs); // pass context to View's constructor
-
+//      System.out.println("Note_drawingView / _constructor ");
       paintScreen = new Paint(); // used to display bitmap onto screen
 
       // set the initial display settings for the painted line
@@ -57,31 +67,50 @@ public class Note_drawingView extends View
       paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
       pathMap = new HashMap<Integer, Path>();
       previousPointMap = new HashMap<Integer, Point>();
+	  this.context = context;
    } // end DoodleView constructor
 
-   // Method onSizeChanged creates BitMap and Canvas after app displays
-   @Override
-   public void onSizeChanged(int w, int h, int oldW, int oldH)
-   {
-      bitmap = Bitmap.createBitmap(getWidth(), getHeight(), 
-         Bitmap.Config.ARGB_8888);
-      bitmapCanvas = new Canvas(bitmap);
-      bitmap.eraseColor(Color.WHITE); // erase the BitMap with white
-   } // end method onSizeChanged
-   
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+//        System.out.println("Note_drawingView / _onFinishInflate ");
+        if(drawing_mode == EDIT_MODE) {
+            filePath = Note_editDrawing.drawingUriInDB;
+            jpgBitmap = BitmapFactory.decodeFile(filePath.replace("file:///", ""));
+        }
+    }
+
+    // Method onSizeChanged creates BitMap and Canvas after app displays
+    @Override
+    public void onSizeChanged(int w, int h, int oldW, int oldH)
+    {
+//        System.out.println("Note_drawingView / _onSizeChanged ");
+        bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        bitmapCanvas = new Canvas(bitmap);
+        bitmap.eraseColor(Color.WHITE); // erase the BitMap with white
+
+        if(drawing_mode == EDIT_MODE) {
+            // draw overlay bitmap on canvas
+            overlayBitmap = overlay(bitmap, jpgBitmap);
+            bitmapCanvas.drawBitmap(overlayBitmap, 0, 0, paintScreen);
+        }
+    } // end method onSizeChanged
+
    // clear the painting
    public void clear()
    {
-      pathMap.clear(); // remove all paths
-      previousPointMap.clear(); // remove all previous points
-      bitmap.eraseColor(Color.WHITE); // clear the bitmap 
-      invalidate(); // refresh the screen
+//        System.out.println("Note_drawingView / _clear ");
+        pathMap.clear(); // remove all paths
+        previousPointMap.clear(); // remove all previous points
+        bitmap.eraseColor(Color.WHITE); // clear the bitmap
+        invalidate(); // refresh the screen
    } // end method clear
    
    // set the painted line's color
    public void setDrawingColor(int color) 
    {
-      paintLine.setColor(color);
+//        System.out.println("Note_drawingView / _setDrawingColor ");
+        paintLine.setColor(color);
    } // end method setDrawingColor
 
    // return the painted line's color
@@ -93,7 +122,8 @@ public class Note_drawingView extends View
    // set the painted line's width
    public void setLineWidth(int width) 
    {
-      paintLine.setStrokeWidth(width);
+//        System.out.println("Note_drawingView / _setLineWidth ");
+        paintLine.setStrokeWidth(width);
    } // end method setLineWidth
 
    // return the painted line's width
@@ -102,51 +132,69 @@ public class Note_drawingView extends View
       return (int) paintLine.getStrokeWidth();
    } // end method getLineWidth
 
-   // called each time this View is drawn
-   @Override
-   protected void onDraw(Canvas canvas) 
-   {
-      // draw the background screen
-      canvas.drawBitmap(bitmap, 0, 0, paintScreen);
+    @Override
+    public void onDrawForeground(Canvas canvas) {
+        super.onDrawForeground(canvas);
+//        System.out.println("Note_drawingView / _onDrawForeground ");
+    }
 
-      // for each path currently being drawn
-      for (Integer key : pathMap.keySet()) 
-         canvas.drawPath(pathMap.get(key), paintLine); // draw line
-   } // end method onDraw
+    // called each time this View is drawn
+    @Override
+    protected void onDraw(Canvas canvas)
+    {
+//        System.out.println("Note_drawingView / _onDraw ");
+        canvas.drawBitmap(bitmap, 0, 0, paintScreen);
+        // for each filePath currently being drawn
+        for (Integer key : pathMap.keySet())
+          canvas.drawPath(pathMap.get(key), paintLine); // draw line
+    } // end method onDraw
 
-   // handle touch event
-   @Override
-   public boolean onTouchEvent(MotionEvent event) 
-   {
-      // get the event type and the ID of the pointer that caused the event
-      int action = event.getActionMasked(); // event type 
-      int actionIndex = event.getActionIndex(); // pointer (i.e., finger)
-      
-      // determine which type of action the given MotionEvent 
-      // represents, then call the corresponding handling method
-      if (action == MotionEvent.ACTION_DOWN ||
-         action == MotionEvent.ACTION_POINTER_DOWN) 
-      {
-         touchStarted(event.getX(actionIndex), event.getY(actionIndex), 
-            event.getPointerId(actionIndex));
-      } // end if
-      else if (action == MotionEvent.ACTION_UP ||
-         action == MotionEvent.ACTION_POINTER_UP) 
-      {
-         touchEnded(event.getPointerId(actionIndex));
-      } // end else if
-      else 
-      {
-         touchMoved(event); 
-      } // end else
-      
-      invalidate(); // redraw
-      return true; // consume the touch event
-   } // end method onTouchEvent
+
+    // overlay bitmap
+    private Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
+        Bitmap bmOverlay = Bitmap.createBitmap(getWidth(), getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawBitmap(bmp2, new Matrix(), null);
+        return bmOverlay;
+    }
+
+    // handle touch event
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+//        System.out.println("Note_drawingView / _onTouchEvent ");
+        // get the event type and the ID of the pointer that caused the event
+        int action = event.getActionMasked(); // event type
+        int actionIndex = event.getActionIndex(); // pointer (i.e., finger)
+
+        // determine which type of action the given MotionEvent
+        // represents, then call the corresponding handling method
+        if (action == MotionEvent.ACTION_DOWN ||
+         action == MotionEvent.ACTION_POINTER_DOWN)
+        {
+            touchStarted(event.getX(actionIndex),
+                         event.getY(actionIndex),
+                         event.getPointerId(actionIndex));
+        } // end if
+        else if (action == MotionEvent.ACTION_UP ||
+         action == MotionEvent.ACTION_POINTER_UP)
+        {
+            touchEnded(event.getPointerId(actionIndex));
+        } // end else if
+        else
+        {
+            touchMoved(event);
+        } // end else
+
+        invalidate(); // redraw
+        return true; // consume the touch event
+    } // end method onTouchEvent
 
    // called when the user touches the screen
    private void touchStarted(float x, float y, int lineID) 
    {
+//      System.out.println("Note_drawingView / _touchStarted ");
       Path path; // used to store the path for the given touch id
       Point point; // used to store the last point in path
 
@@ -174,6 +222,7 @@ public class Note_drawingView extends View
    // called when the user drags along the screen
    private void touchMoved(MotionEvent event) 
    {
+//      System.out.println("Note_drawingView / _touchMoved ");
       // for each of the pointers in the given MotionEvent
       for (int i = 0; i < event.getPointerCount(); i++) 
       {
@@ -215,21 +264,56 @@ public class Note_drawingView extends View
    // called when the user finishes a touch
    private void touchEnded(int lineID) 
    {
+//      System.out.println("Note_drawingView / _touchEnded ");
       Path path = pathMap.get(lineID); // get the corresponding Path
       bitmapCanvas.drawPath(path, paintLine); // draw to bitmapCanvas
       path.reset(); // reset the Path
    } // end method touch_ended
 
-   // save the current image to the Gallery
-   public String saveImage(Activity act)
+   // update the current image to the Gallery
+   public void updateImage()
    {
+//        System.out.println("Note_drawingView / _updateImage / filePath = " + filePath);
+        try
+        {
+            // get an OutputStream to uri
+            OutputStream outStream = getContext().getContentResolver().openOutputStream(Uri.parse(filePath));
 
-      String dirString = Environment.getExternalStorageDirectory().toString() +
-               "/" +
-               Util.getStorageDirName(MainAct.mAct);
+            // copy the bitmap to the OutputStream
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 
-      // use "getStorageDirName" followed by current time as the image file name
-//       String fileName = Util.getStorageDirName(act) + System.currentTimeMillis();
+            // flush and close the OutputStream
+            outStream.flush(); // empty the buffer
+            outStream.close(); // close the stream
+
+            // display a message indicating that the image was saved
+            Toast message = Toast.makeText(getContext(),
+            R.string.message_updated, Toast.LENGTH_SHORT);
+            message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
+            message.getYOffset() / 2);
+            message.show(); // display the Toast
+        } // end try
+        catch (IOException ex)
+        {
+            // display a message indicating that the image was saved
+            Toast message = Toast.makeText(getContext(),
+                 R.string.message_error_saving, Toast.LENGTH_SHORT);
+            message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
+                 message.getYOffset() / 2);
+            message.show(); // display the Toast
+        } // end catch
+    } // end method updateImage
+
+
+   // save the current image to the Gallery
+   public String saveImage()
+   {
+       // First, create a sub-directory named App name under DCIM if needed
+       File imageDir = Util.getPicturesDir(context);
+       if(!imageDir.isDirectory())
+           imageDir.mkdir();
+
+       String dirString = imageDir.getPath();
        String fileName = "Draw" + Util.getCurrentTimeString();
 
       // create a ContentValues and configure new image's data
@@ -266,11 +350,11 @@ public class Note_drawingView extends View
          outStream.close(); // close the stream
 
          // display a message indicating that the image was saved
-//         Toast message = Toast.makeText(getContext(),
-//            R.string.message_saved, Toast.LENGTH_SHORT);
-//         message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
-//            message.getYOffset() / 2);
-//         message.show(); // display the Toast
+         Toast message = Toast.makeText(getContext(),
+            R.string.message_saved, Toast.LENGTH_SHORT);
+         message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
+            message.getYOffset() / 2);
+         message.show(); // display the Toast
       } // end try
       catch (IOException ex) 
       {

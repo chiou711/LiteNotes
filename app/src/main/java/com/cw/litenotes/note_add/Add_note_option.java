@@ -136,7 +136,7 @@ public class Add_note_option {
         if(permitted) {
             // drawing
             addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
-                    android.R.drawable.ic_menu_edit,
+                    R.drawable.ic_menu_draw,
                     R.string.note_drawing));
         }
             // Back
