@@ -306,6 +306,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         // show audio highlight if audio is not at Stop
         if( PageUi.isAudioPlayingPage() &&
+            (marking !=0) &&
             (position == Audio_manager.mAudioPos)  &&
             (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
             (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE) 	)

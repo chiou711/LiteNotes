@@ -90,6 +90,7 @@ public class AudioPlayer_page
 			if( (Audio_manager.getAudioFilesCount() == 0) &&
 				(Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)        )
 			{
+                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
 				Toast.makeText(act,R.string.audio_file_not_found,Toast.LENGTH_SHORT).show();
 			}
 			else
@@ -112,6 +113,7 @@ public class AudioPlayer_page
                 }
                 else
                 {
+                    Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
                     Toast.makeText(act,R.string.audio_file_not_found,Toast.LENGTH_SHORT).show();
                 }
 			}
