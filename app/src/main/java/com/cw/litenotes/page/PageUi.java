@@ -20,7 +20,6 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -45,12 +44,11 @@ import com.cw.litenotes.define.Define;
 import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.TouchableEditText;
 import com.cw.litenotes.util.Util;
-import com.cw.litenotes.util.image.UtilImage;
 import com.cw.litenotes.util.preferences.Pref;
 
 import java.lang.reflect.Field;
 
-
+// implement lambda expressions
 public class PageUi
 {
 	public PageUi(){}
@@ -64,26 +62,28 @@ public class PageUi
 		// set color
 		final Builder builder = new Builder(act);
 		builder.setTitle(R.string.edit_page_color_title)
-	    	   .setPositiveButton(R.string.edit_page_button_ignore, new OnClickListener(){
-	            	@Override
-	                public void onClick(DialogInterface dialog, int which)
-	                {/*cancel*/}
-	            	});
+	    	   .setPositiveButton(R.string.edit_page_button_ignore, (DialogInterface dialog, int which) ->
+	                 {/*cancel*/}
+	            	);
 		// inflate select style layout
 		LayoutInflater mInflater= (LayoutInflater) act.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = mInflater.inflate(R.layout.select_style, null);
-		RadioGroup RG_view = (RadioGroup)view.findViewById(R.id.radioGroup1);
 
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio0),0);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio1),1);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio2),2);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio3),3);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio4),4);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio5),5);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio6),6);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio7),7);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio8),8);
-		Util.setButtonColor((RadioButton)RG_view.findViewById(R.id.radio9),9);
+		if(mInflater == null)
+		    return;
+
+		View view = mInflater.inflate(R.layout.select_style, null);
+		RadioGroup RG_view = view.findViewById(R.id.radioGroup1);
+
+		Util.setButtonColor(RG_view.findViewById(R.id.radio0),0);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio1),1);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio2),2);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio3),3);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio4),4);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio5),5);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio6),6);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio7),7);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio8),8);
+		Util.setButtonColor(RG_view.findViewById(R.id.radio9),9);
 
 		// set current selection
 		for(int i=0;i< Util.getStyleCount();i++)
@@ -105,10 +105,7 @@ public class PageUi
 		final AlertDialog dlg = builder.create();
 	    dlg.show();
 
-		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener()
-		{
-			@Override
-			public void onCheckedChanged(RadioGroup radioGroup, int id) {
+		radioGroup.setOnCheckedChangeListener( (anyName, id) -> {
 				DB_folder db = new DB_folder(MainAct.mAct,DB_folder.getFocusFolder_tableId());
 				int style = radioGroup.indexOfChild(radioGroup.findViewById(id));
                 int pos = TabsHost.getFocus_tabPos();
@@ -119,7 +116,7 @@ public class PageUi
                               true);
 	 			dlg.dismiss();
 				FolderUi.startTabsHostRun();
-		}});
+		});
 	}
 
 	final static int LEFTMOST = -1;
@@ -149,14 +146,11 @@ public class PageUi
 	    final AlertDialog dlg = builder.create();
 
         // set center for negative button
-        dlg.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button negativeButton = dlg.getButton(AlertDialog.BUTTON_NEUTRAL);
-                LinearLayout layoutView = (LinearLayout) negativeButton.getParent();
-                Space space= (Space) layoutView.getChildAt(1);
-                space.setVisibility(View.GONE);
-            }
+        dlg.setOnShowListener( (DialogInterface dialog) -> {
+            Button negativeButton = dlg.getButton(AlertDialog.BUTTON_NEUTRAL);
+            LinearLayout layoutView = (LinearLayout) negativeButton.getParent();
+            Space space= (Space) layoutView.getChildAt(1);
+            space.setVisibility(View.GONE);
         });
 
 	    // disable dim background
@@ -164,100 +158,82 @@ public class PageUi
 		dlg.show();
 
 
-		final int dividerWidth = act.getResources().getDrawable(R.drawable.ic_tab_divider).getMinimumWidth();
-        final int screenWidth = UtilImage.getScreenWidth(act);
+//        inal int dividerWidth = act.getResources().getDrawable(R.drawable.ic_tab_divider).getMinimumWidth();
+//        final int screenWidth = UtilImage.getScreenWidth(act);
 
 		// Shift to left
-//		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
-		dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener()
-	    {   @Override
-	        public void onClick(View v)
-	        {
-	    		//change to OK
-//			    Button mButton=(Button)dlg.findViewById(android.R.id.button3);
-			    Button mButton=(Button)dlg.findViewById(android.R.id.button2);
-		        mButton.setText(R.string.btn_Finish);
-		        mButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_finish , 0, 0, 0);
-				DB_folder db = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
-			   int focus_tabPos = 	TabsHost.getFocus_tabPos();
-                if(getTabPositionState() != LEFTMOST)
-	    	    {
-					Pref.setPref_focusView_page_tableId(act, db.getPageTableId(focus_tabPos, true));
-	    	    	swapPage(focus_tabPos,
-							focus_tabPos -1);
+		dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener((View v) -> {
+			//change to OK
+			Button mButton=(Button)dlg.findViewById(android.R.id.button2);
+			mButton.setText(R.string.btn_Finish);
+			mButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_finish , 0, 0, 0);
+			DB_folder db = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
+		    int focus_tabPos = 	TabsHost.getFocus_tabPos();
+			if(getTabPositionState() != LEFTMOST)
+			{
+				Pref.setPref_focusView_page_tableId(act, db.getPageTableId(focus_tabPos, true));
+				swapPage(focus_tabPos,
+						focus_tabPos -1);
 
-                    // shift left when audio playing
-                    if(MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) {
-                        // target is playing index
-                        if (focus_tabPos == MainAct.mPlaying_pagePos)
-                            MainAct.mPlaying_pagePos--;
-                        // target is at right side of playing index
-                        else if ((focus_tabPos - MainAct.mPlaying_pagePos) == 1)
-                            MainAct.mPlaying_pagePos++;
-                    }
-                    FolderUi.startTabsHostRun();
-                    TabsHost.setFocus_tabPos(focus_tabPos-1);
-                    updateButtonState(dlg);
-	    	    }
-	       }
+				// shift left when audio playing
+				if(MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) {
+					// target is playing index
+					if (focus_tabPos == MainAct.mPlaying_pagePos)
+						MainAct.mPlaying_pagePos--;
+					// target is at right side of playing index
+					else if ((focus_tabPos - MainAct.mPlaying_pagePos) == 1)
+						MainAct.mPlaying_pagePos++;
+				}
+				FolderUi.startTabsHostRun();
+				TabsHost.setFocus_tabPos(focus_tabPos-1);
+				updateButtonState(dlg);
+			}
 	    });
 
 	    // done
-//		dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener()
-		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
-	    {   @Override
-	       public void onClick(View v)
-	       {
-	           dlg.dismiss();
-	       }
-	    });
+		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener( (View v)-> dlg.dismiss() );
 
 	    // Shift to right
-	    dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
-	    {   @Override
-	        public void onClick(View v)
-	        {
-                // middle button text: change to OK
+	    dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener((View v)-> {
+			// middle button text: change to OK
 //			    dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 //			    Button mButton=(Button)dlg.findViewById(android.R.id.button3);
-			    dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
-			    Button mButton=(Button)dlg.findViewById(android.R.id.button2);
+			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
+			Button mButton=(Button)dlg.findViewById(android.R.id.button2);
 
-		        mButton.setText(R.string.btn_Finish);
-		        mButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_finish , 0, 0, 0);
+			mButton.setText(R.string.btn_Finish);
+			mButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_finish , 0, 0, 0);
 
-			    DB_folder db = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
-				int focus_tabPos = 	TabsHost.getFocus_tabPos();
-                if(getTabPositionState() != RIGHTMOST)
-	   	    	{
-					Pref.setPref_focusView_page_tableId(act, db.getPageTableId(focus_tabPos, true));
-					swapPage(focus_tabPos, focus_tabPos +1);
+			DB_folder db = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
+			int focus_tabPos = 	TabsHost.getFocus_tabPos();
+			if(getTabPositionState() != RIGHTMOST)
+			{
+				Pref.setPref_focusView_page_tableId(act, db.getPageTableId(focus_tabPos, true));
+				swapPage(focus_tabPos, focus_tabPos +1);
 
-                    // shift right when audio playing
-                    if(MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) {
-                        // target is playing index
-                        if (focus_tabPos== MainAct.mPlaying_pagePos)
-                            MainAct.mPlaying_pagePos++;
-                        // target is at left side of plying index
-                        else if ((MainAct.mPlaying_pagePos - focus_tabPos) == 1)
-                            MainAct.mPlaying_pagePos--;
-                    }
-                    FolderUi.startTabsHostRun();
-					TabsHost.setFocus_tabPos(TabsHost.getFocus_tabPos()+1);
-					updateButtonState(dlg);
-	   	    	}
-	       }
+				// shift right when audio playing
+				if(MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) {
+					// target is playing index
+					if (focus_tabPos== MainAct.mPlaying_pagePos)
+						MainAct.mPlaying_pagePos++;
+					// target is at left side of plying index
+					else if ((MainAct.mPlaying_pagePos - focus_tabPos) == 1)
+						MainAct.mPlaying_pagePos--;
+				}
+				FolderUi.startTabsHostRun();
+				TabsHost.setFocus_tabPos(TabsHost.getFocus_tabPos()+1);
+				updateButtonState(dlg);
+			}
 	    });
 
 
         updateButtonState(dlg);
 
-//		((Button)dlg.findViewById(android.R.id.button3))
 		((Button)dlg.findViewById(android.R.id.button2))
 	              .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_close_clear_cancel, 0, 0, 0);
 	}
 
-	static int getTabPositionState()
+	private static int getTabPositionState()
 	{
 		int pos = TabsHost.getFocus_tabPos();
 
@@ -272,7 +248,7 @@ public class PageUi
 			return MIDDLE;
 	}
 
-	static void updateButtonState(AlertDialog dlg)
+	private static void updateButtonState(AlertDialog dlg)
     {
         if(getTabPositionState() == LEFTMOST )
         {
@@ -281,9 +257,6 @@ public class PageUi
             ((Button)dlg.findViewById(android.R.id.button1))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_forward, 0, 0, 0);
 
-            // android.R.id.button2 for negative: previous
-//			  dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
-//            ((Button)dlg.findViewById(android.R.id.button2))
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
             ((Button)dlg.findViewById(android.R.id.button3))
@@ -296,9 +269,6 @@ public class PageUi
             ((Button)dlg.findViewById(android.R.id.button1))
                     .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-            // android.R.id.button2 for negative: previous
-//			  dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);//avoid long time toast
-//            ((Button)dlg.findViewById(android.R.id.button2))
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(true);//avoid long time toast
             ((Button)dlg.findViewById(android.R.id.button3))
@@ -312,9 +282,6 @@ public class PageUi
             ((Button)dlg.findViewById(android.R.id.button1))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_forward, 0, 0, 0);
 
-            // android.R.id.button2 for negative: previous
-//			  dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-//			  ((Button)dlg.findViewById(android.R.id.button2))
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(true);
 			((Button)dlg.findViewById(android.R.id.button3))
@@ -326,7 +293,7 @@ public class PageUi
 	 * swap page
 	 *
 	 */
-	public static void swapPage(int start, int end)
+	private static void swapPage(int start, int end)
 	{
 		System.out.println("PageUi / _swapPage / start = " + start + " , end = " + end);
 		DB_folder db = new DB_folder(MainAct.mAct,Pref.getPref_focusView_folder_tableId(MainAct.mAct));
@@ -365,8 +332,8 @@ public class PageUi
 	 * Add new page: 1 dialog
 	 *
 	 */
-    static int mAddAt;
-    static SharedPreferences mPref_add_new_page_location;
+    private static int mAddAt;
+    private static SharedPreferences mPref_add_new_page_location;
 	public static  void addNewPage(final AppCompatActivity act, final int newTabId) {
         // get tab name
         String pageName = Define.getTabTitle(act, newTabId);
@@ -615,7 +582,5 @@ public class PageUi
 			     (MainAct.mPlaying_pagePos == TabsHost.getFocus_tabPos()) &&
 	     	     (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos())  );
     }
-
-
 
 }

@@ -47,7 +47,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-//todo uses unchecked or unsafe operations.
 public class Import_filesList extends ListFragment
 {
     private List<String> filePathArray = null;
@@ -254,10 +253,11 @@ public class Import_filesList extends ListFragment
         }
     }
 
-    // File name array for setting focus and file name
-    class FileNameAdapter extends ArrayAdapter
+
+    // File name array for setting focus and file name, note: without generic will cause unchecked or unsafe operations warning
+    class FileNameAdapter extends ArrayAdapter<String>
     {
-        public FileNameAdapter(Context context, int resource, List objects) {
+        FileNameAdapter(Context context, int resource, List<String> objects) {
             super(context, resource, objects);
         }
 
