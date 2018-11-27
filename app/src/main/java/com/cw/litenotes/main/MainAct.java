@@ -411,7 +411,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             String audioFileName = "local.mp3";
             Util.createAssetsFile(this, audioFileName);
 
-            fileName = "default.xml";
+            fileName = "default_content.xml";
 
             // By assets file
             xmlFile = Util.createAssetsFile(this,fileName);
