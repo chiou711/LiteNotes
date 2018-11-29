@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.litenotes.R;
+import com.cw.litenotes.note_common.Note_drawing;
 import com.cw.litenotes.util.Util;
 
 import java.util.ArrayList;
@@ -289,7 +290,8 @@ public class Add_note_option {
 
             case ID_NEW_DRAWING:
             {
-                Intent intent = new Intent(act, Note_addDrawing.class);
+                Intent intent = new Intent(act, Note_drawing.class);
+                intent.putExtra("drawing_mode",Util.DRAWING_ADD);
 
                 if(bTop)
                     intent.putExtra("extra_ADD_NEW_TO_TOP", "true");

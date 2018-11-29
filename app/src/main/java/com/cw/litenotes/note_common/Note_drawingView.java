@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cw.litenotes.R;
-import com.cw.litenotes.note.Note_editDrawing;
 import com.cw.litenotes.util.Util;
 
 import java.io.File;
@@ -43,9 +42,6 @@ public class Note_drawingView extends View
     Context context;
     Bitmap jpgBitmap;
     Bitmap overlayBitmap;
-    public static int drawing_mode;
-    public static final int ADD_MODE = 1;
-    public static final int EDIT_MODE = 2;
 
     // constructor
     public Note_drawingView(Context context, AttributeSet attrs)
@@ -68,8 +64,8 @@ public class Note_drawingView extends View
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        if(drawing_mode == EDIT_MODE) {
-            filePath = Note_editDrawing.drawingUriInDB;
+        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
+            filePath = Note_drawing.drawingUriInDB;
             jpgBitmap = BitmapFactory.decodeFile(filePath.replace("file:///", ""));
         }
     }
@@ -82,7 +78,7 @@ public class Note_drawingView extends View
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE); // erase the BitMap with white
 
-        if(drawing_mode == EDIT_MODE) {
+        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
             // draw overlay bitmap on canvas
             overlayBitmap = overlay(bitmap, jpgBitmap);
             bitmapCanvas.drawBitmap(overlayBitmap, 0, 0, paintScreen);

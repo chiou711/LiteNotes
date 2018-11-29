@@ -47,7 +47,6 @@ import com.cw.litenotes.folder.FolderUi;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.note.Note;
 import com.cw.litenotes.note.Note_edit;
-import com.cw.litenotes.note.Note_editDrawing;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.AudioPlayer_page;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;

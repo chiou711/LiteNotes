@@ -691,7 +691,7 @@ public class Note_edit extends Activity
 		}
 
 		// edit drawing
-		if(requestCode == Util.EDIT_DRAWING)
+		if(requestCode == Util.DRAWING_EDIT)
 		{
 			this.recreate();
 		}
