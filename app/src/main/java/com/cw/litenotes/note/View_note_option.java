@@ -139,8 +139,16 @@ public class View_note_option {
 				sentString = Util.addXmlTag(sentString);
 
                 DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
-				String picFile = dB_page.getNotePictureUri_byId(noteId);
-				System.out.println("-> picFile = " + picFile);
+
+                // picture first priority
+                String picFile = dB_page.getNotePictureUri_byId(noteId);
+
+				// then drawing
+				if(Util.isEmptyString(picFile))
+                    picFile = dB_page.getNoteDrawingUri_byId(noteId);
+
+                System.out.println("-> picFile = " + picFile);
+
 				String[] picFileArray = null;
 				if( (picFile != null) &&
 						(picFile.length() > 0) )
