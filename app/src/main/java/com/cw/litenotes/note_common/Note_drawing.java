@@ -1,7 +1,9 @@
 package com.cw.litenotes.note_common;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -39,15 +41,16 @@ public class Note_drawing extends Activity
     private static final int SAVE_MENU_ID = Menu.FIRST + 4;
     private static final int UPDATE_MENU_ID = Menu.FIRST + 5;
     
-	// variable that refers to a Choose Color or Choose Line Width dialog
+    // variable that refers to a Choose Color or Choose Line Width dialog
     private Dialog currentDialog;
 
     private DB_page dB;
     static String drawingUriInDB;
     long id;
+    static boolean drawingHasNew;
 
     static int mode;
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -57,12 +60,12 @@ public class Note_drawing extends Activity
         Bundle extras = getIntent().getExtras();
         setMode(extras.getInt("drawing_mode"));
 
-	    dB = new DB_page(this, TabsHost.getCurrentPageTableId());
+        dB = new DB_page(this, TabsHost.getCurrentPageTableId());
 
         if(getMode() == Util.DRAWING_EDIT) {
             id = extras.getLong("drawing_id");
-	        drawingUriInDB = dB.getNoteDrawingUri_byId(id);
-	        getActionBar().setTitle(R.string.edit_drawing);
+            drawingUriInDB = dB.getNoteDrawingUri_byId(id);
+            getActionBar().setTitle(R.string.edit_drawing);
         } else if(getMode() == Util.DRAWING_ADD) {
             drawingUriInDB = "";
             getActionBar().setTitle(R.string.add_drawing);
@@ -70,6 +73,8 @@ public class Note_drawing extends Activity
 
         setContentView(R.layout.drawing_main); // inflate the layout
         drawingView = findViewById(R.id.doodleView);
+
+        drawingHasNew = false;
     }
 
     public static int getMode() {
@@ -85,11 +90,61 @@ public class Note_drawing extends Activity
         super.onResume();
     }
 
-        @Override
-        protected void onPause(){
-            super.onPause();
-            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        drawingHasNew = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(drawingHasNew)
+            confirmUpdateChangeDlg();
+        else
+            super.onBackPressed();
+    }
+
+    // confirmation to update change or not
+    void confirmUpdateChangeDlg()
+    {
+        getIntent().putExtra("NOTE_ADDED","edited");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Note_drawing.this);
+        builder.setTitle(R.string.confirm_dialog_title);
+
+        if(getMode() == Util.DRAWING_ADD)
+            builder.setMessage(R.string.add_new_note_confirm_save);
+        else if(getMode() == Util.DRAWING_EDIT)
+            builder.setMessage(R.string.edit_note_confirm_update);
+
+            builder.setPositiveButton(R.string.confirm_dialog_button_yes, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    storeDrawingInDB();
+                    setResult(RESULT_OK, getIntent());
+                    finish();
+                }})
+            .setNeutralButton(R.string.btn_Cancel, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {   // do nothing
+                }})
+            .setNegativeButton(R.string.confirm_dialog_button_no, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    setResult(RESULT_CANCELED, getIntent());
+                    finish();
+                }})
+            .show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -109,16 +164,16 @@ public class Note_drawing extends Activity
         menu.add(Menu.NONE, CLEAR_MENU_ID, Menu.NONE,
          R.string.menuitem_clear);
 
-		if(getMode() == Util.DRAWING_ADD)
-		{
-	        menu.add(Menu.NONE, SAVE_MENU_ID, Menu.NONE,
+        if(getMode() == Util.DRAWING_ADD)
+        {
+            menu.add(Menu.NONE, SAVE_MENU_ID, Menu.NONE,
             R.string.menuitem_save_image);
-		}
-		else if(getMode() == Util.DRAWING_EDIT)
-		{
+        }
+        else if(getMode() == Util.DRAWING_EDIT)
+        {
             menu.add(Menu.NONE, UPDATE_MENU_ID, Menu.NONE,
             R.string.menuitem_update_image);		
-		}
+        }
 
         return true;
     }
@@ -146,65 +201,72 @@ public class Note_drawing extends Activity
                 return true;
 
             case SAVE_MENU_ID:
-                String uriStr = drawingView.saveImage(); // save the current images
-                dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
-                String scheme = Uri.parse(uriStr).getScheme();
-
-                // add single file
-                if( scheme.equalsIgnoreCase("file") ||
-                   scheme.equalsIgnoreCase("content") )
-                {
-                    // check if content scheme points to local file
-                    if(scheme.equalsIgnoreCase("content"))
-                    {
-                        String realPath = Util.getLocalRealPathByUri(this, Uri.parse(uriStr));
-
-                        if(realPath != null)
-                            uriStr = "file://".concat(realPath);
-                    }
-
-//                    noteId = null; // set null for Insert
-
-                    if( !Util.isEmptyString(uriStr))
-                    {
-                        // insert
-                        // set marking to 1 for default
-//	                    noteId = dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
-	                    dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
-                    }
-
-                    if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
-                      dB.getNotesCount(true) > 0 )
-                    {
-                        Page_recycler.swap(Page_recycler.mDb_page);
-                    }
-
-                    if(!Util.isEmptyString(uriStr))
-                    {
-                        String drawingName = Util.getDisplayNameByUriString(uriStr, this);
-                        Util.showSavedFileToast(drawingName,this);
-                    }
-                }
-                return true;
-			
             case UPDATE_MENU_ID:
-                drawingView.updateImage(); // save the current images
-                Date now = new Date();
-                dB.updateNote(id,
-                        dB.getNoteTitle_byId(id),
-                        dB.getNotePictureUri_byId(id),
-                        dB.getNoteAudioUri_byId(id),
-                        drawingUriInDB,
-                        dB.getNoteLinkUri_byId(id),
-                        dB.getNoteBody_byId(id),
-                        dB.getNoteMarking_byId(id),
-                        now.getTime(),
-                        true);// add new note, get return row Id
-                return true;			
+                storeDrawingInDB();
+                return true;
         }
         return super.onOptionsItemSelected(item); // call super's method
     }
-     
+
+    // save drawing in DB
+    void storeDrawingInDB()
+    {
+        if(getMode() == Util.DRAWING_ADD) {
+            String uriStr = drawingView.saveImage(); // save the current images
+            dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
+            String scheme = Uri.parse(uriStr).getScheme();
+            // add single file
+            if( scheme.equalsIgnoreCase("file") ||
+                    scheme.equalsIgnoreCase("content") )
+            {
+                // check if content scheme points to local file
+                if(scheme.equalsIgnoreCase("content"))
+                {
+                    String realPath = Util.getLocalRealPathByUri(this, Uri.parse(uriStr));
+
+                    if(realPath != null)
+                        uriStr = "file://".concat(realPath);
+                }
+
+                if( !Util.isEmptyString(uriStr))
+                {
+                    // insert
+                    // set marking to 1 for default
+                    dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
+                }
+
+                if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
+                        dB.getNotesCount(true) > 0 )
+                {
+                    Page_recycler.swap(Page_recycler.mDb_page);
+                }
+
+                if(!Util.isEmptyString(uriStr))
+                {
+                    String drawingName = Util.getDisplayNameByUriString(uriStr, this);
+                    Util.showSavedFileToast(drawingName,this);
+                }
+            }
+        }
+        else if(getMode() == Util.DRAWING_EDIT) {
+            drawingView.updateImage(); // save the current images
+            Date now = new Date();
+            dB.updateNote(id,
+                    dB.getNoteTitle_byId(id),
+                    dB.getNotePictureUri_byId(id),
+                    dB.getNoteAudioUri_byId(id),
+                    drawingUriInDB,
+                    dB.getNoteLinkUri_byId(id),
+                    dB.getNoteBody_byId(id),
+                    dB.getNoteMarking_byId(id),
+                    now.getTime(),
+                    true);// add new note, get return row Id
+
+        }
+
+        drawingHasNew = false;
+    }
+
     // display a dialog for selecting color
     private void showColorDialog()
     {

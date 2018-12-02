@@ -66,7 +66,8 @@
         <activity android:name=".note_add.Note_addCameraVideo"/>
         <activity android:name=".note_add.Note_addReadyVideo"/>
         <activity android:name=".note_common.Note_drawing" />
-        <activity android:name=".note.Note_edit"/>
+        <activity android:name=".note.Note_edit"
+                  android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".note.Note"
                   android:theme="@style/MyTheme"
             	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode">

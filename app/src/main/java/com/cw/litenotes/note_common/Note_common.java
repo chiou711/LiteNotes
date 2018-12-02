@@ -160,8 +160,8 @@ public class Note_common {
             	{
             		closeEnlargedImage();
             		// show soft input
-            		if (act.getCurrentFocus() != null)
-            		    imm.showSoftInput(act.getCurrentFocus(), 0);
+//            		if (act.getCurrentFocus() != null)
+//            		    imm.showSoftInput(act.getCurrentFocus(), 0);
             	}
             	else
                 {

@@ -147,6 +147,7 @@ public class Note_drawingView extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
+//        System.out.println("Note_drawingView / onDraw ");
         canvas.drawBitmap(bitmap, 0, 0, paintScreen);
         // for each filePath currently being drawn
         for (Integer key : pathMap.keySet())
@@ -268,6 +269,9 @@ public class Note_drawingView extends View
         Path path = pathMap.get(lineID); // get the corresponding Path
         bitmapCanvas.drawPath(path, paintLine); // draw to bitmapCanvas
         path.reset(); // reset the Path
+
+        if(!Note_drawing.drawingHasNew)
+            Note_drawing.drawingHasNew = true;
     }
 
     // update the current image to the Gallery
