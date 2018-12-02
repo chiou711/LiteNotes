@@ -55,7 +55,7 @@ public class Drawer {
         mNavigationView.setItemIconTintList(null);// use original icon color
 
         // set icon for folder draggable: portrait
-        if(!Util.isLandscapeOrientation(MainAct.mAct) && (MainAct.mPref_show_note_attribute != null)) {
+        if(Util.isPortraitOrientation(MainAct.mAct) && (MainAct.mPref_show_note_attribute != null)) {
             if (MainAct.mPref_show_note_attribute.getString("KEY_ENABLE_FOLDER_DRAGGABLE", "no")
                     .equalsIgnoreCase("yes"))
                 mNavigationView.getMenu().findItem(R.id.ENABLE_FOLDER_DRAG_AND_DROP).setIcon(R.drawable.btn_check_on_holo_light);

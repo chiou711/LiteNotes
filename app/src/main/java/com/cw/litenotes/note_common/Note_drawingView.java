@@ -77,10 +77,18 @@ public class Note_drawingView extends View
         }
 
         if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
-            if (jpgBitmap.getWidth() > jpgBitmap.getHeight())
-                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            else
-                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            if (jpgBitmap.getWidth() > jpgBitmap.getHeight()) {
+                if(Util.isLandscapeOrientation(act))
+                    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                else
+                    Toast.makeText(act,R.string.toast_edit_drawing_to_landscape,Toast.LENGTH_LONG).show();
+            }
+            else {
+                if(Util.isPortraitOrientation(act))
+                    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                else
+                    Toast.makeText(act,R.string.toast_edit_drawing_to_portrait,Toast.LENGTH_LONG).show();
+            }
         }
         else if(Note_drawing.getMode() == Util.DRAWING_ADD) {
             if (Util.isLandscapeOrientation(act))

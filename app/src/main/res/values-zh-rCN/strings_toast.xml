@@ -12,4 +12,6 @@
     <string name="toast_pause">暂停</string>
     <string name="toast_play">播放</string>
     <string name="toast_no_link_found">找不到连结</string>
+    <string name="toast_edit_drawing_to_landscape">要查看整个图像，请将您的设备方向旋转为横向</string>
+    <string name="toast_edit_drawing_to_portrait">要查看整个图像，请将您的设备方向旋转为纵向</string>
 </resources>

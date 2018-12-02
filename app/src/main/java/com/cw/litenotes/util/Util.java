@@ -1107,6 +1107,16 @@ public class Util
 			return false;
 	}
 
+	static public boolean isPortraitOrientation(Activity act)
+	{
+		int currentOrientation = act.getResources().getConfiguration().orientation;
+
+		if (currentOrientation == Configuration.ORIENTATION_PORTRAIT)
+			return true;
+		else
+			return false;
+	}
+
 
 	static public void lockOrientation(Activity act) {
 //	    if (act.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {

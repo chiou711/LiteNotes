@@ -1006,7 +1006,7 @@ public class Note extends AppCompatActivity
 //		System.out.println(" Note / _canShowFullPicture / UtilImage.isLandscapePicture(pictureStr) = " +UtilImage.isLandscapePicture(pictureStr));
         if( !Util.isEmptyString(pictureStr) &&
             ( (Util.isLandscapeOrientation(act) && UtilImage.isLandscapePicture(pictureStr) ) ||
-            (!Util.isLandscapeOrientation(act) && !UtilImage.isLandscapePicture(pictureStr))  ) )
+            (Util.isPortraitOrientation(act) && !UtilImage.isLandscapePicture(pictureStr))  ) )
             return true;
         else
             return false;
