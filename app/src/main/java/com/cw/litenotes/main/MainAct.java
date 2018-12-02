@@ -171,17 +171,33 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 // dialog: with default content
                 if(Define.WITH_DEFAULT_CONTENT) {
                     DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
-                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
 
                         // Close dialog
                         dialog.dismiss();
+
+                        // check build version for permission request
+                        if(Build.VERSION.SDK_INT >= 21)
+                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+                        else {
+                            if (Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
+                                downloadXmlFile();
+                            }
+                            Pref.setPref_will_create_default_content(this, true);
+                            recreate();
+                        }
                     };
 
                     DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
-                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
-
                         // Close dialog
                         dialog.dismiss();
+
+                        // check build version for permission request
+                        if(Build.VERSION.SDK_INT >= 21)
+                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
+                        else {
+                            Pref.setPref_will_create_default_content(this, false);
+                            recreate();
+                        }
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
@@ -194,8 +210,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 }
                 else if(Define.INITIAL_FOLDERS_COUNT > 0)
                 {
-                    checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES);
-
+                    if(Build.VERSION.SDK_INT >= 21)
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES);
+                    else
+                    {
+                        Pref.setPref_will_create_initial_tables(this, true);
+                        recreate();
+                    }
                     // Close dialog
                     dialog.dismiss();
                 }

@@ -1,7 +1,9 @@
 package com.cw.litenotes.note_common;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -42,11 +44,14 @@ public class Note_drawingView extends View
     Context context;
     Bitmap jpgBitmap;
     Bitmap overlayBitmap;
+    Activity act;
 
     // constructor
     public Note_drawingView(Context context, AttributeSet attrs)
     {
         super(context, attrs); // pass context to View's constructor
+        System.out.println("Note_drawingView / constructor");
+
         paintScreen = new Paint(); // used to display bitmap onto screen
 
         // set the initial display settings for the painted line
@@ -59,14 +64,29 @@ public class Note_drawingView extends View
         pathMap = new HashMap<Integer, Path>();
         previousPointMap = new HashMap<Integer, Point>();
         this.context = context;
+        act = (Activity) context;
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        System.out.println("Note_drawingView / _onFinishInflate");
         if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
             filePath = Note_drawing.drawingUriInDB;
             jpgBitmap = BitmapFactory.decodeFile(filePath.replace("file:///", ""));
+        }
+
+        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
+            if (jpgBitmap.getWidth() > jpgBitmap.getHeight())
+                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            else
+                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        else if(Note_drawing.getMode() == Util.DRAWING_ADD) {
+            if (Util.isLandscapeOrientation(act))
+                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            else
+                act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 

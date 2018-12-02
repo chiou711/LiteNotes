@@ -53,6 +53,7 @@ public class Note_drawing extends Activity
     {
         super.onCreate(savedInstanceState);
 
+        System.out.println("Note_drawing / _onCreate");
         Bundle extras = getIntent().getExtras();
         setMode(extras.getInt("drawing_mode"));
 
@@ -82,7 +83,6 @@ public class Note_drawing extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
     }
 
         @Override
