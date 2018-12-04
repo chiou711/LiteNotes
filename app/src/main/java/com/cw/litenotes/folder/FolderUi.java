@@ -533,20 +533,15 @@ public class FolderUi
     }
     
     public static Handler mHandler;
-    // runnable to launch folder host
-    public static Runnable mTabsHostRun =  new Runnable()
-    {
-        @Override
-        public void run()
-        {
-        	System.out.println("FolderUi / mTabsHostRun");
+    // runnable to launch folder host, (press alt+enter to get lambda)
+    public static Runnable mTabsHostRun = () -> {
+	    System.out.println("FolderUi / mTabsHostRun");
 
-            TabsHost tabsHost = new TabsHost();
+        TabsHost tabsHost = new TabsHost();
 
-        	FragmentTransaction fragmentTransaction = MainAct.mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.content_frame, tabsHost).commit();
-        	MainAct.mFragmentManager.executePendingTransactions();
-        }
+	    FragmentTransaction fragmentTransaction = MainAct.mFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content_frame, tabsHost).commit();
+	    MainAct.mFragmentManager.executePendingTransactions();
     };
     
     public static int getFolder_pagesCount(AppCompatActivity act,int folderPos)

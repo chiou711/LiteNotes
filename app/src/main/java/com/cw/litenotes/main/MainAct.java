@@ -602,6 +602,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 break;
             }
         }
+        else
+        {
+            Pref.setPref_will_create_default_content(this, false);
+            recreate();
+        }
 
         //normally, will go to _resume
     }

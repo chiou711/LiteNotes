@@ -46,8 +46,6 @@ public class Drawer {
     public static NavigationView mNavigationView;
     DragSortListView listView;
 
-    public static int folderCount;
-
     public Drawer(AppCompatActivity activity)
     {
         drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
@@ -141,49 +139,49 @@ public class Drawer {
                                                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                                                 R.string.drawer_close  /* "close drawer" description for accessibility */
                                                 )
+            {
+                public void onDrawerOpened(View drawerView)
                 {
-                    public void onDrawerOpened(View drawerView)
-                    {
-                        System.out.println("Drawer / _onDrawerOpened ");
+                    System.out.println("Drawer / _onDrawerOpened ");
 
-                        if(act.getSupportActionBar() != null) {
-                            act.getSupportActionBar().setTitle(R.string.app_name);
-                            MainAct.mToolbar.setLogo(R.drawable.ic_launcher);
-                        }
-
-                        act.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-
-                        if(listView.getCount() >0) {
-                            // will call Folder_adapter _getView to update audio playing high light
-                            listView.invalidateViews();
-                        }
+                    if(act.getSupportActionBar() != null) {
+                        act.getSupportActionBar().setTitle(R.string.app_name);
+                        MainAct.mToolbar.setLogo(R.drawable.ic_launcher);
                     }
 
-                    public void onDrawerClosed(View view)
-                    {
-                        System.out.println("Drawer / _onDrawerClosed / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+                    act.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 
-                        FragmentManager fragmentManager = act.getSupportFragmentManager();
-                        if(fragmentManager.getBackStackEntryCount() ==0 )
+                    if(listView.getCount() >0) {
+                        // will call Folder_adapter _getView to update audio playing high light
+                        listView.invalidateViews();
+                    }
+                }
+
+                public void onDrawerClosed(View view)
+                {
+                    System.out.println("Drawer / _onDrawerClosed / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+
+                    FragmentManager fragmentManager = act.getSupportFragmentManager();
+                    if(fragmentManager.getBackStackEntryCount() ==0 )
+                    {
+                        act.invalidateOptionsMenu(); // creates a call to onPrepareOptionsMenu()
+
+                        DB_drawer dB_drawer = new DB_drawer(act);
+                        if (dB_drawer.getFoldersCount(true) > 0)
                         {
-                            act.invalidateOptionsMenu(); // creates a call to onPrepareOptionsMenu()
+                            int pos = listView.getCheckedItemPosition();
+                            MainAct.mFolderTitle = dB_drawer.getFolderTitle(pos,true);
 
-                            DB_drawer dB_drawer = new DB_drawer(act);
-                            if (dB_drawer.getFoldersCount(true) > 0)
-                            {
-                                int pos = listView.getCheckedItemPosition();
-                                MainAct.mFolderTitle = dB_drawer.getFolderTitle(pos,true);
-
-                                if(act.getSupportActionBar() != null) {
-                                    act.getSupportActionBar().setTitle(MainAct.mFolderTitle);
-                                    MainAct.mToolbar.setLogo(null);
-                                }
+                            if(act.getSupportActionBar() != null) {
+                                act.getSupportActionBar().setTitle(MainAct.mFolderTitle);
+                                MainAct.mToolbar.setLogo(null);
                             }
-
-                            FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
                         }
+
+                        FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
                     }
-               };
+                }
+           };
     }
 
     public void initDrawer()
@@ -191,9 +189,6 @@ public class Drawer {
         // set a custom shadow that overlays the main content when the drawer opens
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         drawerLayout.addDrawerListener(drawerToggle);
-
-	    DB_drawer dB_drawer = new DB_drawer(act);
-	    setFolderCount(dB_drawer.getFoldersCount(true));
     }
 
     public void closeDrawer()
@@ -208,10 +203,7 @@ public class Drawer {
     }
 
     public static int getFolderCount() {
-        return folderCount;
-    }
-
-    public static void setFolderCount(int folderCount) {
-        Drawer.folderCount = folderCount;
+        DB_drawer dB_drawer = new DB_drawer(MainAct.mAct);
+        return dB_drawer.getFoldersCount(true);
     }
 }

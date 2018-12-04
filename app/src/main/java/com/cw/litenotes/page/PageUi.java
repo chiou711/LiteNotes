@@ -488,12 +488,9 @@ public class PageUi
         FolderUi.startTabsHostRun();
 
 		if(TabsHost.mTabLayout != null) {
-			TabsHost.mTabLayout.post(new Runnable() {
-				@Override
-				public void run() {
-					TabsHost.mTabLayout.scrollTo(scrollX, 0);
+			TabsHost.mTabLayout.post(() -> {
+				TabsHost.mTabLayout.scrollTo(scrollX, 0);
 //					Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX);
-				}
 			});
 		}
 
