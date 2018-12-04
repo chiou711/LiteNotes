@@ -541,10 +541,10 @@ public class FolderUi
         {
         	System.out.println("FolderUi / mTabsHostRun");
 
-            TabsHost fragment = new TabsHost();
+            TabsHost tabsHost = new TabsHost();
 
         	FragmentTransaction fragmentTransaction = MainAct.mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.content_frame, fragment).commit();
+            fragmentTransaction.replace(R.id.content_frame, tabsHost).commit();
         	MainAct.mFragmentManager.executePendingTransactions();
         }
     };

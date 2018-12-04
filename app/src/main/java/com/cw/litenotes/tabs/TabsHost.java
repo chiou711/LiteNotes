@@ -43,6 +43,7 @@ import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_folder;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.define.Define;
+import com.cw.litenotes.drawer.Drawer;
 import com.cw.litenotes.folder.FolderUi;
 import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.operation.audio.Audio_manager;
@@ -127,7 +128,10 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 //        mTabsPagerAdapter = new TabsPagerAdapter(MainAct.mAct,getChildFragmentManager());
 
         // add pages to mTabsPagerAdapter
-        int pageCount = addPages(mTabsPagerAdapter);
+        int pageCount = 0;
+        if(Drawer.getFolderCount() > 0) {
+            pageCount = addPages(mTabsPagerAdapter);
+        }
 
         // show blank folder if no page exists
         if(pageCount == 0) {
@@ -314,6 +318,9 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         super.onResume();
         // default
         setFocus_tabPos(0);
+
+        if(Drawer.getFolderCount() == 0)
+            return;//todo Check again
 
         // restore focus view page
         int pageCount = mTabsPagerAdapter.dbFolder.getPagesCount(true);

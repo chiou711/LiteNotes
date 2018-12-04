@@ -64,15 +64,13 @@ import com.mobeta.android.dslv.DragSortListView;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.StrictMode;
@@ -150,13 +148,77 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     	///
 
         super.onCreate(savedInstanceState);
+
+        /***
+         * Set APP build mode
+         */
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);   // 1 debug, initial
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);    // 2 debug, assets
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);  // 3 debug, download
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_ASSETS);  // 5 release, assets
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);// 6 release, download
+
+        // Release mode: no debug message
+        if (Define.CODE_MODE == Define.RELEASE_MODE) {
+            OutputStream nullDev = new OutputStream() {
+                public void close() {}
+                public void flush() {}
+                public void write(byte[] b) {}
+                public void write(byte[] b, int off, int len) {}
+                public void write(int b) {}
+            };
+            System.setOut(new PrintStream(nullDev));
+        }
+
         System.out.println("================start application ==================");
         System.out.println("MainAct / _onCreate");
 
         mAct = this;
-		mAppTitle = getTitle();
+        mAppTitle = getTitle();
         mMainUi = new MainUi();
 
+        // File provider implementation is needed after Android version 24
+        // if not, will encounter android.os.FileUriExposedException
+        // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
+
+        // add the following to disable this requirement
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                // method 1
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+
+                // method 2
+//                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+//                StrictMode.setVmPolicy(builder.build());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Show Api version
+        if (Define.CODE_MODE == Define.DEBUG_MODE)
+            Toast.makeText(this, mAppTitle + " " + "API_" + Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, mAppTitle, Toast.LENGTH_SHORT).show();
+
+        //Log.d below can be disabled by applying proguard
+        //1. enable proguard-android-optimize.txt in project.properties
+        //2. be sure to use newest version to avoid build error
+        //3. add the following in proguard-project.txt
+        /*-assumenosideeffects class android.util.Log {
+        public static boolean isLoggable(java.lang.String, int);
+        public static int v(...);
+        public static int i(...);
+        public static int w(...);
+        public static int d(...);
+        public static int e(...);
+    	}
+        */
+        UtilImage.getDefaultScaleInPercent(MainAct.this);
+
+        // EULA
         Dialog_EULA dialog_EULA = new Dialog_EULA(this);
         bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
 
@@ -169,9 +231,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 dialog_EULA.applyPreference();
 
                 // dialog: with default content
-                if(Define.WITH_DEFAULT_CONTENT) {
+                if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
+                    (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
+                {
+                    // Click Yes
                     DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
-
                         // Close dialog
                         dialog.dismiss();
 
@@ -179,14 +243,17 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                         if(Build.VERSION.SDK_INT >= 21)
                             checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                         else {
-                            if (Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
-                                downloadXmlFile();
+                            if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
+                                createDefaultContent_byDownload();
                             }
-                            Pref.setPref_will_create_default_content(this, true);
-                            recreate();
+                            else {
+                                Pref.setPref_will_create_default_content(this, true);
+                                recreate();
+                            }
                         }
                     };
 
+                    // Click No
                     DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
                         // Close dialog
                         dialog.dismiss();
@@ -208,13 +275,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                             .setNegativeButton(R.string.confirm_dialog_button_no, click_No);
                     builder.create().show();
                 }
-                else if(Define.INITIAL_FOLDERS_COUNT > 0)
+                else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
                 {
                     if(Build.VERSION.SDK_INT >= 21)
-                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES);
+                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                     else
                     {
-                        Pref.setPref_will_create_initial_tables(this, true);
+                        Pref.setPref_will_create_default_content(this, true);
                         recreate();
                     }
                     // Close dialog
@@ -263,67 +330,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     {
         System.out.println("MainAct / _doCreate");
 
-        if(Define.WITH_DEFAULT_CONTENT) {
-            if(Pref.getPref_will_create_default_content(this))
-                createDefaultContent();
+        // Will create default contents: by assets or by initial tables
+        if(Pref.getPref_will_create_default_content(this)) {
+            if (Define.DEFAULT_CONTENT == Define.BY_ASSETS)
+                createDefaultContent_byAssets();
+            else if ((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
+                createDefaultContent_byInitialTables();
         }
-
-        if(Define.INITIAL_FOLDERS_COUNT > 0) {
-            if(Pref.getPref_will_create_initial_tables(this))
-                createInitialTables();
-        }
-
-        // file provider implementation is needed after Android version 24
-        // if not, will encounter android.os.FileUriExposedException
-        // cf. https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
-
-        // add the following to disable this requirement
-        if (Build.VERSION.SDK_INT >= 24) {
-            try {
-                // method 1
-                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                m.invoke(null);
-
-                // method 2
-//                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-//                StrictMode.setVmPolicy(builder.build());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Show Api version
-        if (Define.CODE_MODE == Define.DEBUG_MODE)
-            Toast.makeText(mAct, mAppTitle + " " + "API_" + Build.VERSION.SDK_INT, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(mAct, mAppTitle, Toast.LENGTH_SHORT).show();
-
-        // Release mode: no debug message
-        if (Define.CODE_MODE == Define.RELEASE_MODE) {
-            OutputStream nullDev = new OutputStream() {
-                public void close() {}
-                public void flush() {}
-                public void write(byte[] b) {}
-                public void write(byte[] b, int off, int len) {}
-                public void write(int b) {}
-            };
-            System.setOut(new PrintStream(nullDev));
-        }
-
-        //Log.d below can be disabled by applying proguard
-        //1. enable proguard-android-optimize.txt in project.properties
-        //2. be sure to use newest version to avoid build error
-        //3. add the following in proguard-project.txt
-        /*-assumenosideeffects class android.util.Log {
-        public static boolean isLoggable(java.lang.String, int);
-        public static int v(...);
-        public static int i(...);
-        public static int w(...);
-        public static int d(...);
-        public static int e(...);
-    	}
-        */
-        UtilImage.getDefaultScaleInPercent(MainAct.this);
 
         mFolderTitles = new ArrayList<>();
 
@@ -409,7 +422,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     /**
      *  Create default content
      */
-    void createDefaultContent()
+    void createDefaultContent_byAssets()
     {
         System.out.println("MainAct / _createDefaultContent");
 
@@ -419,33 +432,22 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         DB_drawer dB_drawer = new DB_drawer(this);
 
         // create asset files
-        if(Define.DEFAULT_CONTENT_BY_ASSETS) {
-            // default image
-            String imageFileName = "local.jpg";
-            Util.createAssetsFile(this, imageFileName);
+        // default image
+        String imageFileName = "local.jpg";
+        Util.createAssetsFile(this, imageFileName);
 
-            // default video
-            String videoFileName = "local.mp4";
-            Util.createAssetsFile(this, videoFileName);
+        // default video
+        String videoFileName = "local.mp4";
+        Util.createAssetsFile(this, videoFileName);
 
-            // default audio
-            String audioFileName = "local.mp3";
-            Util.createAssetsFile(this, audioFileName);
+        // default audio
+        String audioFileName = "local.mp3";
+        Util.createAssetsFile(this, audioFileName);
 
-            fileName = "default_content.xml";
+        fileName = "default_content_by_assets.xml";
 
-            // By assets file
-            xmlFile = Util.createAssetsFile(this,fileName);
-
-        } else if(Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
-            fileName = "default_content.xml";
-            // By downloaded file
-            String dirString = Environment.getExternalStorageDirectory().toString() +
-                    "/" +
-                    Util.getStorageDirName(MainAct.mAct);
-            File storageRoot = new File(dirString);
-            xmlFile = new File(storageRoot, fileName);
-        }
+        // By assets file
+        xmlFile = Util.createAssetsFile(this,fileName);
 
         // import content
         if(xmlFile.exists()) {
@@ -466,7 +468,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     /**
      * Create initial tables
      */
-    void createInitialTables()
+    void createDefaultContent_byInitialTables()
     {
         DB_drawer dB_drawer = new DB_drawer(this);
 
@@ -503,7 +505,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         recreate();
-        Pref.setPref_will_create_initial_tables(this,false);
+        Pref.setPref_will_create_default_content(this,false);
     }
 
     Intent intentReceive;
@@ -586,71 +588,38 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             switch (requestCode)
             {
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
-                    if(Define.DEFAULT_CONTENT_BY_DOWNLOAD) {
-                        downloadXmlFile();
+                    if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD)
+                        createDefaultContent_byDownload();
+                    else {
+                        Pref.setPref_will_create_default_content(this, true);
+                        recreate();
                     }
-                    Pref.setPref_will_create_default_content(this, true);
                 break;
 
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
                     Pref.setPref_will_create_default_content(this, false);
-                break;
-
-                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_INITIAL_TABLES:
-                    Pref.setPref_will_create_initial_tables(this, true);
+                    recreate();
                 break;
             }
         }
+
         //normally, will go to _resume
-        recreate();
     }
 
     //  Download XML file from Google drive
-    void downloadXmlFile()
+    void createDefaultContent_byDownload()
     {
 
-        // 英文耐聽.xml
-        //String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1LzQ2FRCYygejiZFZe-RRYas12nn5Jefl&export=download";
+        /**
+         * LiteNotes_default_content.xml
+         * Unit: folder
+         */
+        // LiteNotes_default_content.xml
+        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
 
-        // 英文老歌.xml
-        // String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1Ax9GRgr4QeHQOUxSWsGadI9_A9fziuZ-&export=download";
+        Async_default_byDownload async = new Async_default_byDownload(mAct,srcUrl);
+        async.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Downloading file ...");
 
-        // LiteNotes_defaultContent.xml
-        // https://drive.google.com/open?id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF
-        String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
-
-        String targetUrl = "file://" + "/storage/emulated/0/LiteNotes" + "/default_content.xml";
-
-        DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(srcUrl);
-
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setTitle("LiteNotes download");
-        request.setDescription("Downloading");
-//                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//                    request.setVisibleInDownloadsUi(true);
-        request.setDestinationUri(Uri.parse(targetUrl));
-
-        downloadmanager.enqueue(request);
-
-        String dirString = Environment.getExternalStorageDirectory().toString() +
-                "/" +
-                Util.getStorageDirName(MainAct.mAct);
-        File storageRoot = new File(dirString);
-        File downloadFile = new File(storageRoot, "default_content.xml");
-
-        // waiting until time out
-        int timeOutCount = 10;
-        while( (!downloadFile.exists()) && (timeOutCount !=0) )
-        {
-            System.out.println("MainAct / _onRequestPermissionsResult / downloading ! Waiting...");
-            try {
-                Thread.sleep(Util.oneSecond);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            timeOutCount--;
-        }
 
         ///
         // download txt file from Web site
@@ -677,7 +646,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 //                                        Util.getStorageDirName(MainAct.mAct);
 //
 //                                File storageRoot = new File(dirString);
-//                                File file = new File(storageRoot, "default_content.xml");
+//                                File file = new File(storageRoot, "default_content_by_download.xml");
 //
 //                                FileOutputStream fileOutput = null;
 //                                fileOutput = new FileOutputStream(file);

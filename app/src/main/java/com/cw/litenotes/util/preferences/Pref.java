@@ -145,7 +145,7 @@ public class Pref
         return pref.getInt(keyName, 0);
     }
 
-    // set with default content
+    // set key: will create default content
     public static void setPref_will_create_default_content(Activity act, boolean will)
     {
         SharedPreferences pref = act.getSharedPreferences("create_view", 0);
@@ -153,30 +153,13 @@ public class Pref
         pref.edit().putBoolean(keyName, will).apply();
     }
 
-    // get with default content
+    // get key: will create default content
     public static boolean getPref_will_create_default_content(Context context)
     {
         SharedPreferences pref = context.getSharedPreferences("create_view", 0);
         String keyName = "KEY_WITH_DEFAULT_CONTENT";
         return pref.getBoolean(keyName, false);
     }
-
-    // set with initial tables
-    public static void setPref_will_create_initial_tables(Activity act, boolean will)
-    {
-        SharedPreferences pref = act.getSharedPreferences("create_view", 0);
-        String keyName = "KEY_WITH_INITIAL_TABLES";
-        pref.edit().putBoolean(keyName, will).apply();
-    }
-
-    // get with initial tables
-    public static boolean getPref_will_create_initial_tables(Context context)
-    {
-        SharedPreferences pref = context.getSharedPreferences("create_view", 0);
-        String keyName = "KEY_WITH_INITIAL_TABLES";
-        return pref.getBoolean(keyName, false);
-    }
-
 
     // location about drawer table Id and page table Id
     static String getCurrentListViewLocation(Activity act)

@@ -11,7 +11,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-     show licenses dialog
+     <!--show licenses dialog-->
    	<LinearLayout
    	    android:id="@+id/showLicenses"
    	    android:layout_width="match_parent"

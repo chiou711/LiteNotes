@@ -33,7 +33,7 @@ import com.cw.litenotes.util.preferences.Pref;
 import android.content.Context;
 import android.util.Xml;
 
-class ParseXmlToDB {
+public class ParseXmlToDB {
 
     private String pageName,title,body,picture,audio,link;
     private DB_folder mDb_folder;
@@ -42,7 +42,7 @@ class ParseXmlToDB {
     private Context mContext;
    
     private FileInputStream fileInputStream = null;
-    volatile boolean isParsing;
+    public static boolean isParsing;
     String fileBody = "";
     private String strSplitter;
     private boolean mEnableInsertDB = true;

@@ -46,6 +46,7 @@ public class Drawer {
     public static NavigationView mNavigationView;
     DragSortListView listView;
 
+    public static int folderCount;
 
     public Drawer(AppCompatActivity activity)
     {
@@ -190,6 +191,9 @@ public class Drawer {
         // set a custom shadow that overlays the main content when the drawer opens
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         drawerLayout.addDrawerListener(drawerToggle);
+
+	    DB_drawer dB_drawer = new DB_drawer(act);
+	    setFolderCount(dB_drawer.getFoldersCount(true));
     }
 
     public void closeDrawer()
@@ -201,5 +205,13 @@ public class Drawer {
     public boolean isDrawerOpen()
     {
         return drawerLayout.isDrawerOpen(mNavigationView);
+    }
+
+    public static int getFolderCount() {
+        return folderCount;
+    }
+
+    public static void setFolderCount(int folderCount) {
+        Drawer.folderCount = folderCount;
     }
 }
