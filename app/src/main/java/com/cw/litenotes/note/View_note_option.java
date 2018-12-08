@@ -33,12 +33,15 @@ import android.widget.Toast;
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.operation.mail.MailNotes;
+import com.cw.litenotes.operation.youtube.SearchYouTubeByKeyword;
 import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.Util;
 import com.cw.litenotes.util.preferences.Pref;
+import com.google.api.services.youtube.model.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * Created by cw on 2017/10/7.
@@ -64,6 +67,7 @@ public class View_note_option {
 
     private final static int ID_OPTION_MAIL = 0;
     private final static int ID_OPTION_AUTO_PLAY = 1;
+    private final static int ID_OPTION_SEARCH_YOUTUBE = 2;
     private final static int ID_OPTION_BACK = 9;
     static long noteId;
     static GridIconAdapter mGridIconAdapter;
@@ -91,6 +95,11 @@ public class View_note_option {
             option_list.add(new View_note_option(ID_OPTION_AUTO_PLAY,
                             R.drawable.btn_radio_off_holo_dark,
                             R.string.view_note_auto_play));
+
+        // search youtube with keyword
+        option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
+                R.drawable.ic_youtube,
+                R.string.search_youtube));
 
         // Back
         option_list.add(new View_note_option(ID_OPTION_BACK,
@@ -178,6 +187,21 @@ public class View_note_option {
                 }
 
                 mGridIconAdapter.notifyDataSetChanged();
+            }
+            break;
+
+            case ID_OPTION_SEARCH_YOUTUBE:
+            {
+                dlgAddNew.dismiss();
+
+                Executors.newSingleThreadExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
+                        String keyWord = dB_page.getNoteTitle_byId(noteId);
+                        List<SearchResult> searchResult =  new SearchYouTubeByKeyword().main(keyWord);
+                    }
+                });
             }
             break;
 

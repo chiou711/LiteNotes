@@ -25,6 +25,7 @@
     <string name="drag_note">拖放笔记</string>
     <string name="preview_note_body">预览本文</string>
     <string name="click_launch_youtube">点击启动YouTube</string>
+    <string name="search_youtube">Search YouTube</string>
     <string name="drag_folder">拖放文件夹</string>
     <string name="delete_folders">删除文件夹</string>
 </resources>

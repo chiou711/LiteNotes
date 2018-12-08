@@ -25,6 +25,7 @@
     <string name="drag_note">Drag note</string>
     <string name="preview_note_body">Preview body</string>
     <string name="click_launch_youtube">Click to launch YouTube</string>
+    <string name="search_youtube">Search YouTube</string>
     <string name="drag_folder">Drag folder</string>
     <string name="delete_folders">Delete folders</string>
 </resources>
