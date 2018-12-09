@@ -75,7 +75,10 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </activity>
-        <!-- note: add orientation above, when doing Rotate, activity will not go through the following states: 
+        <activity android:name=".operation.youtube.SearchYouTube"
+                  android:windowSoftInputMode="adjustPan"
+                  android:theme="@style/MyTheme"/>
+        <!-- note: add orientation above, when doing Rotate, activity will not go through the following states:
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->
 

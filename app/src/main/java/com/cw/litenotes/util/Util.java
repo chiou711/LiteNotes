@@ -59,6 +59,7 @@ import com.google.android.youtube.player.YouTubeIntents;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -1813,5 +1814,16 @@ public class Util
 				act.startActivity(i);
 			}
 		}
+	}
+
+	public static void openLink_YouTube(ListActivity act, String idStr)
+	{
+			System.out.println("Util / _openLink_YouTube / idStr = " + idStr);
+
+			Intent intent = null;
+			if (!Util.isEmptyString(idStr) )
+				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, idStr, false/*fullscreen*/, true/*finishOnEnd*/);
+
+			act.startActivity(intent);
 	}
 }

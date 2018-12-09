@@ -14,12 +14,26 @@
 
 package com.cw.litenotes.operation.youtube;
 
+import android.app.ListActivity;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.cw.litenotes.R;
+import com.cw.litenotes.util.Util;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-//import com.google.api.services.samples.youtube.cmdline.Auth;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
@@ -30,16 +44,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+
+//import com.google.api.services.samples.youtube.cmdline.Auth;
 
 /**
  * Print a list of videos matching a search term.
  *
  * @author Jeremy Walker
  */
-public class SearchYouTubeByKeyword {
+public class SearchYouTube extends ListActivity {
 
     /**
      * Define a global variable that identifies the name of a file that
@@ -47,13 +65,55 @@ public class SearchYouTubeByKeyword {
      */
     private static final String PROPERTIES_FILE_PATH = "/assets/youtube.properties";
 
-    private static final long NUMBER_OF_VIDEOS_RETURNED = 10;//25;
+    private static final long NUMBER_OF_VIDEOS_RETURNED = 25;//25;
 
     /**
      * Define a global instance of a Youtube object, which will be used
      * to make YouTube Data API requests.
      */
     private static YouTube youtube;
+    EditText editKeyword;
+    Button btnSearch;
+    List<SearchResult> searchResultList;
+    List<String> listTitles;
+    static List<String> listIDs;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.search_youtube);
+
+        // keyword
+        editKeyword = findViewById(R.id.editSearchText);
+        String str = getIntent().getExtras().getString("search_title");
+        editKeyword.setText(str);
+        editKeyword.setSelection(editKeyword.length());
+
+        // search button
+        btnSearch = findViewById(R.id.button_search);
+        btnSearch.setOnClickListener(v -> {
+            search(editKeyword.getText().toString());
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            // hide soft input
+            if (getCurrentFocus() != null)
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        });
+
+        listTitles = new ArrayList<>();
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
+    }
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(parent, name, context, attrs);
+    }
 
     /**
      * Initialize a YouTube object to search for videos on YouTube. Then
@@ -61,14 +121,14 @@ public class SearchYouTubeByKeyword {
      *
      * @param args command line args.
      */
-    public static List<SearchResult>  main(String args) {
-    	System.out.println("SearchYouTubeByKeyword / _main / args = " + args);
+    public void  search(String args) {
+    	System.out.println("SearchYouTube / _search / args = " + args);
         // Read the developer key from the properties file.
         Properties properties = new Properties();
         try {
-            InputStream in = SearchYouTubeByKeyword.class.getResourceAsStream(PROPERTIES_FILE_PATH);
+            InputStream in = SearchYouTube.class.getResourceAsStream(PROPERTIES_FILE_PATH);
 //				InputStream in = MainAct.mAct.getResources().openRawResource(R.raw.youtube_properties);
-            System.out.println("SearchYouTubeByKeyword / _main / in = " + in.toString());
+            System.out.println("SearchYouTube / _search / in = " + in.toString());
             properties.load(in);
 
         } catch (IOException e) {
@@ -93,7 +153,7 @@ public class SearchYouTubeByKeyword {
 
             // Prompt the user to enter a query term.
             String queryTerm = args;//getInputQuery();//args
-            System.out.println("SearchYouTubeByKeyword / _main / apiqueryTermKey = " + queryTerm);
+            System.out.println("SearchYouTube / _search / apiqueryTermKey = " + queryTerm);
 
             // Define the API request for retrieving search results.
             YouTube.Search.List search = youtube.search().list("id,snippet");
@@ -102,7 +162,7 @@ public class SearchYouTubeByKeyword {
             // non-authenticated requests. See:
             // {{ https://cloud.google.com/console }}
             String apiKey = properties.getProperty("youtube.apikey");
-            System.out.println("SearchYouTubeByKeyword / _main / apiKey = " + apiKey);
+            System.out.println("SearchYouTube / _search/ apiKey = " + apiKey);
             search.setKey(apiKey);
             search.setQ(queryTerm);
 
@@ -116,14 +176,42 @@ public class SearchYouTubeByKeyword {
             search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 
             // Call the API and print results.
-            SearchListResponse searchResponse = search.execute();
-            List<SearchResult> searchResultList = searchResponse.getItems();
-            if (searchResultList != null) {
-                prettyPrint(searchResultList.iterator(), queryTerm);
+            Executors.newSingleThreadExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SearchListResponse searchResponse = search.execute();
+
+                        if (searchResponse == null)
+                            return;
+                        else
+//                            searchResultList = searchResponse.getItems();
+                            searchResultList = searchResponse.getItems();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
+            while (searchResultList == null)
+            {}
+
+//            listTitles = new ArrayList<>();
+            listTitles = getSearchResult(searchResultList.iterator());
+
+            for (int i = 0; i < listTitles.size(); i++) {
+                System.out.println("---- list title = " + listTitles.get(i));
             }
 
-            return searchResultList;
+            SearchYouTubeAdapter fileListAdapter = new SearchYouTubeAdapter(this,
+                    R.layout.search_youtube_list_row,
+                    listTitles);
 
+            setListAdapter(fileListAdapter);
+
+            searchResultList = null;
         }
         catch (GoogleJsonResponseException e)
         {
@@ -135,7 +223,45 @@ public class SearchYouTubeByKeyword {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-        return null;
+    }
+
+
+    // File name array for setting focus and file name, note: without generic will cause unchecked or unsafe operations warning
+    class SearchYouTubeAdapter extends ArrayAdapter<String>
+    {
+        SearchYouTubeAdapter(Context context, int resource, List<String> objects) {
+            super(context, resource, objects);
+            System.out.println("SearchYouTube / SearchYouTubeAdapter / _constructor ");
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            System.out.println("SearchYouTube / SearchYouTubeAdapter / _getView / position = " + position);
+            if(convertView == null)
+            {
+                convertView = getLayoutInflater().inflate(R.layout.search_youtube_list_row, parent, false);
+            }
+
+            convertView.setFocusable(true);
+            convertView.setClickable(true);
+
+            TextView tv = (TextView)convertView.findViewById(R.id.text1);
+            tv.setText((position+1) + "\n" + listTitles.get(position));
+//            tv.setText(position);
+
+
+            final int item = position;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String idStr = listIDs.get(position);
+                    // apply native YouTube
+                    Util.openLink_YouTube(SearchYouTube.this, idStr);
+                }
+            });
+            return convertView;
+        }
     }
 
     /*
@@ -195,4 +321,35 @@ public class SearchYouTubeByKeyword {
             }
         }
     }
+
+    // Get titles of searched items
+    private static List<String> getSearchResult(Iterator<SearchResult> iteratorSearchResults) {
+        System.out.println("SearchYouTube / _getSearchResult");
+        listIDs = new ArrayList<>();
+        List<String> list = new ArrayList<>();
+        if (!iteratorSearchResults.hasNext()) {
+            System.out.println(" There aren't any results for your query.");
+        }
+
+        while (iteratorSearchResults.hasNext()) {
+            SearchResult singleVideo = iteratorSearchResults.next();
+            ResourceId rId = singleVideo.getId();
+
+            // Confirm that the result represents a video. Otherwise, the
+            // item will not contain a video ID.
+            if (rId.getKind().equals("youtube#video")) {
+//                Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
+//                System.out.println(" Video Id" + rId.getVideoId());
+//                System.out.println(" Count: " + count);
+                String title = singleVideo.getSnippet().getTitle();
+//                System.out.println(" Title: " + title);
+//                System.out.println(" URL = https://youtu.be/" + rId.getVideoId());
+//                System.out.println(" Thumbnail: " + thumbnail.getUrl());
+                list.add(title);
+                listIDs.add(rId.getVideoId());
+            }
+        }
+        return list;
+    }
+
 }
