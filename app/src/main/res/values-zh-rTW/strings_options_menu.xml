@@ -25,7 +25,9 @@
     <string name="drag_note">拖放記事</string>
     <string name="preview_note_body">預覽本文</string>
     <string name="click_launch_youtube">點擊啟動YouTube</string>
-    <string name="search_youtube">Search YouTube</string>
+    <string name="search_youtube">YouTube搜索</string>
+    <string name="search_youtube_keywords">關鍵詞輸入</string>
+    <string name="search_youtube_btn">搜索</string>
     <string name="drag_folder">拖放文件夾</string>
     <string name="delete_folders">刪除文件夾</string>
 </resources>

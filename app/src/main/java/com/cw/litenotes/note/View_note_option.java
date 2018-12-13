@@ -196,7 +196,7 @@ public class View_note_option {
                 DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
                 String keyWord = dB_page.getNoteTitle_byId(noteId);
                 Intent intent = new Intent(act,SearchYouTube.class);
-                intent.putExtra("search_title", keyWord );
+                intent.putExtra("search_keywords", keyWord );
                 act.startActivity(intent);
             }
 
