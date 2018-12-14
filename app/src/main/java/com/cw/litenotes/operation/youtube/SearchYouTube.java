@@ -102,6 +102,8 @@ public class SearchYouTube extends ListActivity {
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         });
 
+        UilCommon.init();
+
     }
 
 

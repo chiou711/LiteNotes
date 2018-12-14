@@ -202,7 +202,7 @@ public class Folder
             DB_drawer db_drawer = new DB_drawer(act);
             Pref.setPref_focusView_folder_tableId(act,db_drawer.getFolderTableId(position,true) );
 
-            FolderUi.selectFolder(act,position);
+            MainAct.openFolder();
         }
     }
 

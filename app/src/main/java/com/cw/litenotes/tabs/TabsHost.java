@@ -209,7 +209,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                 if (pageTableId > lastPageTableId)
                     lastPageTableId = pageTableId;
 
-//                System.out.println("TabsHost / _addPages / page_tableId = " + pageTableId);
+                System.out.println("TabsHost / _addPages / page_tableId = " + pageTableId);
                 adapter.addFragment(new Page_recycler(i, pageTableId));
             }
         }
@@ -388,43 +388,17 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public void onPause() {
         super.onPause();
         System.out.println("TabsHost / _onPause");
-
-        //  Remove fragments
-        ArrayList<Page_recycler> fragmentList = mTabsPagerAdapter.fragmentList;
-        if( (fragmentList != null) &&
-            (fragmentList.size() >0) )
-        {
-            RecyclerView listView = fragmentList.get(getFocus_tabPos()).recyclerView;//drag_listView;
-
-            if(listView != null)
-                store_listView_vScroll(listView);
-
-            for (int i = 0; i < fragmentList.size(); i++) {
-                MainAct.mAct.getSupportFragmentManager().beginTransaction().remove(fragmentList.get(i)).commit();
-            }
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         System.out.println("TabsHost / _onDestroy");
-    }
 
-    // store scroll of list view
-//    public static void store_listView_vScroll(DragSortListView listView)
-//    {
-//        int firstVisibleIndex = listView.getFirstVisiblePosition();
-//        View v = listView.getChildAt(0);
-//        int firstVisibleIndexTop = (v == null) ? 0 : v.getTop();
-//
-//        System.out.println("TabsHost / _store_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
-//                                                          " , firstVisibleIndexTop = " + firstVisibleIndexTop);
-//
-//        // keep index and top position
-//        Pref.setPref_focusView_list_view_first_visible_index(MainAct.mAct, firstVisibleIndex);
-//        Pref.setPref_focusView_list_view_first_visible_index_top(MainAct.mAct, firstVisibleIndexTop);
-//    }
+        //  Remove fragments
+        if(!MainAct.mAct.isDestroyed())
+            removeTabs();
+    }
 
     // store scroll of recycler view
     public static void store_listView_vScroll(RecyclerView recyclerView)
@@ -442,20 +416,6 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         Pref.setPref_focusView_list_view_first_visible_index(MainAct.mAct, firstVisibleIndex);
         Pref.setPref_focusView_list_view_first_visible_index_top(MainAct.mAct, firstVisibleIndexTop);
     }
-
-    // resume scroll of list view
-//    public static void resume_listView_vScroll(DragSortListView listView)
-//    {
-//        // recover scroll Y
-//        int firstVisibleIndex = Pref.getPref_focusView_list_view_first_visible_index(MainAct.mAct);
-//        int firstVisibleIndexTop = Pref.getPref_focusView_list_view_first_visible_index_top(MainAct.mAct);
-//
-//        System.out.println("TabsHost / _resume_listView_vScroll / firstVisibleIndex = " + firstVisibleIndex +
-//                " , firstVisibleIndexTop = " + firstVisibleIndexTop);
-//
-//        // restore index and top position
-//        listView.setSelectionFromTop(firstVisibleIndex, firstVisibleIndexTop);
-//    }
 
     // resume scroll of recycler view
     public static void resume_listView_vScroll(RecyclerView recyclerView)
@@ -490,6 +450,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 
     public static void reloadCurrentPage()
     {
+        System.out.println("TabsHost / _reloadCurrentPage");
         int pagePos = getFocus_tabPos();
         mViewPager.setAdapter(mTabsPagerAdapter);
         mViewPager.setCurrentItem(pagePos);
@@ -746,6 +707,28 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public static void setFocus_tabPos(int pos)
     {
         mFocusTabPos = pos;
+    }
+
+
+    public static void removeTabs()
+    {
+        System.out.println("TabsHost / _removeTabs");
+    	if(TabsHost.mTabsPagerAdapter == null)
+    		return;
+
+        ArrayList<Page_recycler> fragmentList = TabsHost.mTabsPagerAdapter.fragmentList;
+        if( (fragmentList != null) &&
+            (fragmentList.size() >0)  )
+        {
+            RecyclerView listView = fragmentList.get(TabsHost.getFocus_tabPos()).recyclerView;//drag_listView;
+
+            if(listView != null)
+                TabsHost.store_listView_vScroll(listView);
+
+            for (int i = 0; i < fragmentList.size(); i++) {
+                MainAct.mAct.getSupportFragmentManager().beginTransaction().remove(fragmentList.get(i)).commit();
+            }
+        }
     }
 
 }

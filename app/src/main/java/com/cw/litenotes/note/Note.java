@@ -597,15 +597,15 @@ public class Note extends AppCompatActivity
 	// avoid exception: has leaked window android.widget.ZoomButtonsController
 	@Override
 	public void finish() {
-		
+		System.out.println("Note / _finish");
 		if(mPagerHandler != null)
 			mPagerHandler.removeCallbacks(mOnBackPressedRun);		
 	    
 		ViewGroup view = (ViewGroup) getWindow().getDecorView();
 	    view.setBackgroundColor(getResources().getColor(color.background_dark)); // avoid white flash
 	    view.removeAllViews();
-	    
-	    super.finish();
+
+		super.finish();
 	}
 	
 	@Override
@@ -688,7 +688,7 @@ public class Note extends AppCompatActivity
             	return true;
 
 			case R.id.VIEW_NOTE_CHECK:
-				int markingNow = PageAdapter_recycler.toggleNoteMarking(MainAct.mAct,NoteUi.getFocus_notePos());
+				int markingNow = PageAdapter_recycler.toggleNoteMarking(this,NoteUi.getFocus_notePos());
 
 				// update marking
 				if(markingNow == 1)

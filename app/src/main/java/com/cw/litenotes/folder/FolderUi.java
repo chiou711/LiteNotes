@@ -325,7 +325,8 @@ public class FolderUi
 
                 // update
                 if (foldersCount > 0)
-                    selectFolder(act,getFocus_folderPos()); // select folder to clear old playing view
+	                MainAct.openFolder();
+
             }
         }
 
@@ -508,26 +509,26 @@ public class FolderUi
         DB_drawer dB_drawer = new DB_drawer(act);
     	MainAct.mFolderTitle = dB_drawer.getFolderTitle(position,true);
 
-		// update selected item and title, then close the drawer
-        DragSortListView listView = (DragSortListView) act.findViewById(R.id.drawer_listview);
-
-		listView.setItemChecked(position, true);
-
         // will call Drawer / _onDrawerClosed
         DrawerLayout drawerLayout = (DrawerLayout) act.findViewById(R.id.drawer_layout);
-        drawerLayout.closeDrawer(Drawer.mNavigationView);
 
-        MainAct.mAct.invalidateOptionsMenu();
+        if(drawerLayout != null) {
+	        // update selected item and title, then close the drawer
+	        DragSortListView listView = (DragSortListView) act.findViewById(R.id.drawer_listview);
+	        listView.setItemChecked(position, true);
+	        drawerLayout.closeDrawer(Drawer.mNavigationView);
+	        act.invalidateOptionsMenu();
 
-		// use Runnable to make sure only one folder background is seen
-        mHandler = new Handler();
-        mHandler.post(mTabsHostRun);
+	        // use Runnable to make sure only one folder background is seen
+	        startTabsHostRun();
+        }
     }
 
 
     // start tabs host runnable
     public static void startTabsHostRun()
     {
+	    System.out.println("FolderUi / _startTabsHostRun");
         mHandler = new Handler();
         mHandler.post(mTabsHostRun);
     }

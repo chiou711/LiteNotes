@@ -178,7 +178,7 @@ public class Drawer {
                             }
                         }
 
-                        FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
+                        MainAct.openFolder();
                     }
                 }
            };
