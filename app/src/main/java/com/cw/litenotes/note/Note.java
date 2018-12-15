@@ -240,7 +240,10 @@ public class Note extends AppCompatActivity
 		UilCommon.init();
 
 		// DB
-		mDb_page = new DB_page(act, TabsHost.getCurrentPageTableId());
+		DB_folder dbFolder = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
+		mStyle = dbFolder.getPageStyle(TabsHost.getFocus_tabPos(), true);
+
+		mDb_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
 
 		// Instantiate a ViewPager and a PagerAdapter.
 		viewPager = (ViewPager) findViewById(R.id.tabs_pager);
@@ -251,9 +254,6 @@ public class Note extends AppCompatActivity
 		// tab style
 //		if(TabsHost.mDbFolder != null)
 //			TabsHost.mDbFolder.close();
-
-		DB_folder dbFolder = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
-		mStyle = dbFolder.getPageStyle(TabsHost.getFocus_tabPos(), true);
 
 		if(mDb_page != null) {
 			mNoteId = mDb_page.getNoteId(NoteUi.getFocus_notePos(), true);
