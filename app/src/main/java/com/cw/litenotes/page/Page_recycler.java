@@ -112,7 +112,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         if( (itemAdapter != null) &&
-            (itemAdapter.getItemCount() ==0) ){
+            (itemAdapter.getItemCount() ==0) ){ //todo bug: Attempt to invoke interface method 'int android.database.Cursor.getCount()' on a null object reference
             blankView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
@@ -136,6 +136,7 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
 
     public void fillData()
     {
+        System.out.println("Page_recycler / _fillData / page_tableId = " + page_tableId);
         mDb_page = new DB_page(getActivity(), page_tableId);
         mDb_page.open();
         cursor_note = mDb_page.mCursor_note;

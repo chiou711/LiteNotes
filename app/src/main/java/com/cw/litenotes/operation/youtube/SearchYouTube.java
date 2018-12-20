@@ -43,7 +43,8 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Thumbnail;
 
-import java.io.IOException;
+//import java.io.IOException;
+//import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -130,7 +131,7 @@ public class SearchYouTube extends ListActivity {
 //            System.out.println("SearchYouTube / _search / in = " + in.toString());
             properties.load(in);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("There was an error reading " + PROPERTIES_FILE_PATH + ": " + e.getCause()
                     + " : " + e.getMessage());
             System.exit(1);
@@ -145,7 +146,7 @@ public class SearchYouTube extends ListActivity {
             //https://stackoverflow.com/questions/24065065/having-trouble-importing-google-api-services-samples-youtube-cmdline-auth
 //            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
                 youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-                public void initialize(HttpRequest request) throws IOException {
+                public void initialize(HttpRequest request) {
 //                    System.out.println("SearchYouTubeByKeyword / _main / Builder IOException ");
                 }
             }
@@ -187,15 +188,19 @@ public class SearchYouTube extends ListActivity {
                         else
                             searchResultList = searchResponse.getItems();
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
 
 
-            while (searchResultList == null)
-            {}
+            int count = 0;
+            while (( searchResultList == null) && (count < 5))
+            {
+                Thread.sleep(1000);
+                count++;
+            }
 
             getSearchResult(searchResultList.iterator());
 
@@ -212,7 +217,7 @@ public class SearchYouTube extends ListActivity {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
         } catch (Throwable t) {
             t.printStackTrace();

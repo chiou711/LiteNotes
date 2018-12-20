@@ -154,8 +154,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          */
 //        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);   // 1 debug, initial
 //        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);    // 2 debug, assets
-        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);  // 3 debug, download
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);  // 3 debug, download
+        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_ASSETS);  // 5 release, assets
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);// 6 release, download
 
