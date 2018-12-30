@@ -75,9 +75,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </activity>
-        <activity android:name=".operation.youtube.SearchYouTube"
-                  android:windowSoftInputMode="adjustPan"
-                  android:theme="@style/MyTheme"/>
         <!-- note: add orientation above, when doing Rotate, activity will not go through the following states:
              onPause/onSaveInstanceState/onStop/onDestroy/
                                                 onCreate/onStart/onRestoreInstanceState/onResume    -->
@@ -90,6 +87,12 @@
         <activity android:name=".operation.gallery.GalleryPagerAct"/>
       	<activity android:name=".operation.slideshow.SlideshowPlayer"
                   android:theme="@android:style/Theme.NoTitleBar"/>
+        <!--YouTube search -->
+        <activity android:name=".operation.youtube.SearchYouTube"
+                  android:windowSoftInputMode="adjustPan"
+                  android:theme="@style/MyTheme"/>
+
+        <!--receiver-->
         <receiver
             android:name=".util.DeleteFileAlarmReceiver"
             android:enabled="true" />

@@ -3,12 +3,13 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_height="100dp"
-              android:layout_width="match_parent">
+              android:layout_width="match_parent"
+              android:orientation="horizontal">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/searched_thumbnail"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:visibility="visible">
@@ -26,18 +27,51 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:visibility="gone"/>
-    </FrameLayout>
+        <TextView
+            android:id="@+id/searched_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/searched_image"
+            android:layout_alignRight="@id/searched_image"
+            android:layout_alignEnd="@id/searched_image"
+            android:background="#00ffffff"
+            android:lineSpacingMultiplier="0.9"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+    </RelativeLayout>
 
+    <!--<RelativeLayout-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--&gt;-->
+        <TextView android:id="@+id/searched_keyword"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#ffffff"
+            android:lineSpacingMultiplier="0.9"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textColor="#000000"
+            android:textSize="14sp"/>
 
-    <TextView android:id="@+id/searched_keyword"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:background="#ffffff"
-        android:lineSpacingMultiplier="0.9"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:textColor="#000000"
-        android:textSize="17sp"/>
+        <!--<TextView-->
+            <!--android:id="@+id/searched_duration"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_below="@+id/searched_keyword"-->
+            <!--android:background="#ffffff"-->
+            <!--android:lineSpacingMultiplier="0.9"-->
+            <!--android:paddingLeft="3dp"-->
+            <!--android:paddingRight="3dp"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textColor="#0000FF"-->
+            <!--android:textSize="12sp"/>-->
+    <!--</RelativeLayout>-->
 
 </LinearLayout>
