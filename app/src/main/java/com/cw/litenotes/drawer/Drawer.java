@@ -111,7 +111,7 @@ public class Drawer {
                             closeDrawer();
                             MainAct.mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
                             DeleteFolders delFoldersFragment = new DeleteFolders();
-                            MainAct.mFragmentTransaction = MainAct.mFragmentManager.beginTransaction();
+                            MainAct.mFragmentTransaction = MainAct.mAct.getSupportFragmentManager().beginTransaction();
                             MainAct.mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                             MainAct.mFragmentTransaction.replace(R.id.content_frame, delFoldersFragment).addToBackStack("delete_folders").commit();
                         }

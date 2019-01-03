@@ -111,7 +111,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public static Menu mMenu;
     public static List<String> mFolderTitles;
     public static AppCompatActivity mAct;//TODO static issue
-    public static FragmentManager mFragmentManager;
+    public FragmentManager mFragmentManager;
     public static FragmentManager.OnBackStackChangedListener mOnBackStackChangedListener;
     public static int mLastOkTabId = 1;
     public static SharedPreferences mPref_show_note_attribute;
@@ -152,10 +152,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         /***
          * Set APP build mode
          */
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);   // 1 debug, initial
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);   // 1 debug, initial
 //        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);    // 2 debug, assets
 //        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);  // 3 debug, download
-        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_ASSETS);  // 5 release, assets
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);// 6 release, download
 

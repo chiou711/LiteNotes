@@ -540,9 +540,9 @@ public class FolderUi
 
         TabsHost tabsHost = new TabsHost();
 
-	    FragmentTransaction fragmentTransaction = MainAct.mFragmentManager.beginTransaction();
+	    FragmentTransaction fragmentTransaction = MainAct.mAct.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content_frame, tabsHost).commit();
-	    MainAct.mFragmentManager.executePendingTransactions();
+	    MainAct.mAct.getSupportFragmentManager().executePendingTransactions();
     };
     
     public static int getFolder_pagesCount(AppCompatActivity act,int folderPos)

@@ -209,8 +209,13 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                 if (pageTableId > lastPageTableId)
                     lastPageTableId = pageTableId;
 
+                Page_recycler page = new Page_recycler();
+                Bundle args = new Bundle();
+                args.putInt("page_pos",i);
+                args.putInt("page_table_id",pageTableId);
+                page.setArguments(args);
                 System.out.println("TabsHost / _addPages / page_tableId = " + pageTableId);
-                adapter.addFragment(new Page_recycler(i, pageTableId));
+                adapter.addFragment(page);
             }
         }
 
@@ -388,16 +393,9 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public void onPause() {
         super.onPause();
         System.out.println("TabsHost / _onPause");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        System.out.println("TabsHost / _onDestroy");
-
         //  Remove fragments
         if(!MainAct.mAct.isDestroyed())
-            removeTabs();
+            removeTabs();//Put here will solve onBackStackChanged issue (no Page_recycler / _onCreate)
     }
 
     // store scroll of recycler view
@@ -726,6 +724,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                 TabsHost.store_listView_vScroll(listView);
 
             for (int i = 0; i < fragmentList.size(); i++) {
+                System.out.println("TabsHost / _removeTabs / i = " + i);
                 MainAct.mAct.getSupportFragmentManager().beginTransaction().remove(fragmentList.get(i)).commit();
             }
         }
