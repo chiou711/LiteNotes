@@ -29,6 +29,7 @@ import com.cw.litenotes.util.image.TouchImageView;
 import com.cw.litenotes.util.image.UtilImage;
 import com.cw.litenotes.util.ColorSet;
 import com.cw.litenotes.util.Util;
+import com.cw.litenotes.util.preferences.Pref;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -67,7 +68,7 @@ public class Note_edit extends Activity
         super.onCreate(savedInstanceState);
         
         // check note count first
-		dB = new DB_page(this, TabsHost.getCurrentPageTableId());
+	    dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
 
         if(dB.getNotesCount(true) ==  0)
         {

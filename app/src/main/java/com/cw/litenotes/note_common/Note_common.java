@@ -81,7 +81,7 @@ public class Note_common {
 	public boolean bRemoveAudioUri = false;
 	public boolean bEditPicture = false;
 
-    private DB_page dB;
+    private DB_page dB_page;
     Activity act;
     int style;
     ProgressBar progressBar;
@@ -104,9 +104,9 @@ public class Note_common {
 	    currPictureUri = pictureUri;
 	    currAudioUri = audioUri;
 	    
-	    dB = _db;//Page.mDb_page;
+	    dB_page = _db;//Page.mDb_page;
 	    
-	    oriMarking = dB.getNoteMarking_byId(noteId);
+	    oriMarking = dB_page.getNoteMarking_byId(noteId);
 		
 	    bRollBackData = false;
 		bEditPicture = true;
@@ -116,7 +116,7 @@ public class Note_common {
 	public Note_common(Activity act)
     {
     	this.act = act;
-		dB = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+		dB_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
     }
 
 	public void UI_init()
@@ -379,7 +379,7 @@ public class Note_common {
     	System.out.println("Note_common / _deleteNote");
         // for Add new note (noteId is null first), but decide to cancel
         if(rowId != null)
-        	dB.deleteNote(rowId,true);
+        	dB_page.deleteNote(rowId,true);
     }
     
     // populate text fields
@@ -387,17 +387,17 @@ public class Note_common {
 	{
 		if (rowId != null) {
 			// title
-			String strTitleEdit = dB.getNoteTitle_byId(rowId);
+			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
 			titleEditText.setText(strTitleEdit);
 			titleEditText.setSelection(strTitleEdit.length());
 
 			// body
-			String strBodyEdit = dB.getNoteBody_byId(rowId);
+			String strBodyEdit = dB_page.getNoteBody_byId(rowId);
 			bodyEditText.setText(strBodyEdit);
 			bodyEditText.setSelection(strBodyEdit.length());
 
 			// link
-			String strLinkEdit = dB.getNoteLinkUri_byId(rowId);
+			String strLinkEdit = dB_page.getNoteLinkUri_byId(rowId);
 			linkEditText.setText(strLinkEdit);
 			linkEditText.setSelection(strLinkEdit.length());
 		}
@@ -427,8 +427,8 @@ public class Note_common {
 			populateFields_text(rowId);
 
     		// for picture block
-			pictureUriInDB = dB.getNotePictureUri_byId(rowId);
-			drawingUriInDB = dB.getNoteDrawingUri_byId(rowId);
+			pictureUriInDB = dB_page.getNotePictureUri_byId(rowId);
+			drawingUriInDB = dB_page.getNoteDrawingUri_byId(rowId);
 			System.out.println("populateFields_all / mPictureFileNameInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
@@ -466,7 +466,7 @@ public class Note_common {
 	    	}			
 	    	
     		// audio
-			audioUriInDB = dB.getNoteAudioUri_byId(rowId);
+			audioUriInDB = dB_page.getNoteAudioUri_byId(rowId);
         	if(!Util.isEmptyString(audioUriInDB))
     		{
     			String audio_name = audioUriInDB;
@@ -477,12 +477,12 @@ public class Note_common {
 				audioTextView.setText("");
         		
     		// link
-			String strLinkEdit = dB.getNoteLink_byId(rowId);
+			String strLinkEdit = dB_page.getNoteLink_byId(rowId);
             linkEditText.setText(strLinkEdit);
             linkEditText.setSelection(strLinkEdit.length());
 
             // title        	
-			String strTitleEdit = dB.getNoteTitle_byId(rowId);
+			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
 			final String curLinkStr = linkEditText.getText().toString();
 			if( Util.isEmptyString(strTitleEdit) &&
 				Util.isEmptyString(titleEditText.getText().toString()) )
@@ -618,7 +618,7 @@ public class Note_common {
 	        	{
 	        		// insert
 	        		System.out.println("Note_common / _saveStateInDB / insert");
-	        		rowId = dB.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
+	        		rowId = dB_page.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
         		currAudioUri = audioUri; // update file name
@@ -640,7 +640,7 @@ public class Note_common {
 	        			title = oriTitle;
 	        			body = oriBody;
 	        			Long time = oriCreatedTime;
-	        			dB.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body, oriMarking, time,true);
+	        			dB_page.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body, oriMarking, time,true);
 	        		}
 	        		else // update new
 	        		{
@@ -657,7 +657,7 @@ public class Note_common {
 
 //						long marking = (!audioUri.isEmpty())?1:oriMarking;
                         boolean isOK;
-	        			isOK = dB.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body,
+	        			isOK = dB_page.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body,
 												marking, now.getTime(),true); // update note
 	        			System.out.println("--- isOK = " + isOK);
 	        		}
@@ -693,7 +693,7 @@ public class Note_common {
 	        		// insert
 					String name = Util.getDisplayNameByUriString(pictureUri, act);
 	        		System.out.println("Note_common / _savePictureStateInDB / insert");
-	        		rowId = dB.insertNote(name, pictureUri, audioUri, drawingUri, linkUri, "", 1, (long) 0);// add new note, get return row Id
+	        		rowId = dB_page.insertNote(name, pictureUri, audioUri, drawingUri, linkUri, "", 1, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
 	        } 
@@ -707,12 +707,12 @@ public class Note_common {
 	        		{
 			        	System.out.println("Note_common / _savePictureStateInDB / update: roll back");
 	        			Long time = oriCreatedTime;
-	        			dB.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", oriMarking, time, true);
+	        			dB_page.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", oriMarking, time, true);
 	        		}
 	        		else // update new
 	        		{
 	        			System.out.println("Note_common / _savePictureStateInDB / update new");
-	        			dB.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", 1, now.getTime(), true); // update note
+	        			dB_page.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", 1, now.getTime(), true); // update note
 	        		}
 	        		currPictureUri = pictureUri; // update file name
 	        	}
@@ -730,7 +730,7 @@ public class Note_common {
 	
 	// for confirmation condition
 	public void removePictureStringFromOriginalNote(Long rowId) {
-    	dB.updateNote(rowId,
+    	dB_page.updateNote(rowId,
 				oriTitle,
     				   "",
 				oriAudioUri,
@@ -746,7 +746,7 @@ public class Note_common {
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
         
-    	dB.updateNote(rowId,
+    	dB_page.updateNote(rowId,
     				   title,
     				   "",
 				oriAudioUri,
@@ -758,7 +758,7 @@ public class Note_common {
 	}
 
 	public void removeAudioStringFromOriginalNote(Long rowId) {
-    	dB.updateNote(rowId,
+    	dB_page.updateNote(rowId,
 				oriTitle,
 				oriPictureUri,
     				   "",
@@ -773,7 +773,7 @@ public class Note_common {
         String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
-        dB.updateNote(rowId,
+        dB_page.updateNote(rowId,
     				   title,
 				oriPictureUri,
     				   "",
@@ -787,7 +787,7 @@ public class Note_common {
 	public void removeLinkUriFromCurrentEditNote(Long rowId) {
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
-        dB.updateNote(rowId,
+        dB_page.updateNote(rowId,
     				   title,
 				oriPictureUri,
 				oriAudioUri,
@@ -800,7 +800,7 @@ public class Note_common {
 
 	public int getCount()
 	{
-		int noteCount = dB.getNotesCount(true);
+		int noteCount = dB_page.getNotesCount(true);
 		return noteCount;
 	}
 	
@@ -813,7 +813,7 @@ public class Note_common {
     		// insert
     		System.out.println("Note_common / _insertAudioToDB / insert");
     		// set marking to 1 for default
-    		rowId = dB.insertNote("", "", audioUri, "", "", "", 1, (long) 0);// add new note, get return row Id
+    		rowId = dB_page.insertNote("", "", audioUri, "", "", "", 1, (long) 0);// add new note, get return row Id
     	}
 		return rowId;
 	}

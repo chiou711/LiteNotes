@@ -63,7 +63,7 @@ public class SearchYouTube extends ListActivity {
      * Define a global variable that identifies the name of a file that
      * contains the developer's API key.
      */
-    private static final String PROPERTIES_FILE_PATH = "/assets/youtube.properties";
+//    private static final String PROPERTIES_FILE_PATH = "/assets/youtube.properties";
 
     private static final long NUMBER_OF_VIDEOS_RETURNED = 25;
 
@@ -126,19 +126,19 @@ public class SearchYouTube extends ListActivity {
      */
     public void  search(String args) {
     	System.out.println("SearchYouTube / _search / args = " + args);
-        // Read the developer key from the properties file.
-        Properties properties = new Properties();
-        try {
-            InputStream in = SearchYouTube.class.getResourceAsStream(PROPERTIES_FILE_PATH);
-//				InputStream in = MainAct.mAct.getResources().openRawResource(R.raw.youtube_properties);
-//            System.out.println("SearchYouTube / _search / in = " + in.toString());
-            properties.load(in);
-
-        } catch (IOException e) {
-            System.err.println("There was an error reading " + PROPERTIES_FILE_PATH + ": " + e.getCause()
-                    + " : " + e.getMessage());
-            System.exit(1);
-        }
+        // Read the developer key from the properties file. (enable assets.srcDirs = ['preferred/assets/'])
+//        Properties properties = new Properties();
+//        try {
+//            InputStream in = SearchYouTube.class.getResourceAsStream(PROPERTIES_FILE_PATH);
+//			//InputStream in = MainAct.mAct.getResources().openRawResource(R.raw.youtube_properties);
+//            //System.out.println("SearchYouTube / _search / in = " + in.toString());
+//            properties.load(in);
+//
+//        } catch (IOException e) {
+//            System.err.println("There was an error reading " + PROPERTIES_FILE_PATH + ": " + e.getCause()
+//                    + " : " + e.getMessage());
+//            System.exit(1);
+//        }
 
         try {
             // This object is used to make YouTube Data API requests. The last
@@ -166,7 +166,8 @@ public class SearchYouTube extends ListActivity {
             // Set your developer key from the {{ Google Cloud Console }} for
             // non-authenticated requests. See:
             // {{ https://cloud.google.com/console }}
-            String apiKey = properties.getProperty("youtube.apikey");
+//            String apiKey = properties.getProperty("youtube.apikey");
+            String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
 //            System.out.println("SearchYouTube / _search/ apiKey = " + apiKey);
             search.setKey(apiKey);
             search.setQ(queryTerm);
