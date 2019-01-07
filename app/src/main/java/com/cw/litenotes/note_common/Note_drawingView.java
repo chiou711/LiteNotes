@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.cw.litenotes.R;
 import com.cw.litenotes.util.Util;
+import com.cw.litenotes.util.preferences.Pref;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,20 +52,29 @@ public class Note_drawingView extends View
     {
         super(context, attrs); // pass context to View's constructor
         System.out.println("Note_drawingView / constructor");
+        this.context = context;
+        act = (Activity) context;
 
         paintScreen = new Paint(); // used to display bitmap onto screen
 
         // set the initial display settings for the painted line
         paintLine = new Paint();
         paintLine.setAntiAlias(true); // smooth edges of drawn line
-        paintLine.setColor(Color.BLACK); // default color is black
+
+        // set default line color
+        paintLine.setColor(Color.argb(Pref.getPref_drawing_line_color_alpha(act),
+                                      Pref.getPref_drawing_line_color_red(act),
+                                      Pref.getPref_drawing_line_color_green(act),
+                                      Pref.getPref_drawing_line_color_blue(act))); // default color is black
+
         paintLine.setStyle(Paint.Style.STROKE); // solid line
-        paintLine.setStrokeWidth(5); // set the default line width
+
+        // set default line width
+        paintLine.setStrokeWidth(Pref.getPref_drawing_line_width(act));
+
         paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
         pathMap = new HashMap<Integer, Path>();
         previousPointMap = new HashMap<Integer, Point>();
-        this.context = context;
-        act = (Activity) context;
     }
 
     @Override

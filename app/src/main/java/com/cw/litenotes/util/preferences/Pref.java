@@ -81,28 +81,6 @@ public class Pref
         pref.edit().remove(keyName).apply();
     }
 
-    // set scroll X of drawer of focus view
-//    public static void setPref_focusView_scrollX_byFolderTableId(Activity act, int scrollX )
-//    {
-//        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-//        String keyPrefix = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID_";
-//        int tableId = getPref_focusView_folder_tableId(act);
-//        String keyName = keyPrefix.concat(String.valueOf(tableId));
-//        keyName = keyName.concat("_SCROLL_X");
-//        pref.edit().putInt(keyName, scrollX).apply();
-//    }
-
-    // get scroll X of drawer of focus view
-//    public static Integer getPref_focusView_scrollX_byFolderTableId(Activity act)
-//    {
-//        SharedPreferences pref = act.getSharedPreferences("focus_view", 0);
-//        String keyPrefix = "KEY_FOCUS_VIEW_FOLDER_TABLE_ID_";
-//        int tableId = getPref_focusView_folder_tableId(act);
-//        String keyName = keyPrefix.concat(String.valueOf(tableId));
-//        keyName = keyName.concat("_SCROLL_X");
-//        return pref.getInt(keyName, 0); // default scroll X is 0
-//    }
-
     // Set list view first visible Index of focus view
     public static void setPref_focusView_list_view_first_visible_index(Activity act, int index )
     {
@@ -191,4 +169,83 @@ public class Pref
         pref.edit().putBoolean(keyName, isAuto).apply();
     }
 
+    // set drawing line width
+    public static void setPref_drawing_line_width(Activity act, int width )
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_WIDTH";
+        pref.edit().putInt(key, width).apply();
+    }
+
+    // get drawing line width
+    public static Integer getPref_drawing_line_width(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_WIDTH";
+        return pref.getInt(key, 5);
+    }
+
+    // set drawing line alpha
+    public static void setPref_drawing_line_color_alpha(Activity act, int alpha )
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_ALPHA";
+        pref.edit().putInt(key, alpha).apply();
+    }
+
+    // get drawing line alpha
+    public static Integer getPref_drawing_line_color_alpha(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_ALPHA";
+        return pref.getInt(key, 255);
+    }
+
+    // set drawing line red
+    public static void setPref_drawing_line_color_red(Activity act, int red )
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_RED";
+        pref.edit().putInt(key, red).apply();
+    }
+
+    // get drawing line red
+    public static Integer getPref_drawing_line_color_red(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_RED";
+        return pref.getInt(key, 0);
+    }
+
+    // set drawing line green
+    public static void setPref_drawing_line_color_green(Activity act, int green )
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_GREEN";
+        pref.edit().putInt(key, green).apply();
+    }
+
+    // get drawing line green
+    public static Integer getPref_drawing_line_color_green(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_GREEN";
+        return pref.getInt(key, 0);
+    }
+
+    // set drawing line blue
+    public static void setPref_drawing_line_color_blue(Activity act, int blue )
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_BLUE";
+        pref.edit().putInt(key, blue).apply();
+    }
+
+    // get drawing line blue
+    public static Integer getPref_drawing_line_color_blue(Activity act)
+    {
+        SharedPreferences pref = act.getSharedPreferences("drawing", 0);
+        String key = "KEY_DRAWING_LINE_COLOR_BLUE";
+        return pref.getInt(key, 0);
+    }
 }

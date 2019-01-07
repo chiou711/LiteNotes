@@ -370,10 +370,18 @@ public class Note_drawing extends Activity
             SeekBar blueSeekBar =
                 (SeekBar) currentDialog.findViewById(R.id.blueSeekBar);
 
+            int a = alphaSeekBar.getProgress();
+            int r = redSeekBar.getProgress();
+            int g = greenSeekBar.getProgress();
+            int b =  blueSeekBar.getProgress();
             // set the line color
-            drawingView.setDrawingColor(Color.argb(
-                alphaSeekBar.getProgress(), redSeekBar.getProgress(),
-                greenSeekBar.getProgress(), blueSeekBar.getProgress()));
+            drawingView.setDrawingColor(Color.argb(a,r,g,b));
+
+            Pref.setPref_drawing_line_color_alpha(Note_drawing.this,a);
+            Pref.setPref_drawing_line_color_red(Note_drawing.this,r);
+            Pref.setPref_drawing_line_color_green(Note_drawing.this,g);
+            Pref.setPref_drawing_line_color_blue(Note_drawing.this,b);
+
             currentDialog.dismiss(); // hide the dialog
             currentDialog = null; // dialog no longer needed
         }
@@ -450,8 +458,14 @@ public class Note_drawing extends Activity
             SeekBar widthSeekBar =
                 (SeekBar) currentDialog.findViewById(R.id.widthSeekBar);
 
-            // set the line color
-            drawingView.setLineWidth(widthSeekBar.getProgress());
+            int width = widthSeekBar.getProgress();
+
+            // set the line width
+            drawingView.setLineWidth(width);
+
+            //set preference
+            Pref.setPref_drawing_line_width(Note_drawing.this,width);
+
             currentDialog.dismiss(); // hide the dialog
             currentDialog = null; // dialog no longer needed
         }
