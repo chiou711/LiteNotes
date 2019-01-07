@@ -52,7 +52,7 @@
     <string name="menuitem_erase">Erase</string>
     <string name="menuitem_line_width">Line Width</string>
     <string name="menuitem_save_image">Save Image</string>
-    <string name="menuitem_update_image">Update Image</string>
+    <string name="menuitem_save_as_other_image">Save as other Image</string>
     <string name="message_erase">Erase the drawing?</string>
     <string name="message_error_saving">
        There was an error saving the image</string>

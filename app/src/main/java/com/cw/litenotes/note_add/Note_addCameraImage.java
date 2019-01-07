@@ -24,6 +24,7 @@ import com.cw.litenotes.note_common.Note_common;
 import com.cw.litenotes.page.Page_recycler;
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
+import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.image.UtilImage;
 import com.cw.litenotes.util.Util;
 import com.cw.litenotes.util.preferences.Pref;
@@ -125,7 +126,7 @@ public class Note_addCameraImage extends Activity {
 				(Long) savedInstanceState.getSerializable(DB_page.KEY_NOTE_ID);
 
 		// get picture Uri in DB if instance is not null
-        dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
+        dB = new DB_page(this, TabsHost.getCurrentPageTableId());
 		if(savedInstanceState != null)
 		{
 			System.out.println("Note_addCameraImage / onCreate / noteId =  " + noteId);

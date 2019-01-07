@@ -37,6 +37,7 @@ import com.cw.litenotes.main.MainAct;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.AudioPlayer_note;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
+import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.ColorSet;
 import com.cw.litenotes.util.Util;
 import com.cw.litenotes.util.audio.UtilAudio;
@@ -299,7 +300,7 @@ public class AudioUi_note
            UtilAudio.hasAudioExtension(Util.getDisplayNameByUriString(audioStr, act)))
         {
             AudioPlayer_note.mAudioPos = NoteUi.getFocus_notePos();
-            MainAct.mPlaying_pageTableId = Pref.getPref_focusView_page_tableId(act);
+            MainAct.mPlaying_pageTableId = TabsHost.getCurrentPageTableId();
 
             Audio_manager.setAudioPlayMode(Audio_manager.NOTE_PLAY_MODE);
 

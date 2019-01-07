@@ -21,6 +21,7 @@ import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.operation.audio.Audio_manager;
 import com.cw.litenotes.operation.audio.BackgroundAudioService;
 import com.cw.litenotes.operation.youtube.YouTubePlayerAct;
+import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.image.UtilImage;
 import com.cw.litenotes.util.preferences.Pref;
 import com.cw.litenotes.util.video.UtilVideo;
@@ -89,7 +90,7 @@ public class NoteUi
         act = activity;
         mPosition = position;
 
-	    DB_page db_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+	    DB_page db_page = new DB_page(act,TabsHost.getCurrentPageTableId());
         setNotesCnt(db_page.getNotesCount(true));
         String pictureUri = db_page.getNotePictureUri(position,true);
         String linkUri = db_page.getNoteLinkUri(position,true);

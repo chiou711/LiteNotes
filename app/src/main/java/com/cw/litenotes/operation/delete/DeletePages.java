@@ -200,7 +200,7 @@ public class DeletePages extends Fragment{
             Pref.setPref_focusView_page_tableId(act, newFirstPageTblId);
         }
         else if(pgsCnt ==0)
-            Pref.setPref_focusView_page_tableId(act, 0);
+            Pref.setPref_focusView_page_tableId(act, 0);//todo 0 OK?
 
         mDbFolder.close();
 

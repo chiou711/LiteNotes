@@ -1335,9 +1335,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     {
         //System.out.println("MainAct / _onOptionsItemSelected");
         setMenuUiState(item.getItemId());
-        DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
-        DB_page dB_page = new DB_page(this,TabsHost.getCurrentPageTableId());
         DB_drawer dB_drawer = new DB_drawer(this);
+        DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
+        DB_page dB_page = new DB_page(this,Pref.getPref_focusView_page_tableId(this));
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -1490,11 +1490,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
             case MenuId.SLIDE_SHOW:
                 slideshowInfo = new SlideshowInfo();
-
                 // add images for slide show
                 dB_page.open();
                 int count = dB_page.getNotesCount(false);
-                for(int position = 0; position < dB_page.getNotesCount(false) ; position++)
+                for(int position = 0; position < count ; position++)
                 {
                     if(dB_page.getNoteMarking(position,false) == 1)
                     {

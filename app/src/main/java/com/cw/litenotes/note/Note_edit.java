@@ -68,7 +68,7 @@ public class Note_edit extends Activity
         super.onCreate(savedInstanceState);
         
         // check note count first
-	    dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
+	    dB = new DB_page(this, TabsHost.getCurrentPageTableId());
 
         if(dB.getNotesCount(true) ==  0)
         {

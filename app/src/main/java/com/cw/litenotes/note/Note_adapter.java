@@ -19,6 +19,7 @@ package com.cw.litenotes.note;
 import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.operation.audio.Audio_manager;
+import com.cw.litenotes.tabs.TabsHost;
 import com.cw.litenotes.util.preferences.Pref;
 import com.cw.litenotes.util.uil.UilCommon;
 import com.cw.litenotes.util.audio.UtilAudio;
@@ -77,7 +78,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	act = activity;
         inflater = act.getLayoutInflater();
         mLastPosition = -1;
-	    db_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+	    db_page = new DB_page(act, TabsHost.getCurrentPageTableId());
         System.out.println("Note_adapter / constructor / mLastPosition = " + mLastPosition);
     }
     

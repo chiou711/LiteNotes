@@ -52,7 +52,7 @@
     <string name="menuitem_erase">擦除</string>
     <string name="menuitem_line_width">線寬</string>
     <string name="menuitem_save_image">保存图片</string>
-    <string name="menuitem_update_image">更新图片</string>
+    <string name="menuitem_save_as_other_image">另存为其他图片</string>
     <string name="message_erase">擦除绘图？</string>
     <string name="message_error_saving">
        保存图像时出错</string>

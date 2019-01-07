@@ -151,9 +151,6 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
 
         // Set PageAdapter_recycler as the adapter for RecyclerView.
         recyclerView.setAdapter(itemAdapter);
-
-        //init
-        TabsHost.showFooter(act);
     }
 
     // swap rows

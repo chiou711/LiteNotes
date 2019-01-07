@@ -623,7 +623,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                 }
             }
             System.out.println("TabsHost / deletePage / --- after delete / newFirstPageTblId = " + newFirstPageTblId);
-            Pref.setPref_focusView_page_tableId(activity, newFirstPageTblId);
+            Pref.setPref_focusView_page_tableId(activity, newFirstPageTblId);//todo Could be 0?
         }
 //		else
 //		{

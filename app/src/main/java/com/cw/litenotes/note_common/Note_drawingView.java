@@ -287,6 +287,8 @@ public class Note_drawingView extends View
     {
         try
         {
+            filePath = Note_drawing.drawingUriInDB;
+
             // get an OutputStream to uri
             OutputStream outStream = getContext().getContentResolver().openOutputStream(Uri.parse(filePath));
 

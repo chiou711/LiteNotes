@@ -24,6 +24,7 @@ import com.cw.litenotes.R;
 import com.cw.litenotes.db.DB_page;
 import com.cw.litenotes.page.Page_recycler;
 import com.cw.litenotes.util.Util;
+import com.cw.litenotes.util.image.UtilImage;
 import com.cw.litenotes.util.preferences.Pref;
 import com.cw.litenotes.tabs.TabsHost;
 
@@ -39,8 +40,8 @@ public class Note_drawing extends Activity
     private static final int ERASE_MENU_ID = Menu.FIRST + 2;
     private static final int CLEAR_MENU_ID = Menu.FIRST + 3;
     private static final int SAVE_MENU_ID = Menu.FIRST + 4;
-    private static final int UPDATE_MENU_ID = Menu.FIRST + 5;
-    
+    private static final int SAVE_OTHER_MENU_ID = Menu.FIRST + 5;
+
     // variable that refers to a Choose Color or Choose Line Width dialog
     private Dialog currentDialog;
 
@@ -127,7 +128,11 @@ public class Note_drawing extends Activity
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                    storeDrawingInDB();
+                    if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawing.this))
+                        updateDrawingInDB();
+                    else
+                        saveDrawingInDB();
+
                     setResult(RESULT_OK, getIntent());
                     finish();
                 }})
@@ -164,16 +169,11 @@ public class Note_drawing extends Activity
         menu.add(Menu.NONE, CLEAR_MENU_ID, Menu.NONE,
          R.string.menuitem_clear);
 
-        if(getMode() == Util.DRAWING_ADD)
-        {
-            menu.add(Menu.NONE, SAVE_MENU_ID, Menu.NONE,
-            R.string.menuitem_save_image);
-        }
-        else if(getMode() == Util.DRAWING_EDIT)
-        {
-            menu.add(Menu.NONE, UPDATE_MENU_ID, Menu.NONE,
-            R.string.menuitem_update_image);		
-        }
+        menu.add(Menu.NONE, SAVE_MENU_ID, Menu.NONE,
+        R.string.menuitem_save_image);
+
+        menu.add(Menu.NONE, SAVE_OTHER_MENU_ID, Menu.NONE,
+                R.string.menuitem_save_as_other_image);
 
         return true;
     }
@@ -201,69 +201,77 @@ public class Note_drawing extends Activity
                 return true;
 
             case SAVE_MENU_ID:
-            case UPDATE_MENU_ID:
-                storeDrawingInDB();
+                if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawing.this))
+                    updateDrawingInDB();
+                else
+                    saveDrawingInDB();
+                System.out.println("Note_drawing / onOptionsItemSelected / SAVE_MENU_ID / drawingUriInDB = " + drawingUriInDB);
+                return true;
+
+            case SAVE_OTHER_MENU_ID:
+                saveDrawingInDB();
                 return true;
         }
         return super.onOptionsItemSelected(item); // call super's method
     }
 
     // save drawing in DB
-    void storeDrawingInDB()
+    void saveDrawingInDB()
     {
-        if(getMode() == Util.DRAWING_ADD) {
-            String uriStr = drawingView.saveImage(); // save the current images
-            dB = new DB_page(this, Pref.getPref_focusView_page_tableId(this));
-            String scheme = Uri.parse(uriStr).getScheme();
-            // add single file
-            if( scheme.equalsIgnoreCase("file") ||
-                    scheme.equalsIgnoreCase("content") )
+        String uriStr = drawingView.saveImage(); // save the current images
+        dB = new DB_page(this, TabsHost.getCurrentPageTableId());
+        String scheme = Uri.parse(uriStr).getScheme();
+        // add single file
+        if( scheme.equalsIgnoreCase("file") ||
+            scheme.equalsIgnoreCase("content") )
+        {
+            // check if content scheme points to local file
+            if(scheme.equalsIgnoreCase("content"))
             {
-                // check if content scheme points to local file
-                if(scheme.equalsIgnoreCase("content"))
-                {
-                    String realPath = Util.getLocalRealPathByUri(this, Uri.parse(uriStr));
+                String realPath = Util.getLocalRealPathByUri(this, Uri.parse(uriStr));
 
-                    if(realPath != null)
-                        uriStr = "file://".concat(realPath);
-                }
+                if(realPath != null)
+                    uriStr = "file://".concat(realPath);
+            }
 
-                if( !Util.isEmptyString(uriStr))
-                {
-                    // insert
-                    // set marking to 1 for default
-                    dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
-                }
+            if( !Util.isEmptyString(uriStr))
+            {
+                // insert
+                // set marking to 1 for default
+                id = dB.insertNote("", "", "", uriStr, "", "", 1, (long) 0);// add new note, get return row Id
+                drawingUriInDB = uriStr;
+            }
 
-                if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
-                        dB.getNotesCount(true) > 0 )
-                {
-                    Page_recycler.swap(Page_recycler.mDb_page);
-                }
+            if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
+                    dB.getNotesCount(true) > 0 )
+            {
+                Page_recycler.swap(Page_recycler.mDb_page);
+            }
 
-                if(!Util.isEmptyString(uriStr))
-                {
-                    String drawingName = Util.getDisplayNameByUriString(uriStr, this);
-                    Util.showSavedFileToast(drawingName,this);
-                }
+            if(!Util.isEmptyString(uriStr))
+            {
+                String drawingName = Util.getDisplayNameByUriString(uriStr, this);
+                Util.showSavedFileToast(drawingName,this);
             }
         }
-        else if(getMode() == Util.DRAWING_EDIT) {
-            drawingView.updateImage(); // save the current images
-            Date now = new Date();
-            dB.updateNote(id,
-                    dB.getNoteTitle_byId(id),
-                    dB.getNotePictureUri_byId(id),
-                    dB.getNoteAudioUri_byId(id),
-                    drawingUriInDB,
-                    dB.getNoteLinkUri_byId(id),
-                    dB.getNoteBody_byId(id),
-                    dB.getNoteMarking_byId(id),
-                    now.getTime(),
-                    true);// add new note, get return row Id
+        drawingHasNew = false;
+    }
 
-        }
-
+    // update drawing in DB
+    void updateDrawingInDB()
+    {
+        drawingView.updateImage(); // save the current images
+        Date now = new Date();
+        dB.updateNote(id,
+                dB.getNoteTitle_byId(id),
+                dB.getNotePictureUri_byId(id),
+                dB.getNoteAudioUri_byId(id),
+                drawingUriInDB,
+                dB.getNoteLinkUri_byId(id),
+                dB.getNoteBody_byId(id),
+                dB.getNoteMarking_byId(id),
+                now.getTime(),
+                true);// add new note, get return row Id
         drawingHasNew = false;
     }
 

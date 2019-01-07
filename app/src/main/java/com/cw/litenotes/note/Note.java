@@ -243,7 +243,7 @@ public class Note extends AppCompatActivity
 		DB_folder dbFolder = new DB_folder(act,Pref.getPref_focusView_folder_tableId(act));
 		mStyle = dbFolder.getPageStyle(TabsHost.getFocus_tabPos(), true);
 
-		mDb_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+		mDb_page = new DB_page(act, TabsHost.getCurrentPageTableId());
 
 		// Instantiate a ViewPager and a PagerAdapter.
 		viewPager = (ViewPager) findViewById(R.id.tabs_pager);
