@@ -14,6 +14,7 @@
     <string name="btn_Select">選擇</string>
     <string name="btn_None">無</string>
     <string name="app_name">Lite記事本</string>
+    <string name="app_name_dir">LiteNotes</string>
     <string name="mark_handler">mark_handler</string>
     <string name="drag_handler">drag_handler</string>
     <string name="confirm_dialog_title">確認</string>

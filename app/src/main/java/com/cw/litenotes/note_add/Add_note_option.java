@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.litenotes.R;
+import com.cw.litenotes.note_add.add_recording.Add_recording_act;
 import com.cw.litenotes.note_common.Note_drawing;
 import com.cw.litenotes.util.Util;
 
@@ -63,16 +64,17 @@ public class Add_note_option {
     static List<Add_note_option> addNoteList;
 
     private final static int ID_NEW_TEXT = 1;
-    private final static int ID_NEW_AUDIO = 2;
-    private final static int ID_NEW_CAMERA_IMAGE = 3;
-    private final static int ID_NEW_READY_IMAGE = 4;
-    private final static int ID_NEW_CAMERA_VIDEO = 5;
-    private final static int ID_NEW_READY_VIDEO = 6;
-    private final static int ID_NEW_YOUTUBE_LINK = 7;
-    private final static int ID_NEW_WEB_LINK = 8;
-    private final static int ID_NEW_DRAWING = 9;
-    private final static int ID_NEW_BACK = 10;
-    private final static int ID_NEW_SETTING = 11;
+    private final static int ID_NEW_DRAWING = 2;
+    private final static int ID_NEW_AUDIO = 3;
+    private final static int ID_NEW_RECORDING = 4;
+    private final static int ID_NEW_CAMERA_IMAGE = 5;
+    private final static int ID_NEW_READY_IMAGE = 6;
+    private final static int ID_NEW_CAMERA_VIDEO = 7;
+    private final static int ID_NEW_READY_VIDEO = 8;
+    private final static int ID_NEW_YOUTUBE_LINK = 9;
+    private final static int ID_NEW_WEB_LINK = 20;
+    private final static int ID_NEW_BACK = 11;
+    private final static int ID_NEW_SETTING = 12;
 
     public static void createSelection(AppCompatActivity act,boolean permitted)
     {
@@ -94,10 +96,21 @@ public class Add_note_option {
                 R.string.note_text));
 
         if(permitted) {
+            // drawing
+            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
+                    R.drawable.ic_menu_draw,
+                    R.string.note_drawing));
+
             // audio
             addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
                     R.drawable.ic_audio_unselected,
                     R.string.note_audio));
+
+            // recording
+            addNoteList.add(new Add_note_option(ID_NEW_RECORDING,
+//                    android.R.drawable.ic_btn_speak_now,
+                    R.drawable.ic_mic,
+                    R.string.note_recording));
 
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -134,12 +147,6 @@ public class Add_note_option {
                 android.R.drawable.ic_menu_share,
                 R.string.note_web_link));
 
-        if(permitted) {
-            // drawing
-            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
-                    R.drawable.ic_menu_draw,
-                    R.string.note_drawing));
-        }
             // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
                 R.drawable.ic_menu_back,
@@ -205,6 +212,22 @@ public class Add_note_option {
             case ID_NEW_AUDIO:
             {
                 Intent intent = new Intent(act, Note_addAudio.class);
+                if( bTop && !bDirectory )
+                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
+                else if(!bTop && !bDirectory)
+                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
+                else if(bTop && bDirectory)
+                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
+                else if(!bTop && bDirectory)
+                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
+
+                act.startActivity(intent);
+            }
+            break;
+
+            case ID_NEW_RECORDING:
+            {
+                Intent intent = new Intent(act, Add_recording_act.class);
                 if( bTop && !bDirectory )
                     intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
                 else if(!bTop && !bDirectory)

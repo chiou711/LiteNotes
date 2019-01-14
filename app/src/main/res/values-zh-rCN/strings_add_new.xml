@@ -18,6 +18,7 @@
     <string name="note_ready_image">现成图像</string>
     <string name="note_ready_video">现成视频</string>
     <string name="note_audio">音讯</string>
+    <string name="note_recording">录音</string>
     <string name="note_youtube_link">YouTube连结</string>
     <string name="note_web_link">网页连结</string>
     <string name="note_drawing">涂鸦</string>

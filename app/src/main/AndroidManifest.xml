@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cw.litenotes"
-    android:versionCode="10105"
-    android:versionName="1.01.05" >
+    android:versionCode="10106"
+    android:versionName="1.01.06" >
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -14,6 +14,7 @@
 	<uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 	<uses-feature android:name="android.hardware.camera"
 	    		  android:required="false"/>
@@ -87,10 +88,21 @@
         <activity android:name=".operation.gallery.GalleryPagerAct"/>
       	<activity android:name=".operation.slideshow.SlideshowPlayer"
                   android:theme="@android:style/Theme.NoTitleBar"/>
+
         <!--YouTube search -->
         <activity android:name=".operation.youtube.SearchYouTube"
                   android:windowSoftInputMode="adjustPan"
                   android:theme="@style/MyTheme"/>
+
+        <!--Add_recording-->
+        <activity
+            android:name=".note_add.add_recording.Add_recording_act"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"
+            android:theme="@style/MyTheme" >
+        </activity>
+
+        <service android:name=".note_add.add_recording.RecordingService" />
 
         <!--receiver-->
         <receiver

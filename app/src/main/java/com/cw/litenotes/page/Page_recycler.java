@@ -111,6 +111,8 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
 
         fillData();
 
+        TabsHost.showFooter(MainAct.mAct);
+
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(itemAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);

@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class BaseBackPressedListener implements OnBackPressedListener {
-    final AppCompatActivity activity;
+    AppCompatActivity activity;
 
     public BaseBackPressedListener(AppCompatActivity activity) {
         this.activity = activity;
