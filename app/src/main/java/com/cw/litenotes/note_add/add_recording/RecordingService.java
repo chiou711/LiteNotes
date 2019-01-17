@@ -95,7 +95,7 @@ public class RecordingService extends Service {
             mFileName = getString(R.string.default_file_name)
                     + "_" + timeStr + ".mp3";
             mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            mFilePath += "/" + getString(R.string.app_name_dir) + "/RecorderNote"+ "/" + mFileName;
+            mFilePath += "/" + getString(R.string.app_name_dir) + "/RecordingNote"+ "/" + mFileName;
 
             f = new File(mFilePath);
         }while (f.exists() && !f.isDirectory());

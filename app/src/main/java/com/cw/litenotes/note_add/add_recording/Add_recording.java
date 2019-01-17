@@ -84,7 +84,7 @@ public class Add_recording extends Fragment {
             mRecordButton.setImageResource(R.drawable.ic_media_stop);
             Toast.makeText(getActivity(),R.string.toast_recording_start,Toast.LENGTH_SHORT).show();
             File folder = new File(Environment.getExternalStorageDirectory() +
-                    "/" + getString(R.string.app_name_dir) + "/RecorderNote");
+                    "/" + getString(R.string.app_name_dir) + "/RecordingNote");
 
             if (!folder.exists()) {
                 //folder doesn't exist, create the folder

@@ -62,7 +62,7 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
                 if((BackgroundAudioService.mMediaPlayer != null) && BackgroundAudioService.mMediaPlayer.isPlaying() )
                 {
                     System.out.println("BackgroundAudioService / audioNoisyReceiver / _onReceive / play -> pause");
-
+                    // when phone jack is unplugged
                     if( mMediaPlayer != null  ) {
                         if(mMediaPlayer.isPlaying())
                             mMediaPlayer.pause();
@@ -455,6 +455,7 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
         result.sendResult(null);
     }
 
+    boolean isManualPause;
     @Override
     public void onAudioFocusChange(int focusChange) {
         System.out.println("BackgroundAudioService / _onAudioFocusChange");
@@ -466,7 +467,14 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
                 break;
             }
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT: {
+                // when phone call is coming in
                 System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_LOSS_TRANSIENT");
+
+                if(!mMediaPlayer.isPlaying())
+                    isManualPause = true;
+                else
+                    isManualPause = false;
+
                 mMediaPlayer.pause();
                 break;
             }
@@ -479,8 +487,9 @@ public class BackgroundAudioService extends MediaBrowserServiceCompat implements
             }
             case AudioManager.AUDIOFOCUS_GAIN: {
                 System.out.println("BackgroundAudioService / _onAudioFocusChange / AudioManager.AUDIOFOCUS_GAIN");
+                // when phone call is off line
                 if( mMediaPlayer != null ) {
-                    if( !mMediaPlayer.isPlaying() ) {
+                    if( (!mMediaPlayer.isPlaying()) && (!isManualPause) ) {
                         mMediaPlayer.start();
                     }
                     mMediaPlayer.setVolume(1.0f, 1.0f);

@@ -1196,21 +1196,20 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
                 // pages count
                 int pgsCnt = FolderUi.getFolder_pagesCount(this,FolderUi.getFocus_folderPos());
-                String preStr = "MainAct / _onPrepareOptionsMenu / ";
-//                System.out.println(preStr + "FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
 
                 // notes count
                 int notesCnt = 0;
-                System.out.println(preStr + "Pref.getPref_focusView_page_tableId(this) = " + Pref.getPref_focusView_page_tableId(this));
-                DB_page dB_page = new DB_page(this,Pref.getPref_focusView_page_tableId(this));
-                if(dB_page != null){
-                    try {
-                        notesCnt = dB_page.getNotesCount(true);
-                    }
-                    catch (Exception e)
-                    {
-                        System.out.println(preStr + "dB_page.getNotesCount() error");
-                        notesCnt = 0;
+                int pageTableId = Pref.getPref_focusView_page_tableId(this);
+
+                if(pageTableId > 0) {
+                    DB_page dB_page = new DB_page(this, pageTableId);
+                    if (dB_page != null) {
+                        try {
+                            notesCnt = dB_page.getNotesCount(true);
+                        } catch (Exception e) {
+                            System.out.println("MainAct / _onPrepareOptionsMenu / dB_page.getNotesCount() error");
+                            notesCnt = 0;
+                        }
                     }
                 }
 
