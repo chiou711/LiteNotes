@@ -16,7 +16,7 @@
 
 package de.psdev.licensesdialog.licenses;
 
-import com.cw.litenotes.R;
+import com.cw.litenote.R;
 
 import android.content.Context;
 

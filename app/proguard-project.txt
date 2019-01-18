@@ -25,8 +25,3 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--dontwarn org.apache.**
--dontwarn com.google.common.**
-#-dontwarn com.google.api.client.googleapis.testing.TestUtils
-#-dontwarn com.google.api.client.repackaged.com.google.common.base.**
-#-dontwarn com.google.api.client.googleapis.notifications.json.gson.GsonNotificationCallback

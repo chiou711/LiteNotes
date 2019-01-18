@@ -23,20 +23,20 @@
         android:layout_gravity="center"
         android:visibility="gone" />	 
         
-    <com.cw.litenotes.util.image.TouchImageView
+    <com.cw.litenote.util.image.TouchImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 		android:layout_gravity="center"
 		android:scaleType="fitCenter"
   		android:contentDescription="image_view" />
-    <com.cw.litenotes.util.video.VideoViewCustom
+    <com.cw.litenote.util.video.VideoViewCustom
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:contentDescription="video_view" />
-    <com.cw.litenotes.util.CustomWebView
+    <com.cw.litenote.util.CustomWebView
         android:id="@+id/link_web_view"
         android:layout_width="match_parent"
     	android:layout_height="match_parent"
@@ -167,7 +167,7 @@
     	android:layout_height="0dp"
     	android:layout_weight="1"
     	android:orientation="vertical" >
-    <com.cw.litenotes.util.CustomWebView
+    <com.cw.litenote.util.CustomWebView
         android:id="@+id/textBody"
         android:layout_width="match_parent"
     	android:layout_height="match_parent" 

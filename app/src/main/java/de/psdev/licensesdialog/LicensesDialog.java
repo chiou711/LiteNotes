@@ -30,7 +30,7 @@ import de.psdev.licensesdialog.model.Notices;
 
 import java.util.List;
 
-import com.cw.litenotes.R;
+import com.cw.litenote.R;
 
 public class LicensesDialog {
     public static final Notice LICENSES_DIALOG_NOTICE = new Notice("LicensesDialog", "http://psdev.de/LicensesDialog",

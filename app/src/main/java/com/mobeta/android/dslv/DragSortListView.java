@@ -42,7 +42,7 @@ import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.cw.litenotes.R;
+import com.cw.litenote.R;
 
 import java.io.File;
 import java.io.FileWriter;

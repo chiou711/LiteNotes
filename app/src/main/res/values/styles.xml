@@ -45,7 +45,7 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-<!-- 
+<!--
     <style name="cwEditText" parent="@android:style/Widget.Holo.Light.EditText">
         <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>

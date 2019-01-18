@@ -8,7 +8,7 @@
         <note>
             <title>[n]local image file</title>
             <body></body>
-            <picture>file:///storage/emulated/0/LiteNotes/local.jpg</picture>
+            <picture>file:///storage/emulated/0/LiteNote/local.jpg</picture>
             <audio></audio>
             <link></link>
         </note>
@@ -20,7 +20,7 @@
             <title>[n]local audio file</title>
             <body></body>
             <picture></picture>
-            <audio>file:///storage/emulated/0/LiteNotes/local.mp3</audio>
+            <audio>file:///storage/emulated/0/LiteNote/local.mp3</audio>
             <link></link>
         </note>
     </page>
@@ -30,7 +30,7 @@
         <note>
             <title>[s]local video file</title>
             <body></body>
-            <picture>file:///storage/emulated/0/LiteNotes/local.mp4</picture>
+            <picture>file:///storage/emulated/0/LiteNote/local.mp4</picture>
             <audio></audio>
             <link></link>
         </note>

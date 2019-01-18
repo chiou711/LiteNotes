@@ -163,7 +163,7 @@
 <!-- expanded image  -->
 	
 
-	<com.cw.litenotes.util.image.TouchImageView
+	<com.cw.litenote.util.image.TouchImageView
         android:id="@+id/expanded_image"
         android:layout_width="400dp"
 		android:layout_height="300dp"

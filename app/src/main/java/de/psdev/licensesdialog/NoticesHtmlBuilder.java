@@ -19,7 +19,7 @@ package de.psdev.licensesdialog;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cw.litenotes.R;
+import com.cw.litenote.R;
 
 import android.content.Context;
 import de.psdev.licensesdialog.licenses.License;

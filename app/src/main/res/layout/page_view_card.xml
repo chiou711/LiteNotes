@@ -58,7 +58,7 @@
                 android:contentDescription="img_check"/>
 
             <!-- drag button -->
-            <com.cw.litenotes.page.ImageViewCustom
+            <com.cw.litenote.page.ImageViewCustom
                 android:id="@+id/btn_drag"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
@@ -191,7 +191,7 @@
                 android:contentDescription="img_thumb_audio"
                 android:scaleType="centerCrop"/>
 
-            <com.cw.litenotes.util.CustomWebView
+            <com.cw.litenote.util.CustomWebView
                 android:id="@+id/thumb_web"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
