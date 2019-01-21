@@ -65,8 +65,8 @@ public class Add_note_option {
 
     private final static int ID_NEW_TEXT = 1;
     private final static int ID_NEW_DRAWING = 2;
-    private final static int ID_NEW_AUDIO = 3;
-    private final static int ID_NEW_RECORDING = 4;
+    private final static int ID_NEW_RECORDING = 3;
+    private final static int ID_NEW_AUDIO = 4;
     private final static int ID_NEW_CAMERA_IMAGE = 5;
     private final static int ID_NEW_READY_IMAGE = 6;
     private final static int ID_NEW_CAMERA_VIDEO = 7;
@@ -101,16 +101,16 @@ public class Add_note_option {
                     R.drawable.ic_menu_draw,
                     R.string.note_drawing));
 
-            // audio
-            addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
-                    R.drawable.ic_audio_unselected,
-                    R.string.note_audio));
-
             // recording
             addNoteList.add(new Add_note_option(ID_NEW_RECORDING,
 //                    android.R.drawable.ic_btn_speak_now,
                     R.drawable.ic_mic,
                     R.string.note_recording));
+
+            // audio
+            addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
+                    R.drawable.ic_audio_unselected,
+                    R.string.note_audio));
 
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
