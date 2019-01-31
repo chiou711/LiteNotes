@@ -149,15 +149,29 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         super.onCreate(savedInstanceState);
 
-        /***
+        /**
          * Set APP build mode
+         * Note:
+         *  1. for AdMob: it works after Google Play store release
+         *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
-        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);   // 1 debug, initial
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);    // 2 debug, assets
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);  // 3 debug, download
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL); // 4 release, initial
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_ASSETS);  // 5 release, assets
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);// 6 release, download
+        /** 1 debug, initial */
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);
+
+        /** 2 debug, assets */
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);
+
+        /** 3 debug, download */
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+
+        /** 4 release, initial */
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL);
+
+        /** 5 release, assets */
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_ASSETS);
+
+        /** 6 release, download */
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
         if (Define.CODE_MODE == Define.RELEASE_MODE) {
@@ -239,8 +253,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                         // Close dialog
                         dialog.dismiss();
 
-                        // check build version for permission request
-                        if(Build.VERSION.SDK_INT >= 21)
+                        // check build version for permission request (starts from API 23)
+                        if(Build.VERSION.SDK_INT >= 23)
                             checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                         else {
                             if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
@@ -259,7 +273,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                         dialog.dismiss();
 
                         // check build version for permission request
-                        if(Build.VERSION.SDK_INT >= 21)
+                        if(Build.VERSION.SDK_INT >= 23)
                             checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
                         else {
                             Pref.setPref_will_create_default_content(this, false);
@@ -277,7 +291,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 }
                 else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
                 {
-                    if(Build.VERSION.SDK_INT >= 21)
+                    if(Build.VERSION.SDK_INT >= 23)
                         checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                     else
                     {
@@ -421,7 +435,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      */
     void createDefaultContent_byAssets()
     {
-        System.out.println("MainAct / _createDefaultContent");
+        System.out.println("MainAct / _createDefaultContent_byAssets");
 
         String fileName;
         File xmlFile = null;
@@ -448,6 +462,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // import content
         if(xmlFile.exists()) {
+            //todo Could halt on this ?
             Import_fileView.importDefaultContentByXml(this, xmlFile);
 
             //set default position to 0
@@ -456,8 +471,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             DB_folder.setFocusFolder_tableId(folderTableId);
         }
 
+
         // already has preferred tables
         Pref.setPref_will_create_default_content(this, false);
+
         //workaround: fix blank page after adding default page (due to no TabsHost onPause/onResume cycles, but why?)
         recreate();
     }

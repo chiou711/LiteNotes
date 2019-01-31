@@ -17,17 +17,19 @@
 package com.cw.litenote.util.uil;
 
 import android.annotation.TargetApi;
-import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import android.support.multidex.MultiDexApplication;
+
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
-public class UilApplication extends Application {
+//refer https://stackoverflow.com/questions/27698287/noclassdeffounderror-with-android-studio-on-android-4
+public class UilApplication extends MultiDexApplication {
 	
 	static final boolean DEVELOPER_MODE = false;
 	
@@ -70,11 +72,11 @@ public class UilApplication extends Application {
 												   .tasksProcessingOrder(QueueProcessingType.LIFO);
 		ImageLoaderConfiguration config;
 		
-//		if(Util.CODE_MODE == Util.RELEASE_MODE) 
-			config = builder.build();			
+//		if(Util.CODE_MODE == Util.RELEASE_MODE)
+			config = builder.build();
 //		else
 //			config = builder.writeDebugLogs().build(); // Remove for release app
-		
+
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);
 	}

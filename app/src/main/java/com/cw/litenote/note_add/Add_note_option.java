@@ -110,7 +110,7 @@ public class Add_note_option {
             // audio
             addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
                     R.drawable.ic_audio_unselected,
-                    R.string.note_audio));
+                    R.string.note_ready_audio));
 
             // camera image
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {

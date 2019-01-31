@@ -31,7 +31,7 @@ android {
               // mark: With initial tables: 2 folders, 1 page each folder
               // un-mark: With default content by assets XML file
               // Note: Apk file size will increase if assets directory is set at default location (app/src/main/assets)
-//            assets.srcDirs = ['preferred/assets/']
+            assets.srcDirs = ['preferred/assets/']
         }
     }
 
@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-
+    implementation 'com.android.support:multidex:1.0.3'
     //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/commons-io-2.4.jar')
     implementation files('libs/universal-image-loader-1.9.5.jar')
@@ -61,26 +61,25 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-
     // if ENABLE_ADMOB = true, enable the following
     //    implementation 'com.android.support:support-annotations:28.0.0'
     //    implementation 'com.google.android.gms:play-services-ads:16.0.0'
     // group: short and best
-    implementation ('com.google.api-client:google-api-client-android:1.27.0') {
-        exclude group: 'org.apache.httpcomponents' }
-    implementation ('com.google.apis:google-api-services-youtube:v3-rev20180511-1.27.0') {
-        exclude group: 'org.apache.httpcomponents' }
-
+    implementation('com.google.api-client:google-api-client-android:1.27.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-youtube:v3-rev20180511-1.27.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
     // group 1
-//    implementation files('libs/google-api-client-1.24.1.jar')
-//    implementation files('libs/google-oauth-client-1.24.1.jar')
-//    implementation files('libs/google-http-client-1.24.1.jar')
-//    implementation files('libs/jsr305-3.0.2.jar')
-//    implementation files('libs/google-api-client-gson-1.24.1.jar')
-//    implementation files('libs/gson-2.1.jar')
-//    implementation files('libs/google-http-client-jackson2-1.24.1.jar')
-//    implementation files('libs/jackson-core-2.9.2.jar')
-//    implementation files('libs/google-api-services-youtube-v3-rev20180511-1.27.0.jar')
-//    implementation files('libs/google-api-services-oauth2-v1-rev145-java-1.25.0.zip')
-
+    //    implementation files('libs/google-api-client-1.24.1.jar')
+    //    implementation files('libs/google-oauth-client-1.24.1.jar')
+    //    implementation files('libs/google-http-client-1.24.1.jar')
+    //    implementation files('libs/jsr305-3.0.2.jar')
+    //    implementation files('libs/google-api-client-gson-1.24.1.jar')
+    //    implementation files('libs/gson-2.1.jar')
+    //    implementation files('libs/google-http-client-jackson2-1.24.1.jar')
+    //    implementation files('libs/jackson-core-2.9.2.jar')
+    //    implementation files('libs/google-api-services-youtube-v3-rev20180511-1.27.0.jar')
+    //    implementation files('libs/google-api-services-oauth2-v1-rev145-java-1.25.0.zip')
 }

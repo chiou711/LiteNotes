@@ -17,7 +17,8 @@
     <string name="note_camera_video">Camera video</string>
     <string name="note_ready_image">Ready image</string>
     <string name="note_ready_video">Ready video</string>
-    <string name="note_audio">Ready audio</string>
+    <string name="note_audio">Audio</string>
+    <string name="note_ready_audio">Ready audio</string>
     <string name="note_recording">Recording</string>
     <string name="note_youtube_link">YouTube Link</string>
     <string name="note_web_link">Web Link</string>
