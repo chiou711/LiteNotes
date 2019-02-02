@@ -54,7 +54,8 @@
         </activity>
 
         <activity android:name=".note_add.Note_addText"
-                  android:windowSoftInputMode="adjustPan" >
+                  android:windowSoftInputMode="adjustPan"
+                  android:parentActivityName=".main.MainAct">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainAct" />
