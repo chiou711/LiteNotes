@@ -228,7 +228,9 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
     	String strHtml;
 		strHtml = getHtmlStringWithViewPort(position,viewPort);
-		textWebView.loadData(strHtml,"text/html; charset=utf-8", "UTF-8");
+//	    textWebView.loadData(strHtml,"text/html; charset=utf-8", "UTF-8");
+	    //refer https://stackoverflow.com/questions/3312643/android-webview-utf-8-not-showing
+	    textWebView.loadDataWithBaseURL(null, strHtml, "text/html", "UTF-8", null);
     }
     
     // show picture view
