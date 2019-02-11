@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 CW Chiu
+ * Copyright (C) 2019 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import com.cw.litenote.note_common.Note_common;
 import com.cw.litenote.page.Page_recycler;
 import com.cw.litenote.R;
 import com.cw.litenote.db.DB_page;
@@ -57,16 +56,13 @@ import static android.os.Build.VERSION_CODES.M;
  * 
  *  UtilImage.bShowExpandedImage: used to control DB saving state
  * 
- *  Note_common: used to do DB operation
  */
 public class Note_addCameraImage extends Activity {
 
     Long noteId;
     String cameraImageUri;
-    Note_common note_common;
-    boolean enSaveDb;
 	String imageUriInDB;
-	private DB_page dB;
+	private DB_page dB_page;
     boolean bUseCameraImage;
 	final int TAKE_IMAGE_ACT = 1;
 	private Uri imageUri;
@@ -114,23 +110,21 @@ public class Note_addCameraImage extends Activity {
 
     void doCreate(Bundle savedInstanceState)
 	{
-		note_common = new Note_common(this);
 		imageUriInDB = "";
 		cameraImageUri = "";
 		bUseCameraImage = false;
-		enSaveDb = true;
 
 		// get row Id from saved instance
 		noteId = (savedInstanceState == null) ? null :
 				(Long) savedInstanceState.getSerializable(DB_page.KEY_NOTE_ID);
 
 		// get picture Uri in DB if instance is not null
-        dB = new DB_page(this, TabsHost.getCurrentPageTableId());
+        dB_page = new DB_page(this, TabsHost.getCurrentPageTableId());
 		if(savedInstanceState != null)
 		{
 			System.out.println("Note_addCameraImage / onCreate / noteId =  " + noteId);
 			if(noteId != null)
-				imageUriInDB = dB.getNotePictureUri_byId(noteId);
+				imageUriInDB = dB_page.getNotePictureUri_byId(noteId);
 		}
 
 		// at the first beginning
@@ -180,8 +174,7 @@ public class Note_addCameraImage extends Activity {
         if( !UtilImage.bShowExpandedImage )
         {
         	System.out.println("Note_addCameraImage / onPause / keep pictureUriInDB");
-        	if(note_common != null)
-        	    noteId = note_common.savePictureStateInDB(noteId, enSaveDb, imageUriInDB, "", "", "");
+        	noteId = savePictureStateInDB(noteId, imageUriInDB);
         }
     }
 
@@ -218,13 +211,12 @@ public class Note_addCameraImage extends Activity {
     public void onBackPressed() {
         setResult(RESULT_CANCELED);
     	if((UtilImage.mExpandedImageView != null) &&
-          	   (UtilImage.mExpandedImageView.getVisibility() == View.VISIBLE) &&
-         	   (UtilImage.bShowExpandedImage == true))    	
+           (UtilImage.mExpandedImageView.getVisibility() == View.VISIBLE) &&
+           (UtilImage.bShowExpandedImage == true))
     	{
 	    	UtilImage.closeExpandedImage();
     	}
-	        enSaveDb = false;
-	        finish();
+	    finish();
     }
     
     
@@ -288,8 +280,7 @@ public class Note_addCameraImage extends Activity {
 			{
 				// disable Rotate to avoid leak window
 //				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-				
-				
+
 				// Note: 
 				// 1 .for Google Camera App, imageReturnedIntent is null
 				//    its default path is 
@@ -362,16 +353,16 @@ public class Note_addCameraImage extends Activity {
         		pref_takeImage = getSharedPreferences("takeImage", 0);
         		
 				if( !UtilImage.bShowExpandedImage )
-		        	noteId = note_common.savePictureStateInDB(noteId, enSaveDb, imageUriInDB, "", "", "");
+		        	noteId = savePictureStateInDB(noteId,imageUriInDB);
 				
 				// set for Rotate any times
 		        if(noteId != null)
 		        {
-		        	cameraImageUri = dB.getNotePictureUri_byId(noteId);
+		        	cameraImageUri = dB_page.getNotePictureUri_byId(noteId);
 		        }
 	            
     			if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
-    				(note_common.getCount() > 0) )
+    				(dB_page.getNotesCount(true) > 0) )
 		               Page_recycler.swap(Page_recycler.mDb_page);
     			
     			Toast.makeText(this, R.string.toast_saved , Toast.LENGTH_SHORT).show();
@@ -420,9 +411,9 @@ public class Note_addCameraImage extends Activity {
 				Toast.makeText(this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
 				
 				// delete the temporary note in DB
-				note_common.deleteNote(noteId);
-                enSaveDb = false;
-                
+				if(noteId != null)
+					dB_page.deleteNote(noteId,true);
+
                 // When auto time out of taking picture App happens, 
             	// Note_addCameraImage activity will start from onCreate,
                 // at this case, imageUri is null
@@ -541,12 +532,12 @@ public class Note_addCameraImage extends Activity {
 	    	   		// update new Uri to DB
 	    	   		imageUriInDB = "file://" + Uri.parse(file1.getPath()).toString();
 					if( !UtilImage.bShowExpandedImage )
-			        	noteId = note_common.savePictureStateInDB(noteId, enSaveDb, imageUriInDB, "", "", "");
+			        	noteId = savePictureStateInDB(noteId,imageUriInDB);
 					
 					// set for Rotate any times
 			        if(noteId != null)
 			        {
-			        	cameraImageUri = dB.getNotePictureUri_byId(noteId);
+			        	cameraImageUri = dB_page.getNotePictureUri_byId(noteId);
 			        }
 			        
 	    	   		// delete
@@ -621,8 +612,6 @@ public class Note_addCameraImage extends Activity {
             	{
         	    	UtilImage.closeExpandedImage();
             	}
-            	
-	            enSaveDb = false;
 	            finish();
             }
         });
@@ -645,5 +634,21 @@ public class Note_addCameraImage extends Activity {
 		        } 
 		    });
 	}
-	
+
+
+	Long savePictureStateInDB(Long rowId, String pictureUri)
+	{
+		if (rowId == null) // for Add new
+		{
+			if( !pictureUri.isEmpty())
+			{
+				// insert
+				String name = Util.getDisplayNameByUriString(pictureUri, this);
+				System.out.println("Note_addCameraImage / _savePictureStateInDB / insert");
+				rowId = dB_page.insertNote(name, pictureUri, "", "", "", "", 1, (long) 0);// add new note, get return row Id
+			}
+		}
+		return rowId;
+	}
+
 }

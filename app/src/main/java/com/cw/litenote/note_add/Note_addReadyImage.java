@@ -18,10 +18,10 @@ package com.cw.litenote.note_add;
 
 import java.io.File;
 
-import com.cw.litenote.note_common.Note_common;
 import com.cw.litenote.page.Page_recycler;
 import com.cw.litenote.R;
 import com.cw.litenote.db.DB_page;
+import com.cw.litenote.tabs.TabsHost;
 import com.cw.litenote.util.Util;
 
 import android.app.Activity;
@@ -40,23 +40,23 @@ import android.widget.Toast;
 public class Note_addReadyImage extends AppCompatActivity {
 
     Long rowId;
-    Note_common note_common;
     TextView progress;
+	private DB_page dB_page;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        System.out.println("Note_addReadyPicture / onCreate");
+        System.out.println("Note_addReadyImage / onCreate");
 
 		setContentView(R.layout.note_add_prepare);
-        note_common = new Note_common(this);
-	
+
         // get row Id from saved instance
         rowId = (savedInstanceState == null) ? null :
             (Long) savedInstanceState.getSerializable(DB_page.KEY_NOTE_ID);
-        
-        // at the first beginning
+		dB_page = new DB_page(this, TabsHost.getCurrentPageTableId());
+
+		// at the first beginning
         if(savedInstanceState == null)
         	addPicture();
         
@@ -76,7 +76,7 @@ public class Note_addReadyImage extends AppCompatActivity {
     // for Rotate screen
     @Override
     protected void onPause() {
-    	System.out.println("Note_addReadyPicture / onPause");
+    	System.out.println("Note_addReadyImage / onPause");
         super.onPause();
     }
 
@@ -85,7 +85,7 @@ public class Note_addReadyImage extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-   	 	System.out.println("Note_addReadyPicture / onSaveInstanceState");
+   	 	System.out.println("Note_addReadyImage / onSaveInstanceState");
         outState.putSerializable(DB_page.KEY_NOTE_ID, rowId);
     }
     
@@ -102,7 +102,7 @@ public class Note_addReadyImage extends AppCompatActivity {
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent)
 	{
-		System.out.println("Note_addReadyPicture / onActivityResult");
+		System.out.println("Note_addReadyImage / onActivityResult");
 		if (resultCode == Activity.RESULT_OK)
 		{
             setContentView(R.layout.note_add_prepare);
@@ -125,9 +125,9 @@ public class Note_addReadyImage extends AppCompatActivity {
 				{
 					System.out.println("Note_addReadyImage / onActivityResult / uriStr = " + uriStr);
 		  		    rowId = null; // set null for Insert
-		        	rowId = note_common.savePictureStateInDB(rowId,true,uriStr, "", "", "");
+		        	rowId = savePictureStateInDB(rowId,uriStr);
 
-		        	if( (note_common.getCount() > 0) &&
+		        	if( (dB_page.getNotesCount(true) > 0) &&
 		        		option.equalsIgnoreCase("single_to_top"))
 		        	{
 		        		Page_recycler.swap(Page_recycler.mDb_page);
@@ -184,9 +184,9 @@ public class Note_addReadyImage extends AppCompatActivity {
 //							System.out.println("urlStr = " + urlStr);
 				  		    rowId = null; // set null for Insert
 				  		    if(!Util.isEmptyString(urlStr))
-				  		    	rowId = note_common.savePictureStateInDB(rowId,true,urlStr, "", "", "");
+				  		    	rowId = savePictureStateInDB(rowId,urlStr);
 
-				        	if( (note_common.getCount() > 0) &&
+				        	if( (dB_page.getNotesCount(true) > 0) &&
 	  		        			option.equalsIgnoreCase("directory_to_top") )
 				        	{
 				        		Page_recycler.swap(Page_recycler.mDb_page);
@@ -233,6 +233,21 @@ public class Note_addReadyImage extends AppCompatActivity {
             setResult(RESULT_CANCELED, getIntent());
             finish();
 		}
+	}
+
+	Long savePictureStateInDB(Long rowId, String pictureUri)
+	{
+		if (rowId == null) // for Add new
+		{
+			if( !pictureUri.isEmpty())
+			{
+				// insert
+				String name = Util.getDisplayNameByUriString(pictureUri, this);
+				System.out.println("Note_addReadyImage / _savePictureStateInDB / insert");
+				rowId = dB_page.insertNote(name, pictureUri, "", "", "", "", 1, (long) 0);// add new note, get return row Id
+			}
+		}
+		return rowId;
 	}
     
 }

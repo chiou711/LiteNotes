@@ -113,12 +113,6 @@ public class Note_common {
 		bShowEnlargedImage = false;
     }
 
-	public Note_common(Activity act)
-    {
-    	this.act = act;
-		dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
-    }
-
 	public void UI_init()
     {
 
@@ -625,8 +619,8 @@ public class Note_common {
 	        } 
 	        else // for Edit
 	        {
-    	        Date now = new Date(); 
-	        	if( !Util.isEmptyString(title) || 
+    	        Date now = new Date();
+	        	if( !Util.isEmptyString(title) ||
 	        		!Util.isEmptyString(body) ||
 	        		!Util.isEmptyString(pictureUri) ||
 	        		!Util.isEmptyString(audioUri) ||
@@ -674,60 +668,14 @@ public class Note_common {
 	        		// delete
 	        		System.out.println("Note_common / _saveStateInDB / delete");
 	        		deleteNote(rowId);
+			        rowId = null;
 	        	}
 	        }
         }
-        
+
 		return rowId;
 	}
 
-	public Long savePictureStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri, String linkUri)
-	{
-		boolean mEnSaveDb = enSaveDb;
-        if(mEnSaveDb)
-        {
-	        if (rowId == null) // for Add new
-	        {
-	        	if( !pictureUri.isEmpty())
-	        	{
-	        		// insert
-					String name = Util.getDisplayNameByUriString(pictureUri, act);
-	        		System.out.println("Note_common / _savePictureStateInDB / insert");
-	        		rowId = dB_page.insertNote(name, pictureUri, audioUri, drawingUri, linkUri, "", 1, (long) 0);// add new note, get return row Id
-	        	}
-        		currPictureUri = pictureUri; // update file name
-	        } 
-	        else // for Edit
-	        {
-    	        Date now = new Date(); 
-	        	if( !pictureUri.isEmpty())
-	        	{
-	        		// update
-	        		if(bRollBackData) //roll back
-	        		{
-			        	System.out.println("Note_common / _savePictureStateInDB / update: roll back");
-	        			Long time = oriCreatedTime;
-	        			dB_page.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", oriMarking, time, true);
-	        		}
-	        		else // update new
-	        		{
-	        			System.out.println("Note_common / _savePictureStateInDB / update new");
-	        			dB_page.updateNote(rowId, "", pictureUri, audioUri, drawingUri, linkUri, "", 1, now.getTime(), true); // update note
-	        		}
-	        		currPictureUri = pictureUri; // update file name
-	        	}
-	        	else if(pictureUri.isEmpty())
-	        	{
-	        		// delete
-	        		System.out.println("Note_common / _savePictureStateInDB / delete");
-	        		deleteNote(rowId);
-	        	}
-	        }
-        }
-        
-		return rowId;
-	}
-	
 	// for confirmation condition
 	public void removePictureStringFromOriginalNote(Long rowId) {
     	dB_page.updateNote(rowId,
@@ -802,20 +750,6 @@ public class Note_common {
 	{
 		int noteCount = dB_page.getNotesCount(true);
 		return noteCount;
-	}
-	
-	// for audio
-	Long insertAudioToDB(String audioUri)
-	{
-		Long rowId = null;
-       	if( !Util.isEmptyString(audioUri))
-    	{
-    		// insert
-    		System.out.println("Note_common / _insertAudioToDB / insert");
-    		// set marking to 1 for default
-    		rowId = dB_page.insertNote("", "", audioUri, "", "", "", 1, (long) 0);// add new note, get return row Id
-    	}
-		return rowId;
 	}
 	
 }
