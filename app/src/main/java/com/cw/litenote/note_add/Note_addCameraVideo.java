@@ -51,7 +51,6 @@ import static android.os.Build.VERSION_CODES.M;
  * 
  *  UtilImage.bShowExpandedImage: used to control DB saving state
  * 
- *  Note_common: used to do DB operation
  */
 public class Note_addCameraVideo extends Activity {
 

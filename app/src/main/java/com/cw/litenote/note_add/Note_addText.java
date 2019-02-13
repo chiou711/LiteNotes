@@ -159,7 +159,7 @@ public class Note_addText extends AppCompatActivity {
 							(Page_recycler.mDb_page.getNotesCount(true) > 0) )
 						Page_recycler.swap(Page_recycler.mDb_page);
 
-					Toast.makeText(Note_addText.this, R.string.toast_saved , Toast.LENGTH_SHORT).show();
+					Toast.makeText(Note_addText.this, getString(R.string.toast_saved) +" + 1", Toast.LENGTH_SHORT).show();
 
 					UI_init_text();
 					rowId = null;
@@ -353,7 +353,7 @@ public class Note_addText extends AppCompatActivity {
 					Util.isEmptyString(linkUri)         )
 			{
 				// delete
-				System.out.println("Note_common / _saveStateInDB / delete");
+				System.out.println("Note_edit_ui / _saveStateInDB / delete");
 				deleteNote(rowId);
 				rowId = null;
 			}

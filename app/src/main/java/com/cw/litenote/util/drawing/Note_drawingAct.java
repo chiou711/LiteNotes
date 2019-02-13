@@ -1,4 +1,4 @@
-package com.cw.litenote.note_common;
+package com.cw.litenote.util.drawing;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,14 +23,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.cw.litenote.R;
 import com.cw.litenote.db.DB_page;
 import com.cw.litenote.page.Page_recycler;
+import com.cw.litenote.tabs.TabsHost;
 import com.cw.litenote.util.Util;
 import com.cw.litenote.util.image.UtilImage;
 import com.cw.litenote.util.preferences.Pref;
-import com.cw.litenote.tabs.TabsHost;
 
 import java.util.Date;
 
-public class Note_drawing extends Activity
+public class Note_drawingAct extends Activity
 {
     private Note_drawingView drawingView; // drawing View
 
@@ -57,7 +57,7 @@ public class Note_drawing extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        System.out.println("Note_drawing / _onCreate");
+        System.out.println("Note_drawingAct / _onCreate");
         Bundle extras = getIntent().getExtras();
         setMode(extras.getInt("drawing_mode"));
 
@@ -83,7 +83,7 @@ public class Note_drawing extends Activity
     }
 
     public static void setMode(int mode) {
-        Note_drawing.mode = mode;
+        Note_drawingAct.mode = mode;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Note_drawing extends Activity
     {
         getIntent().putExtra("NOTE_ADDED","edited");
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Note_drawing.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Note_drawingAct.this);
         builder.setTitle(R.string.confirm_dialog_title);
 
         if(getMode() == Util.DRAWING_ADD)
@@ -128,7 +128,7 @@ public class Note_drawing extends Activity
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                    if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawing.this))
+                    if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawingAct.this))
                         updateDrawingInDB();
                     else
                         saveDrawingInDB();
@@ -201,11 +201,11 @@ public class Note_drawing extends Activity
                 return true;
 
             case SAVE_MENU_ID:
-                if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawing.this))
+                if(UtilImage.hasImageExtension(drawingUriInDB, Note_drawingAct.this))
                     updateDrawingInDB();
                 else
                     saveDrawingInDB();
-                System.out.println("Note_drawing / onOptionsItemSelected / SAVE_MENU_ID / drawingUriInDB = " + drawingUriInDB);
+                System.out.println("Note_drawingAct / onOptionsItemSelected / SAVE_MENU_ID / drawingUriInDB = " + drawingUriInDB);
                 return true;
 
             case SAVE_OTHER_MENU_ID:
@@ -377,10 +377,10 @@ public class Note_drawing extends Activity
             // set the line color
             drawingView.setDrawingColor(Color.argb(a,r,g,b));
 
-            Pref.setPref_drawing_line_color_alpha(Note_drawing.this,a);
-            Pref.setPref_drawing_line_color_red(Note_drawing.this,r);
-            Pref.setPref_drawing_line_color_green(Note_drawing.this,g);
-            Pref.setPref_drawing_line_color_blue(Note_drawing.this,b);
+            Pref.setPref_drawing_line_color_alpha(Note_drawingAct.this,a);
+            Pref.setPref_drawing_line_color_red(Note_drawingAct.this,r);
+            Pref.setPref_drawing_line_color_green(Note_drawingAct.this,g);
+            Pref.setPref_drawing_line_color_blue(Note_drawingAct.this,b);
 
             currentDialog.dismiss(); // hide the dialog
             currentDialog = null; // dialog no longer needed
@@ -464,7 +464,7 @@ public class Note_drawing extends Activity
             drawingView.setLineWidth(width);
 
             //set preference
-            Pref.setPref_drawing_line_width(Note_drawing.this,width);
+            Pref.setPref_drawing_line_width(Note_drawingAct.this,width);
 
             currentDialog.dismiss(); // hide the dialog
             currentDialog = null; // dialog no longer needed

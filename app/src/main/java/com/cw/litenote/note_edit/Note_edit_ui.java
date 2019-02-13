@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 CW Chiu
+ * Copyright (C) 2019 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cw.litenote.note_common;
+package com.cw.litenote.note_edit;
 
 import java.util.Date;
 
@@ -23,6 +23,7 @@ import com.cw.litenote.main.MainAct;
 import com.cw.litenote.R;
 import com.cw.litenote.db.DB_page;
 import com.cw.litenote.tabs.TabsHost;
+import com.cw.litenote.util.drawing.Note_drawingAct;
 import com.cw.litenote.util.image.TouchImageView;
 import com.cw.litenote.util.image.UtilImage_bitmapLoader;
 import com.cw.litenote.util.ColorSet;
@@ -50,45 +51,45 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Note_common {
+public class Note_edit_ui {
 
-	public TextView audioTextView;
+	private TextView audioTextView;
 
-	public ImageView picImageView;
-	public String pictureUriInDB;
-	public String drawingUriInDB;
-	public String audioUriInDB;
-	public String oriPictureUri;
-	public String currPictureUri;
-	public String currAudioUri;
+	private ImageView picImageView;
+	private String pictureUriInDB;
+	private String drawingUriInDB;
+	private String audioUriInDB;
+	String oriPictureUri;
+	String currPictureUri;
+	String currAudioUri;
 
-	public String oriAudioUri;
-	public String oriDrawingUri;
-	public String oriLinkUri;
+	String oriAudioUri;
+	private String oriDrawingUri;
+	String oriLinkUri;
 
-	public EditText linkEditText;
-	public EditText titleEditText;
-	public EditText bodyEditText;
-	public String oriTitle;
-	public String oriBody;
+	private EditText linkEditText;
+	private EditText titleEditText;
+	private EditText bodyEditText;
+	private String oriTitle;
+	private String oriBody;
 
-	public Long noteId;
-	public Long oriCreatedTime;
-	public Long oriMarking;
+	private Long noteId;
+	private Long oriCreatedTime;
+	private Long oriMarking;
 
-	public boolean bRollBackData;
-	public boolean bRemovePictureUri = false;
-	public boolean bRemoveAudioUri = false;
-	public boolean bEditPicture = false;
+	boolean bRollBackData;
+	boolean bRemovePictureUri = false;
+	boolean bRemoveAudioUri = false;
+	private boolean bEditPicture = false;
 
     private DB_page dB_page;
-    Activity act;
-    int style;
-    ProgressBar progressBar;
-    ProgressBar progressBarExpand;
-	TouchImageView enlargedImage;
+	private Activity act;
+	private int style;
+	private ProgressBar progressBar;
+	private ProgressBar progressBarExpand;
+	private TouchImageView enlargedImage;
 
-	public Note_common(Activity act,DB_page _db, Long noteId,String strTitle, String pictureUri, String audioUri, String drawingUri, String linkUri, String strBody, Long createdTime)
+	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, String audioUri, String drawingUri, String linkUri, String strBody, Long createdTime)
     {
     	this.act = act;
     	this.noteId = noteId;
@@ -113,7 +114,7 @@ public class Note_common {
 		bShowEnlargedImage = false;
     }
 
-	public void UI_init()
+	void UI_init()
     {
 
 		UI_init_text();
@@ -163,7 +164,7 @@ public class Note_common {
             		if (act.getCurrentFocus() != null)
             			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
 
-                	System.out.println("Note_common / pictureUriInDB = " + pictureUriInDB);
+                	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
                 	if( (!Util.isEmptyString(pictureUriInDB)) ||
 						(!Util.isEmptyString(drawingUriInDB))   )
                 	{
@@ -225,7 +226,7 @@ public class Note_common {
 						openSetPictureDialog();
 					else if(!Util.isEmptyString(drawingUriInDB))
 					{
-						Intent i = new Intent(act, Note_drawing.class);
+						Intent i = new Intent(act, Note_drawingAct.class);
 						i.putExtra("drawing_id",noteId);
 						i.putExtra("drawing_mode",Util.DRAWING_EDIT);
 						act.startActivityForResult(i,Util.DRAWING_EDIT);
@@ -236,7 +237,7 @@ public class Note_common {
         });
     }
 
-	public void UI_init_text()
+	private void UI_init_text()
 	{
         int focusFolder_tableId = Pref.getPref_focusView_folder_tableId(act);
         DB_folder db = new DB_folder(MainAct.mAct, focusFolder_tableId);
@@ -264,7 +265,7 @@ public class Note_common {
 	}
 
     // set image close listener
-	public void setCloseImageListeners(EditText editText)
+	private void setCloseImageListeners(EditText editText)
     {
     	editText.setOnClickListener(new OnClickListener()
     	{   @Override
@@ -286,15 +287,15 @@ public class Note_common {
     }
 
 
-	public boolean bShowEnlargedImage;
-	public void closeEnlargedImage()
+	boolean bShowEnlargedImage;
+	void closeEnlargedImage()
     {
     	System.out.println("closeExpandImage");
 		enlargedImage.setVisibility(View.GONE);
 		bShowEnlargedImage = false;
     }
 
-	public void openSetPictureDialog()
+	private void openSetPictureDialog()
     {
 		AlertDialog.Builder builder = new AlertDialog.Builder(act);
 		builder.setTitle(R.string.edit_note_set_picture_dlg_title)
@@ -326,7 +327,7 @@ public class Note_common {
 								else if(which ==1)
 									mediaType = "video/*";
 								
-								System.out.println("Note_common / _openSetPictureDialog / mediaType = " + mediaType);
+								System.out.println("Note_edit_ui / _openSetPictureDialog / mediaType = " + mediaType);
 								act.startActivityForResult(Util.chooseMediaIntentByType(act, mediaType),
 				   						Util.CHOOSER_SET_PICTURE);	
 								//end
@@ -368,16 +369,16 @@ public class Note_common {
 		dialog.show();
     }
 
-	public void deleteNote(Long rowId)
+	void deleteNote(Long rowId)
     {
-    	System.out.println("Note_common / _deleteNote");
+    	System.out.println("Note_edit_ui / _deleteNote");
         // for Add new note (noteId is null first), but decide to cancel
         if(rowId != null)
         	dB_page.deleteNote(rowId,true);
     }
     
     // populate text fields
-	public void populateFields_text(Long rowId)
+	void populateFields_text(Long rowId)
 	{
 		if (rowId != null) {
 			// title
@@ -414,7 +415,7 @@ public class Note_common {
 	}
 
     // populate all fields
-	public void populateFields_all(Long rowId)
+	void populateFields_all(Long rowId)
     {
     	if (rowId != null) 
     	{
@@ -524,22 +525,22 @@ public class Note_common {
     	}
     }
 
-	public boolean isLinkUriModified()
+	private boolean isLinkUriModified()
     {
     	return !oriLinkUri.equals(linkEditText.getText().toString());
     }
 
-	public boolean isTitleModified()
+	private boolean isTitleModified()
     {
     	return !oriTitle.equals(titleEditText.getText().toString());
     }
 
-	public boolean isPictureModified()
+	private boolean isPictureModified()
     {
     	return !oriPictureUri.equals(pictureUriInDB);
     }
 
-	public boolean isAudioModified()
+	private boolean isAudioModified()
     {
     	if(oriAudioUri == null)
     		return false;
@@ -547,20 +548,20 @@ public class Note_common {
     		return !oriAudioUri.equals(audioUriInDB);
     }
 
-	public boolean isBodyModified()
+	private boolean isBodyModified()
     {
     	return !oriBody.equals(bodyEditText.getText().toString());
     }
 
-	public boolean isNoteModified()
+	boolean isNoteModified()
     {
     	boolean bModified = false;
-//		System.out.println("Note_common / _isNoteModified / isTitleModified() = " + isTitleModified());
-//		System.out.println("Note_common / _isNoteModified / isPictureModified() = " + isPictureModified());
-//		System.out.println("Note_common / _isNoteModified / isAudioModified() = " + isAudioModified());
-//		System.out.println("Note_common / _isNoteModified / isBodyModified() = " + isBodyModified());
-//		System.out.println("Note_common / _isNoteModified / bRemovePictureUri = " + bRemovePictureUri);
-//		System.out.println("Note_common / _isNoteModified / bRemoveAudioUri = " + bRemoveAudioUri);
+//		System.out.println("Note_edit_ui / _isNoteModified / isTitleModified() = " + isTitleModified());
+//		System.out.println("Note_edit_ui / _isNoteModified / isPictureModified() = " + isPictureModified());
+//		System.out.println("Note_edit_ui / _isNoteModified / isAudioModified() = " + isAudioModified());
+//		System.out.println("Note_edit_ui / _isNoteModified / isBodyModified() = " + isBodyModified());
+//		System.out.println("Note_edit_ui / _isNoteModified / bRemovePictureUri = " + bRemovePictureUri);
+//		System.out.println("Note_edit_ui / _isNoteModified / bRemoveAudioUri = " + bRemoveAudioUri);
     	if( isTitleModified() ||
     		isPictureModified() ||
     		isAudioModified() ||
@@ -575,24 +576,7 @@ public class Note_common {
     	return bModified;
     }
 
-	public boolean isTextAdded()
-    {
-    	boolean bEdit = false;
-    	String curTitle = titleEditText.getText().toString();
-		String curBody = bodyEditText.getText().toString();
-		String curLink = linkEditText.getText().toString();
-
-    	if(!Util.isEmptyString(curTitle)||
-		   !Util.isEmptyString(curBody) ||
-		   !Util.isEmptyString(curLink)   )
-       	{
-    		bEdit = true;
-       	}
-       	
-    	return bEdit;
-    }
-
-	public Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri)
+	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri)
 	{
 		String linkUri = "";
 		if(linkEditText != null)
@@ -611,7 +595,7 @@ public class Note_common {
 	        		(!linkUri.isEmpty())            )
 	        	{
 	        		// insert
-	        		System.out.println("Note_common / _saveStateInDB / insert");
+	        		System.out.println("Note_edit_ui / _saveStateInDB / insert");
 	        		rowId = dB_page.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
 	        	}
         		currPictureUri = pictureUri; // update file name
@@ -629,7 +613,7 @@ public class Note_common {
 	        		// update
 	        		if(bRollBackData) //roll back
 	        		{
-			        	System.out.println("Note_common / _saveStateInDB / update: roll back");
+			        	System.out.println("Note_edit_ui / _saveStateInDB / update: roll back");
 			        	linkUri = oriLinkUri;
 	        			title = oriTitle;
 	        			body = oriBody;
@@ -638,7 +622,7 @@ public class Note_common {
 	        		}
 	        		else // update new
 	        		{
-	        			System.out.println("Note_common / _saveStateInDB / update new");
+	        			System.out.println("Note_edit_ui / _saveStateInDB / update new");
 						System.out.println("--- rowId = " + rowId);
 						System.out.println("--- oriMarking = " + oriMarking);
 						System.out.println("--- audioUri = " + audioUri);
@@ -666,7 +650,7 @@ public class Note_common {
 			        	 Util.isEmptyString(linkUri)         )
 	        	{
 	        		// delete
-	        		System.out.println("Note_common / _saveStateInDB / delete");
+	        		System.out.println("Note_edit_ui / _saveStateInDB / delete");
 	        		deleteNote(rowId);
 			        rowId = null;
 	        	}
@@ -677,7 +661,7 @@ public class Note_common {
 	}
 
 	// for confirmation condition
-	public void removePictureStringFromOriginalNote(Long rowId) {
+	void removePictureStringFromOriginalNote(Long rowId) {
     	dB_page.updateNote(rowId,
 				oriTitle,
     				   "",
@@ -689,7 +673,7 @@ public class Note_common {
 				oriCreatedTime, true );
 	}
 
-	public void removePictureStringFromCurrentEditNote(Long rowId) {
+	private void removePictureStringFromCurrentEditNote(Long rowId) {
         String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
@@ -705,7 +689,7 @@ public class Note_common {
 				oriCreatedTime, true );
 	}
 
-	public void removeAudioStringFromOriginalNote(Long rowId) {
+	void removeAudioStringFromOriginalNote(Long rowId) {
     	dB_page.updateNote(rowId,
 				oriTitle,
 				oriPictureUri,
@@ -717,7 +701,7 @@ public class Note_common {
 				oriCreatedTime, true );
 	}
 
-	public void removeAudioStringFromCurrentEditNote(Long rowId) {
+	void removeAudioStringFromCurrentEditNote(Long rowId) {
         String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
@@ -732,7 +716,7 @@ public class Note_common {
 				oriCreatedTime, true );
 	}
 
-	public void removeLinkUriFromCurrentEditNote(Long rowId) {
+	void removeLinkUriFromCurrentEditNote(Long rowId) {
         String title = titleEditText.getText().toString();
         String body = bodyEditText.getText().toString();
         dB_page.updateNote(rowId,

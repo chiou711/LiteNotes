@@ -1,4 +1,4 @@
-package com.cw.litenote.note_common;
+package com.cw.litenote.util.drawing;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -81,12 +81,12 @@ public class Note_drawingView extends View
     protected void onFinishInflate() {
         super.onFinishInflate();
         System.out.println("Note_drawingView / _onFinishInflate");
-        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
-            filePath = Note_drawing.drawingUriInDB;
+        if(Note_drawingAct.getMode() == Util.DRAWING_EDIT) {
+            filePath = Note_drawingAct.drawingUriInDB;
             jpgBitmap = BitmapFactory.decodeFile(filePath.replace("file:///", ""));
         }
 
-        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
+        if(Note_drawingAct.getMode() == Util.DRAWING_EDIT) {
             if (jpgBitmap.getWidth() > jpgBitmap.getHeight()) {
                 if(Util.isLandscapeOrientation(act))
                     act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -100,7 +100,7 @@ public class Note_drawingView extends View
                     Toast.makeText(act,R.string.toast_edit_drawing_to_portrait,Toast.LENGTH_LONG).show();
             }
         }
-        else if(Note_drawing.getMode() == Util.DRAWING_ADD) {
+        else if(Note_drawingAct.getMode() == Util.DRAWING_ADD) {
             if (Util.isLandscapeOrientation(act))
                 act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             else
@@ -116,7 +116,7 @@ public class Note_drawingView extends View
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE); // erase the BitMap with white
 
-        if(Note_drawing.getMode() == Util.DRAWING_EDIT) {
+        if(Note_drawingAct.getMode() == Util.DRAWING_EDIT) {
             // draw overlay bitmap on canvas
             overlayBitmap = overlay(bitmap, jpgBitmap);
             bitmapCanvas.drawBitmap(overlayBitmap, 0, 0, paintScreen);
@@ -288,8 +288,8 @@ public class Note_drawingView extends View
         bitmapCanvas.drawPath(path, paintLine); // draw to bitmapCanvas
         path.reset(); // reset the Path
 
-        if(!Note_drawing.drawingHasNew)
-            Note_drawing.drawingHasNew = true;
+        if(!Note_drawingAct.drawingHasNew)
+            Note_drawingAct.drawingHasNew = true;
     }
 
     // update the current image to the Gallery
@@ -297,7 +297,7 @@ public class Note_drawingView extends View
     {
         try
         {
-            filePath = Note_drawing.drawingUriInDB;
+            filePath = Note_drawingAct.drawingUriInDB;
 
             // get an OutputStream to uri
             OutputStream outStream = getContext().getContentResolver().openOutputStream(Uri.parse(filePath));

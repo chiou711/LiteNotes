@@ -33,10 +33,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * Note: 
- * Note_common: used to do DB operation
- */
 public class Note_addReadyVideo extends Activity {
 
     Long rowId;

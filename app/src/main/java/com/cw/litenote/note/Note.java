@@ -16,6 +16,7 @@
 
 package com.cw.litenote.note;
 
+import com.cw.litenote.note_edit.Note_edit;
 import com.cw.litenote.R;
 import com.cw.litenote.db.DB_folder;
 import com.cw.litenote.db.DB_page;

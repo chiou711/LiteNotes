@@ -33,10 +33,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * Note: 
- * Note_common: used to do DB operation
- */
 public class Note_addReadyImage extends AppCompatActivity {
 
     Long rowId;

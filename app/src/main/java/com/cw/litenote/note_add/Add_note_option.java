@@ -35,8 +35,8 @@ import android.widget.Toast;
 
 import com.cw.litenote.R;
 import com.cw.litenote.note_add.add_recording.Add_recording_act;
-import com.cw.litenote.note_common.Note_drawing;
 import com.cw.litenote.util.Util;
+import com.cw.litenote.util.drawing.Note_drawingAct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -313,7 +313,7 @@ public class Add_note_option {
 
             case ID_NEW_DRAWING:
             {
-                Intent intent = new Intent(act, Note_drawing.class);
+                Intent intent = new Intent(act, Note_drawingAct.class);
                 intent.putExtra("drawing_mode",Util.DRAWING_ADD);
 
                 if(bTop)
