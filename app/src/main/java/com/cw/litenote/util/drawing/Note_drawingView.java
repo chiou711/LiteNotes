@@ -306,12 +306,15 @@ public class Note_drawingView extends View
             new Thread(new Runnable() {
                 public void run() {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    // flush and close the OutputStream
+                    try {
+                        outStream.flush(); // empty the buffer
+                        outStream.close(); // close the stream
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }).start();
-
-            // flush and close the OutputStream
-            outStream.flush(); // empty the buffer
-            outStream.close(); // close the stream
 
             // display a message indicating that the image was saved
             Toast message = Toast.makeText(getContext(),
@@ -365,12 +368,15 @@ public class Note_drawingView extends View
             new Thread(new Runnable() {
                 public void run() {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    // flush and close the OutputStream
+                    try {
+                        outStream.flush(); // empty the buffer
+                        outStream.close(); // close the stream
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }).start();
-
-            // flush and close the OutputStream
-            outStream.flush(); // empty the buffer
-            outStream.close(); // close the stream
 
             // display a message indicating that the image was saved
             Toast message = Toast.makeText(getContext(),

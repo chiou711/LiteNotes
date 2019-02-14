@@ -202,10 +202,11 @@ public class Checked_notes_option {
                 if(!noItemChecked())
                 {
                     int count = mDb_page.getCheckedNotesCount();
-                    String copyItems[] = new String[count];
+                    String copyItemsTitle[] = new String[count];
                     String copyItemsPicture[] = new String[count];
-                    String copyItemsLink[] = new String[count];
                     String copyItemsAudio[] = new String[count];
+                    String copyItemsDrawing[] = new String[count];
+                    String copyItemsLink[] = new String[count];
                     String copyItemsBody[] = new String[count];
                     Long copyItemsTime[] = new Long[count];
                     int cCopy = 0;
@@ -216,10 +217,11 @@ public class Checked_notes_option {
                     {
                         if(mDb_page.getNoteMarking(i,false) == 1)
                         {
-                            copyItems[cCopy] = mDb_page.getNoteTitle(i,false);
+                            copyItemsTitle[cCopy] = mDb_page.getNoteTitle(i,false);
                             copyItemsPicture[cCopy] = mDb_page.getNotePictureUri(i,false);
-                            copyItemsLink[cCopy] = mDb_page.getNoteLinkUri(i,false);
                             copyItemsAudio[cCopy] = mDb_page.getNoteAudioUri(i,false);
+                            copyItemsDrawing[cCopy] = mDb_page.getNoteDrawingUri(i,false);
+                            copyItemsLink[cCopy] = mDb_page.getNoteLinkUri(i,false);
                             copyItemsBody[cCopy] = mDb_page.getNoteBody(i,false);
                             copyItemsTime[cCopy] = mDb_page.getNoteCreatedTime(i,false);
                             cCopy++;
@@ -228,9 +230,9 @@ public class Checked_notes_option {
                     mDb_page.close();
 
                     if(option == MOVE_CHECKED_NOTE)
-                        operateCheckedTo(mAct,copyItems, copyItemsPicture, copyItemsLink, copyItemsAudio, copyItemsBody, copyItemsTime, MOVE_TO); // move to
+                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture, copyItemsAudio, copyItemsDrawing, copyItemsLink, copyItemsBody, copyItemsTime, MOVE_TO); // move to
                     else if(option == COPY_CHECKED_NOTE)
-                        operateCheckedTo(mAct,copyItems, copyItemsPicture, copyItemsLink, copyItemsAudio, copyItemsBody, copyItemsTime, COPY_TO);// copy to
+                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture, copyItemsAudio, copyItemsDrawing, copyItemsLink, copyItemsBody, copyItemsTime, COPY_TO);// copy to
 
                 }
                 else
@@ -317,9 +319,10 @@ public class Checked_notes_option {
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
             String audioUri = mDb_page.getNoteAudioUri(i,false);
+            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String linkUri = mDb_page.getNoteLinkUri(i,false);
             String noteBody = mDb_page.getNoteBody(i,false);
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, "", linkUri, noteBody , action, 0,false);// action 1:check all, 0:uncheck all
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , action, 0,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
             if((Audio_manager.mAudioPos == i) && (action == 0) )
                 bStopAudio = true;
@@ -352,10 +355,11 @@ public class Checked_notes_option {
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
             String audioUri = mDb_page.getNoteAudioUri(i,false);
+            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String linkUri = mDb_page.getNoteLinkUri(i,false);
             String noteBody = mDb_page.getNoteBody(i,false);
             long marking = (mDb_page.getNoteMarking(i,false)==1)?0:1;
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, "", linkUri, noteBody , marking, 0,false);// action 1:check all, 0:uncheck all
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , marking, 0,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
             if((Audio_manager.mAudioPos == i) && (marking == 0) )
                 bStopAudio = true;
@@ -378,9 +382,9 @@ public class Checked_notes_option {
      *   operate checked to: move to, copy to
      *
      */
-    private void operateCheckedTo(final AppCompatActivity act,final String[] copyItems, final String[] copyItemsPicture, final String[] copyItemsLink,
-                          final String[] copyItemsAudio, final String[] copyItemsBody,
-                          final Long[] copyItemsTime, final int action)
+    private void operateCheckedTo(final AppCompatActivity act,final String[] copyItemsTitle, final String[] copyItemsPicture,
+                                  final String[] copyItemsAudio, final String[] copyItemsDrawing,final String[] copyItemsLink,
+                                  final String[] copyItemsBody, final Long[] copyItemsTime, final int action)
     {
         //list all pages
         int focusFolder_tableId = Pref.getPref_focusView_folder_tableId(act);
@@ -411,11 +415,11 @@ public class Checked_notes_option {
                 //copy checked item to destination page
                 int destPageTableId = pageTableIds[which];
                 DB_page.setFocusPage_tableId(destPageTableId);
-                for(int i=0;i< copyItems.length;i++)
+                for(int i=0;i< copyItemsTitle.length;i++)
                 {
                     // move to same page is not allowed
                     if(!((action == MOVE_TO) && (srcPageTableId == destPageTableId)))
-                        mDb_page.insertNote(copyItems[i],copyItemsPicture[i], copyItemsAudio[i], "", copyItemsLink[i], copyItemsBody[i],1, copyItemsTime[i]);
+                        mDb_page.insertNote(copyItemsTitle[i],copyItemsPicture[i], copyItemsAudio[i], copyItemsDrawing[i], copyItemsLink[i], copyItemsBody[i],1, copyItemsTime[i]);
                 }
 
                 //recover table Id of original page
