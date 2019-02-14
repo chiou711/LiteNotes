@@ -303,7 +303,11 @@ public class Note_drawingView extends View
             OutputStream outStream = getContext().getContentResolver().openOutputStream(Uri.parse(filePath));
 
             // copy the bitmap to the OutputStream
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            new Thread(new Runnable() {
+                public void run() {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                }
+            }).start();
 
             // flush and close the OutputStream
             outStream.flush(); // empty the buffer
@@ -353,23 +357,27 @@ public class Note_drawingView extends View
 
         try
         {
-             // get an OutputStream to uri
-             OutputStream outStream =
-                       getContext().getContentResolver().openOutputStream(Uri.parse(uriStr));
+            // get an OutputStream to uri
+            OutputStream outStream =
+                   getContext().getContentResolver().openOutputStream(Uri.parse(uriStr));
 
-             // copy the bitmap to the OutputStream
-             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            // copy the bitmap to the OutputStream
+            new Thread(new Runnable() {
+                public void run() {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                }
+            }).start();
 
-             // flush and close the OutputStream
-             outStream.flush(); // empty the buffer
-             outStream.close(); // close the stream
+            // flush and close the OutputStream
+            outStream.flush(); // empty the buffer
+            outStream.close(); // close the stream
 
-             // display a message indicating that the image was saved
-             Toast message = Toast.makeText(getContext(),
-                R.string.message_saved, Toast.LENGTH_SHORT);
-             message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
-                message.getYOffset() / 2);
-             message.show();
+            // display a message indicating that the image was saved
+            Toast message = Toast.makeText(getContext(),
+            R.string.message_saved, Toast.LENGTH_SHORT);
+            message.setGravity(Gravity.CENTER, message.getXOffset() / 2,
+            message.getYOffset() / 2);
+            message.show();
         }
         catch (IOException ex)
         {
