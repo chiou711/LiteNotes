@@ -476,7 +476,7 @@ public class Note_addCameraVideo extends Activity {
 	{
 		if (rowId == null) // for Add new
 		{
-			if( !pictureUri.isEmpty())
+			if( !Util.isEmptyString(pictureUri))
 			{
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);

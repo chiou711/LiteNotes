@@ -235,7 +235,7 @@ public class Note_addReadyImage extends AppCompatActivity {
 	{
 		if (rowId == null) // for Add new
 		{
-			if( !pictureUri.isEmpty())
+			if( !Util.isEmptyString(pictureUri))
 			{
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);

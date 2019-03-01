@@ -334,11 +334,11 @@ public class Note_addText extends AppCompatActivity {
 		{
 			if (rowId == null) // for Add new
 			{
-				if( (!title.isEmpty()) ||
-						(!body.isEmpty()) ||
-						(!pictureUri.isEmpty()) ||
-						(!audioUri.isEmpty()) ||
-						(!linkUri.isEmpty())            )
+				if( (!Util.isEmptyString(title)) ||
+						(!Util.isEmptyString(body)) ||
+						(!Util.isEmptyString(pictureUri)) ||
+						(!Util.isEmptyString(audioUri)) ||
+						(!Util.isEmptyString(linkUri))            )
 				{
 					// insert
 					System.out.println("Note_addText / _saveStateInDB / insert");

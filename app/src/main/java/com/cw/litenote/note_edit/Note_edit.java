@@ -245,7 +245,7 @@ public class Note_edit extends Activity
 						Bundle extras = getIntent().getExtras();
 						String originalPictureFileName = extras.getString(DB_page.KEY_NOTE_PICTURE_URI);
 
-						if(originalPictureFileName.isEmpty())
+						if(Util.isEmptyString(originalPictureFileName))
 						{   // no picture at first
 							note_edit_ui.removePictureStringFromOriginalNote(noteId);
 		                    enSaveDb = false;
@@ -259,7 +259,7 @@ public class Note_edit extends Activity
 						
 						String originalAudioFileName = extras.getString(DB_page.KEY_NOTE_AUDIO_URI);
 
-						if(originalAudioFileName.isEmpty())
+						if(Util.isEmptyString(originalAudioFileName))
 						{   // no picture at first
 							note_edit_ui.removeAudioStringFromOriginalNote(noteId);
 		                    enSaveDb = false;
@@ -492,7 +492,7 @@ public class Note_edit extends Activity
 		}});
 
 		// None
-		if(!audioUri.isEmpty())
+		if(!Util.isEmptyString(audioUri))
 		{
 			builder.setPositiveButton(R.string.btn_None, new DialogInterface.OnClickListener(){
 					@Override
@@ -539,7 +539,7 @@ public class Note_edit extends Activity
 			}
 		});
 		// None
-		if(!linkUri.isEmpty())
+		if(!Util.isEmptyString(linkUri))
 		{
 			builder.setPositiveButton(R.string.btn_None, new DialogInterface.OnClickListener()
 			{
@@ -578,7 +578,7 @@ public class Note_edit extends Activity
 			{
 				bUseCameraImage = false;
 				// to use captured picture or original picture
-				if(!cameraPictureUri.isEmpty())
+				if(!Util.isEmptyString(cameraPictureUri))
 				{
 					// update
 					note_edit_ui.saveStateInDB(noteId, enSaveDb, cameraPictureUri, audioUri, "");// replace with existing picture

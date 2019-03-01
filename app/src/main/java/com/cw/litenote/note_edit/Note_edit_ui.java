@@ -348,7 +348,7 @@ public class Note_edit_ui {
 					}
 				});
 
-				if(!pictureUriInDB.isEmpty())
+				if(!Util.isEmptyString(pictureUriInDB))
 				{
 					builder.setPositiveButton(R.string.btn_None, new DialogInterface.OnClickListener()
 					{
@@ -588,11 +588,11 @@ public class Note_edit_ui {
         {
 	        if (rowId == null) // for Add new
 	        {
-	        	if( (!title.isEmpty()) ||
-	        		(!body.isEmpty()) ||
-	        		(!pictureUri.isEmpty()) || 
-	        		(!audioUri.isEmpty()) ||
-	        		(!linkUri.isEmpty())            )
+	        	if( (!Util.isEmptyString(title)) ||
+	        		(!Util.isEmptyString(body)) ||
+	        		(!Util.isEmptyString(pictureUri)) ||
+	        		(!Util.isEmptyString(audioUri)) ||
+	        		(!Util.isEmptyString(linkUri))            )
 	        	{
 	        		// insert
 	        		System.out.println("Note_edit_ui / _saveStateInDB / insert");
@@ -633,7 +633,6 @@ public class Note_edit_ui {
                         else
                             marking = oriMarking;
 
-//						long marking = (!audioUri.isEmpty())?1:oriMarking;
                         boolean isOK;
 	        			isOK = dB_page.updateNote(rowId, title, pictureUri, audioUri, drawingUri, linkUri, body,
 												marking, now.getTime(),true); // update note

@@ -640,7 +640,7 @@ public class Note_addCameraImage extends Activity {
 	{
 		if (rowId == null) // for Add new
 		{
-			if( !pictureUri.isEmpty())
+			if(!Util.isEmptyString(pictureUri))
 			{
 				// insert
 				String name = Util.getDisplayNameByUriString(pictureUri, this);
