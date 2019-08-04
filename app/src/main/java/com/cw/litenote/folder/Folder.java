@@ -71,8 +71,10 @@ public class Folder
         {
             for(int i = 0; i< dB_drawer.getFoldersCount(true); i++)
             {
-                MainAct.mFolderTitles.add(""); // init only
-                MainAct.mFolderTitles.set(i, dB_drawer.getFolderTitle(i,true));
+            	if(MainAct.mFolderTitles != null) {
+		            MainAct.mFolderTitles.add(""); // init only
+		            MainAct.mFolderTitles.set(i, dB_drawer.getFolderTitle(i, true));
+	            }
             }
         }
 
